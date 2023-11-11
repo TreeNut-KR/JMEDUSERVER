@@ -33,3 +33,5 @@ mysql/.DS_Store
 /node/yarn-debug.log*
 /node/yarn-error.log*
 /node/pnpm-debug.log*
+.DS_Store
+*/.DS_Store
