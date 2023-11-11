@@ -1,0 +1,21 @@
+.react-datepicker__header {
+  background-color: #5272f2;
+  color: #ffffff;
+  font-weight: 800;
+}
+.react-datepicker__current-month,
+.react-datepicker__day-name {
+  color: #ffffff;
+  font-weight: 800;
+}
+.react-datepicker__day--selected {
+  background-color: #5272f2;
+  color: #ffffff;
+  font-weight: 800;
+}
+.custom-datepicker-input {
+  cursor: not-allowed;
+  background-color: #f0f0f0;
+  color: #2e3037;
+  font-weight: 800;
+}

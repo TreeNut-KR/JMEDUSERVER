@@ -1,11 +1,17 @@
 FROM node:16-alpine
 
-WORKDIR /node
+WORKDIR /app
 
-COPY package*.json ./
+COPY ./sources/package.json ./sources/yarn.lock /app/
 
-RUN npm install
+RUN yarn install
 
-COPY index.js ./
+COPY ./sources /app
 
-ENTRYPOINT [ "node", "index.js" ]
+RUN yarn run build
+
+RUN yarn global add serve
+
+EXPOSE 5001
+
+CMD ["serve", "-s", "build", "-l", "5001"]

@@ -1,0 +1,15 @@
+@font-face {
+  font-family: "Bae Min";
+  font-style: normal;
+  font-weight: 100;
+  src: url("./baeMinFont.woff") format("woff");
+}
+
+.baemin {
+  font-family: "Bae Min";
+}
+
+.fontA {
+  color: #2e3037;
+  font-weight: 800;
+}
