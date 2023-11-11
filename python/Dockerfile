@@ -1,8 +1,13 @@
-FROM python:3.7-bullseye
+FROM python:3.12-bullseye
 
-COPY main.py /src/
+COPY ./sources /src
 
-ENTRYPOINT python /src/main.py
+
+RUN pip install requests
+RUN pip install configparser
+
+
+ENTRYPOINT python /src/FU/api.py
 
 # 이미지 생성 명령어
 # docker build -f Dockerfile -t python .
