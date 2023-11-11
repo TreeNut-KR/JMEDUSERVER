@@ -2,3 +2,34 @@
 mysql/data/*
 mysql/.DS_Store
 mysql/.DS_Store
+
+
+# Ignore Node.js related folders
+/node/node_modules
+
+# Production build
+/node/build
+
+# .env files
+/node/.env*
+
+# macOS
+/node/.DS_Store
+
+# Windows
+/node/Thumbs.db
+/node/Desktop.ini
+
+# Yarn
+/node/.yarn
+
+# IDE files
+/node/.idea
+/node/.vscode
+/node/*.code-workspace
+
+# Log files
+/node/npm-debug.log*
+/node/yarn-debug.log*
+/node/yarn-error.log*
+/node/pnpm-debug.log*
