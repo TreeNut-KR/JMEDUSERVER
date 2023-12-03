@@ -14,7 +14,7 @@ export default function RegisterPage() {
             <Button
               label={"X"}
               width={50}
-              URL={"/"}
+              URL={"/student"}
               bgColor={"5272F2"}
             ></Button>
           </div>

@@ -5,16 +5,25 @@ import { sideMenus } from "../constants/sideMenus";
 export default function SideBar() {
   const [activeMenuItem, setActiveMenuItem] = useState(null);
   const location = useLocation();
+  const URL = location.pathname;
+  var modifiedUrls = () => {
+    var parts = URL.split("/");
+    if (parts.length > 2) {
+      parts.splice(2, 1);
+    }
+    return parts.join("/");
+  };
+  const modifiedURL = modifiedUrls();
 
   useEffect(() => {
     const foundMenuItem = sideMenus.find((menu) =>
-      menu.menus.some((item) => item.href === location.pathname)
+      menu.menus.some((item) => item.href === modifiedURL)
     );
 
     if (foundMenuItem) {
       setActiveMenuItem(foundMenuItem);
     }
-  }, [location.pathname]);
+  }, [modifiedURL]);
 
   return (
     <div className="relative w-96 h-full min-w-[200px] fontA">
@@ -34,19 +43,21 @@ export default function SideBar() {
             >
               {menu.title}
             </h1>
-            {menu.menus.map((item, itemIndex) => (
-              <a
-                className={`text-right font-extrabold py-1 px-7 ${
-                  item.href === location.pathname
-                    ? "bg-[#5272F2] text-white"
-                    : ""
-                }`}
-                key={itemIndex}
-                href={item.href}
-              >
-                {item.name}
-              </a>
-            ))}
+            {menu.menus.map((item, itemIndex) =>
+              item.display !== "none" ? (
+                <a
+                  className={`text-right font-extrabold py-1 px-7 ${
+                    item.href === location.pathname
+                      ? "bg-[#5272F2] text-white"
+                      : ""
+                  }`}
+                  key={itemIndex}
+                  href={item.href}
+                >
+                  {item.name}
+                </a>
+              ) : null
+            )}
           </div>
         ))}
       </div>

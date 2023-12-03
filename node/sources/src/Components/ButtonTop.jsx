@@ -15,7 +15,7 @@ export default function Button(props) {
     bgColor,
   } = props;
 
-  let cssStyle = "text-xs fontA h-10 px-2 rounded-md border ";
+  let cssStyle = "text-sm fontA h-10 px-2 rounded-md border ";
 
   const dynamicStyle = {
     width: width ? `${width}px` : "4rem",
