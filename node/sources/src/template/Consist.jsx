@@ -7,6 +7,7 @@ import LoginPage from "../pages/login/signIn";
 import RegisterPage from "../pages/register/register";
 import Product from "../pages/student/product";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import StudentEdit from "../pages/student/student-edit/studentEdit";
 
 export default function Consist() {
   return (
@@ -17,10 +18,16 @@ export default function Consist() {
           <SideBar />
           <div className="w-full">
             <Routes>
-              <Route path="/" element={<MainPage />} />
-              <Route path="/product" element={<Product />} />
+              {/* 로그인 , 회원가입 페이지 */}
               <Route path="/sign-in" element={<LoginPage />} />
               <Route path="/register-page" element={<RegisterPage />} />
+              {/* 학생관리 페이지 */}
+              <Route path="/student" element={<MainPage />} />
+              <Route path="/product" element={<Product />} />
+              <Route
+                path="/student-edit/:studentID"
+                element={<StudentEdit />}
+              />
             </Routes>
           </div>
         </div>
