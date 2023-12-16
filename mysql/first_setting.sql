@@ -4,7 +4,7 @@ USE jmedu;
 
 -- 학생 테이블
 CREATE TABLE student (
-    student_pk INT NOT NULL AUTO_INCREMENT,
+    student_pk BINARY(16),
     name VARCHAR(20),
     sex_ism BOOL,
     birthday DATE,
@@ -18,7 +18,7 @@ CREATE TABLE student (
 
 -- 교사 테이블
 CREATE TABLE teacher (
-    teacher_pk INT NOT NULL AUTO_INCREMENT,
+    teacher_pk BINARY(16),
     name VARCHAR(20),
     sex_ism BOOL,
     birthday DATE,
@@ -31,8 +31,8 @@ CREATE TABLE teacher (
 
 -- 수강 로그 테이블
 CREATE TABLE attend_log (
-    attend_log_pk INT NOT NULL AUTO_INCREMENT,
-    student INT,
+    attend_log_pk BINARY(16),
+    student BINARY(16),
     time DATETIME,
     is_attend BOOL,
     is_gohome BOOL,
@@ -41,7 +41,7 @@ CREATE TABLE attend_log (
 
 -- 교사 수강 로그 테이블
 CREATE TABLE teacher_attend_log (
-    teacher_attend_log_pk INT NOT NULL AUTO_INCREMENT,
+    teacher_attend_log_pk BINARY(16),
     teacher VARCHAR(20),
     time DATETIME,
     is_attend BOOL,
@@ -50,7 +50,7 @@ CREATE TABLE teacher_attend_log (
 
 -- 학교 테이블
 CREATE TABLE school (
-    school_pk INT NOT NULL AUTO_INCREMENT,
+    school_pk BINARY(16),
     name VARCHAR(30),
     is_elementary BOOL,
     is_middle BOOL,
@@ -60,19 +60,19 @@ CREATE TABLE school (
 
 -- 과목 테이블
 CREATE TABLE subject (
-    subject_pk INT NOT NULL AUTO_INCREMENT,
+    subject_pk BINARY(16),
     name VARCHAR(20),
     time DATETIME,
-    teacher INT,
+    teacher BINARY(16),
     PRIMARY KEY(subject_pk),
     FOREIGN KEY (teacher) REFERENCES teacher(teacher_pk)
 ) ENGINE=MYISAM CHARSET=utf8;
 
 -- 학생-과목 연결 테이블
 CREATE TABLE student_subject (
-    student_subject_pk INT NOT NULL AUTO_INCREMENT,
-    student_id INT,
-    subject_id INT,
+    student_subject_pk BINARY(16),
+    student_id BINARY(16),
+    subject_id BINARY(16),
     PRIMARY KEY(student_subject_pk),
     FOREIGN KEY (student_id) REFERENCES student(student_pk),
     FOREIGN KEY (subject_id) REFERENCES subject(subject_pk)
@@ -80,8 +80,8 @@ CREATE TABLE student_subject (
 
 -- 관리자 로그 테이블
 CREATE TABLE admin_log (
-    admin_log_pk INT NOT NULL AUTO_INCREMENT,
-    teacher INT,
+    admin_log_pk BINARY(16),
+    teacher BINARY(16),
     time DATETIME,
     log VARCHAR(255),
     PRIMARY KEY(admin_log_pk)
