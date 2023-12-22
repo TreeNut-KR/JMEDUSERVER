@@ -10,7 +10,7 @@ CREATE TABLE student (
     birthday DATE,
     contact VARCHAR(20),
     contact_parent VARCHAR(20),
-    school INT,
+    school BINARY(16),
     payday INT,
     firstreg DATE,
     PRIMARY KEY(student_pk)
