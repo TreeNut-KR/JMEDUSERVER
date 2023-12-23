@@ -5,33 +5,46 @@
 */
 export const sideMenus = [
   {
-    title: "학생관리",
+    title: "학생 관리",
     menus: [
       {
-        name: "회원관리",
+        name: "학생 조회",
         href: "/student",
       },
       {
-        name: "응애관리",
-        href: "/product",
+        name: "수업일정 조회",
+        href: "/class",
       },
       {
-        name: "학생 수정페이지",
+        name: "등/하원 기록 조회",
         href: "/student-edit",
         display: "none",
       },
     ],
   },
   {
-    title: "돈관리",
+    title: "교직원 관리",
     menus: [
       {
-        name: "회원관리2",
+        name: "교직원 조회",
         href: "/aa",
       },
       {
-        name: "응애관리2",
+        name: "등/하원 기록 조회",
         href: "/bb",
+      },
+    ],
+  },
+  {
+    title: "관리자용 페이지",
+    menus: [
+      {
+        name: "수정 로그 보기",
+        href: "/aaㅠㅠ",
+      },
+      {
+        name: "뭐 대충대충",
+        href: "/bbㅁㄴ",
       },
     ],
   },
