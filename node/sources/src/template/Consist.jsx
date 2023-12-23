@@ -23,7 +23,7 @@ export default function Consist() {
               <Route path="/register-page" element={<RegisterPage />} />
               {/* 학생관리 페이지 */}
               <Route path="/student" element={<MainPage />} />
-              <Route path="/product" element={<Product />} />
+              <Route path="/class" element={<Product />} />
               <Route
                 path="/student-edit/:studentID"
                 element={<StudentEdit />}

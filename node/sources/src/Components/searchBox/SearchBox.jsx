@@ -48,7 +48,11 @@ export default function SearchBox(props) {
               id=""
             >
               {Object.values(filterOption(option)).map((filter) => (
-                <option key={filter.value} value={filter.value}>
+                <option
+                  key={filter.value}
+                  value={filter.value}
+                  className="fontA"
+                >
                   {filter.name}
                 </option>
               ))}
