@@ -46,7 +46,7 @@ export default function SideBar() {
             {menu.menus.map((item, itemIndex) =>
               item.display !== "none" ? (
                 <a
-                  className={`text-right font-extrabold py-1 px-7 ${
+                  className={`text-right font-extrabold text-[18px] py-1 px-7 ${
                     item.href === location.pathname
                       ? "bg-[#5272F2] text-white"
                       : ""
