@@ -32,7 +32,7 @@
       <img style="object-fit: cover; width: 100%;" src="logo_final_2.png" alt="">
     </div>
 
-    <div style="padding-top: 800px; ">
+    <div style="padding-top: 800px; z-index: 50;">
       <div style="display: flex; position: absolute; bottom: 400px;">
         <div class="wrap">
           <div class="center">
@@ -44,32 +44,20 @@
           </div>
         </div>
       </div>
-      <div class="innerBox"> 
-        <div style="color: white; width: 100%; padding: 20px; font-size: 30px; font-weight: 900;">
-          <span> 이름 : <span id="name"></span></span>
-          <span> 이름 : <span id="name"></span></span>
-          <span> 이름 : <span id="name"></span></span>
-          <span> 이름 : <span id="name"></span></span>
-          <span> 이름 : <span id="name"></span></span>
+    </div>
+
+    <div style="display: flex; align-items: end; margin-top: 41vh; z-index: 10;">
+      <div class="innerBox" style="overflow: hidden;"> 
+        <div style="position: relative;display: flex; flex-direction: column; align-items: center; justify-content: flex-end; color: white; width: 100%; font-size: 30px; font-weight: 900; padding-top: 50px;">
+          <span class="spanBox" style="font-size: 50px; padding-bottom: 30px;" id="name">길동길동띠</span>
+          <div style="height: 3px; width: 100%; background-color: #f0f0f0;"></div>
+          <span class="spanBox" style="font-size: xxx-large; padding-top: 40px;"> 성별 : <span >크레파스</span></span>
+          <span class="spanBox" style="font-size: xxx-large; padding-top: 40px;">출석 시간 : <span>2000.20.20</span></span>
+          <span style="font-size: 70px; padding-top: 110px;" class="spanBox">출 - 완</span>
         </div>
       </div>
     </div>
-    <!-- --------------- 입력 부분 ---------------------- -->
-    <!-- <div id="app" style="position: absolute; bottom: 0px">
-      <div>
-        <h2>학생증 바코드 입력</h2>
-        <input type="text" id="barcode" placeholder="바코드를 입력하세요" />
-        <button onclick="sendBarcode()">전송</button>
-      </div>
 
-      <div id="studentInfo" style="display: block">
-        <h2 id="studentName"></h2>
-        <p id="studentBirth"></p>
-        <button onclick="checkIn('등원')">등원</button>
-        <button onclick="checkIn('하원')">하원</button>
-      </div>
-    </div> -->
-    <!-- ----------------------------------------------- -->
     <script src="script.js"></script>
   </body>
 </html>

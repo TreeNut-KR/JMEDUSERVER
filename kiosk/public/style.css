@@ -56,11 +56,11 @@
 
 .innerBox_animated {
   width: 700px;
-  height: 1000px;
+  height: 650px;
   border-radius: 20px;
   background-color: #63af90;
   transition: ease-in-out 1s;
-  margin-bottom: 500px;
+  margin-bottom: 450px;
   margin-top: -60px;
 }
 
@@ -224,4 +224,16 @@
   100% {
     transform: scale(1);
   }
+}
+
+.spanBox {
+  opacity: 0;
+  margin-top: 100px;
+  transition: ease-in 0.6s;
+}
+
+.span-animated {
+  opacity: 1;
+  margin-top: 0px;
+  transition: ease-in 0.6s;
 }
