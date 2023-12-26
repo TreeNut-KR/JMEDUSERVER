@@ -1,5 +1,5 @@
 import React from "react";
-import axios from 'axios'; // Axios import
+import axios from 'axios';
 import Button from "../../Components/ButtonTop";
 
 export default function LoginPage() {
@@ -9,28 +9,36 @@ export default function LoginPage() {
     const inputPW = e.target.elements.PASSWORD.value;
 
     try {
-      // Node.js 서버로 로그인 요청 보내기
-      const response = await axios.post('http://node:5002/login', {
+      const response = await axios.post('http://localhost:5002/login', {
         username: inputID,
         password: inputPW
       });
+      console.log(response);
 
-      // 서버 응답 처리
       if (response.data.success) {
-        // 로그인 성공 시 로컬 스토리지에 정보 저장(추후 세션으로 변경)
         const userData = { name: inputID, author: "admin" };
         localStorage.setItem("user", JSON.stringify(userData));
         window.location.href = "/student";
       } else {
-        // 로그인 실패 처리 (서버에서 반환된 메시지를 사용)
         alert('로그인 실패: ' + response.data.message);
       }
     } catch (error) {
-      // 로그인 오류 처리 (팝업으로 오류 메시지 표시)
-      alert('로그인 오류: ' + error.message);
+      if (error.response) {
+        console.log(error.response.data);
+        console.log(error.response.status);
+        console.log(error.response.headers);
+        alert('로그인 실패: ' + error.response.data.message);
+      } else if (error.request) {
+        console.log(error.request);
+        alert('서버로부터 응답이 없습니다: ' + error.message);
+      } else {
+        console.log('Error', error.message);
+        alert('로그인 오류: ' + error.message);
+      }
+      console.log(error.config);
     }
   }
-  // 기존 UI 코드
+
   return (
     <>
       <div className="absolute w-[100vw] h-[100vh] top-0 left-0 bg-black opacity-50" />
