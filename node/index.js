@@ -6,9 +6,15 @@ const bcrypt = require('bcrypt');
 const mysql = require('mysql');
 const cors = require('cors');
 
-
 const app = express();
+
+// CORS 설정: React 애플리케이션 주소 허용
+const corsOptions = {
+    origin: 'http://localhost:5001', // React 앱이 실행 중인 주소
+    optionsSuccessStatus: 200
+};
 app.use(cors());
+
 const saltRounds = 10;
 
 // 데이터베이스 설정
@@ -37,21 +43,27 @@ app.post('/login', (req, res) => {
     const { username, password } = req.body;
 
     db.query('SELECT * FROM teacher WHERE id = ?', [username], (err, results) => {
-        if (err) throw err;
+        if (err) {
+            res.status(500).json({ success: false, message: 'Server error' });
+            return;
+        }
 
         if (results.length > 0) {
             bcrypt.compare(password, results[0].pwd, (err, isMatch) => {
-                if (err) throw err;
+                if (err) {
+                    res.status(500).json({ success: false, message: 'Server error' });
+                    return;
+                }
 
                 if (isMatch) {
                     req.session.user = results[0];
-                    res.redirect('/dashboard');
+                    res.json({ success: true, message: 'Login successful' });
                 } else {
-                    res.send('Incorrect username or password');
+                    res.json({ success: false, message: 'Incorrect username or password' });
                 }
             });
         } else {
-            res.send('Incorrect username or password');
+            res.json({ success: false, message: 'Incorrect username or password' });
         }
     });
 });
