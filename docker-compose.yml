@@ -8,6 +8,17 @@ services:
     ports:
       - 80:80
     depends_on:
+      - react
+
+  react:
+    restart: always
+    build:
+      context: ./react
+    ports:
+      - 5001:5001
+    expose:
+      - 5001
+    depends_on:
       - node
 
   node:
@@ -15,11 +26,12 @@ services:
     build:
       context: ./node
     ports:
-      - 5001:5001
+      - 5002:5002
     expose:
-      - 5001
+      - 5002
     depends_on:
       - mysql
+      
 
   mysql:
     restart: unless-stopped
