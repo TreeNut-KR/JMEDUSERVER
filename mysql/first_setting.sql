@@ -5,14 +5,14 @@ USE jmedu;
 -- 학생 테이블
 CREATE TABLE student (
     student_pk BINARY(16),
-    name VARCHAR(20),
-    sex_ism BOOL,
-    birthday DATE,
-    contact VARCHAR(20),
-    contact_parent VARCHAR(20),
-    school BINARY(16),
-    payday INT,
-    firstreg DATE,
+    name VARCHAR(20), --이름
+    sex_ism BOOL, --성별
+    birthday DATE, --생일
+    contact VARCHAR(20), --연락처
+    contact_parent VARCHAR(20), --부모연락처
+    school BINARY(16), --소속학교
+    payday INT, --결제일
+    firstreg DATE, --최초등록일
     PRIMARY KEY(student_pk)
 ) ENGINE=MYISAM CHARSET=utf8;
 

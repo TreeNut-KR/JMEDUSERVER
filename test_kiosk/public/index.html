@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+     <meta charset="UTF-8">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+
+        #app {
+            border: 1px solid #000;
+            background-color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- 바코드 입력 부분 -->
+        <div>
+            <h2>학생증 바코드 입력</h2>
+            <input type="text" id="barcode" placeholder="바코드를 입력하세요">
+            <button onclick="sendBarcode()">전송</button>
+        </div>
+
+        <!-- 학생 정보 및 등원, 하원 버튼 부분 -->
+        <div id="studentInfo" style="display: none;">
+            <h2 id="studentName"></h2>
+            <p id="studentBirth"></p>
+            <button onclick="checkIn('등원')">등원</button>
+            <button onclick="checkIn('하원')">하원</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
