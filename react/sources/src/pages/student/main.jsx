@@ -57,7 +57,11 @@ export default function MainPage() {
   return (
     <>
       <BasicBox>
-        <SearchBox onSubmit={setSearch} option={"student"}></SearchBox>
+        <SearchBox
+          onSubmit={setSearch}
+          option={"student"}
+          useDatePicker={false}
+        ></SearchBox>
         <DataTableV1
           title={"학생관리 테이블"}
           columns={columns}
