@@ -8,6 +8,7 @@ export default function LoginPage() {
     const inputID = e.target.elements.ID.value;
     const inputPW = e.target.elements.PASSWORD.value;
 
+
     try {
       const response = await axios.post('http://localhost:5002/login', {
         username: inputID,

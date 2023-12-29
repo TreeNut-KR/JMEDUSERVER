@@ -8,11 +8,7 @@ const cors = require('cors');
 
 const app = express();
 
-// CORS 설정: React 애플리케이션 주소 허용
-const corsOptions = {
-    origin: 'http://localhost:5001', // React 앱이 실행 중인 주소
-    optionsSuccessStatus: 200
-};
+// CORS 설정: 모든 출처 허용 (개발 단계에서만)
 app.use(cors());
 
 const saltRounds = 10;
@@ -27,10 +23,11 @@ const db = mysql.createConnection({
 
 db.connect((err) => {
     if (err) throw err;
-    console.log('Connected to the MySQL server.');
+    console.log('@@@@@@Connected to the MySQL server.@@@@@@');
 });
 
 // 미들웨어 설정
+app.use(bodyParser.json()); // JSON 본문 처리
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(session({
     secret: process.env.SESSION_SECRET,
@@ -38,35 +35,55 @@ app.use(session({
     saveUninitialized: true
 }));
 
-////////////////////로그인
+// 로그인 라우트
 app.post('/login', (req, res) => {
     const { username, password } = req.body;
-
     db.query('SELECT * FROM teacher WHERE id = ?', [username], (err, results) => {
         if (err) {
-            res.status(500).json({ success: false, message: 'Server error' });
+            res.status(500).json({ success: false, message: '서버에러'});
             return;
         }
 
         if (results.length > 0) {
             bcrypt.compare(password, results[0].pwd, (err, isMatch) => {
                 if (err) {
-                    res.status(500).json({ success: false, message: 'Server error' });
+                    res.status(500).json({ success: false, message: '서버 에러'});
                     return;
                 }
 
                 if (isMatch) {
                     req.session.user = results[0];
-                    res.json({ success: true, message: 'Login successful' });
+                    res.json({ success: true, message: '로그인 성공'});
                 } else {
-                    res.json({ success: false, message: 'Incorrect username or password' });
+                    res.json({ success: false, message: '비밀번호가 일치하지 않습니다.'});
                 }
             });
         } else {
-            res.json({ success: false, message: 'Incorrect username or password' });
+            res.json({ success: false, message: '없는 ID입니다.'});
         }
     });
 });
+
+
+//////회원가입
+app.post('/register', (req, res) => {
+    const { name, id, pwd, sex_ism, birthday, contact, is_admin } = req.body;
+  
+    // 데이터 삽입 쿼리
+    const query = 'INSERT INTO teacher (teacher_pk, name, id, pwd, sex_ism, birthday, contact, is_admin) VALUES (UUID(), ?, ?, ?, ?, ?, ?, ?)';
+  
+    // 데이터베이스에 쿼리 실행
+    db.query(query, [name, id, pwd, sex_ism, birthday, contact, is_admin], (err, result) => {
+      if (err) {
+        console.error('데이터 삽입 중 오류 발생:', err);
+        res.status(500).send('서버 오류가 발생했습니다.');
+        return;
+      }
+      res.status(200).send('사용자가 성공적으로 등록되었습니다.');
+    });
+  });
+
+
 
 /////////////////////학생조회
 app.get('/student_view', (req, res) => {
