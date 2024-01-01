@@ -28,12 +28,24 @@
         box-shadow: 0 0 0 20px #3faf82 inset;
       "
     >
-    <div style="width: 500px; position: absolute; top: 15%;">
-      <img style="object-fit: cover; width: 100%;" src="logo_final_2.png" alt="">
-    </div>
+      <div style="width: 50vw; position: absolute; top: 15%">
+        <img
+          style="object-fit: cover; width: 100%"
+          src="logo_final_2.png"
+          alt=""
+        />
+      </div>
 
-    <div style="padding-top: 800px; z-index: 50;">
-      <div style="display: flex; position: absolute; bottom: 400px;">
+      <div
+        style="
+          display: flex;
+          align-items: end;
+          z-index: 50;
+          position: absolute;
+          bottom: 10vh;
+          justify-content: center;
+        "
+      >
         <div class="wrap">
           <div class="center">
             <div class="menu_icon">
@@ -44,20 +56,73 @@
           </div>
         </div>
       </div>
-    </div>
 
-    <div style="display: flex; align-items: end; margin-top: 41vh; z-index: 10;">
-      <div class="innerBox" style="overflow: hidden;"> 
-        <div style="position: relative;display: flex; flex-direction: column; align-items: center; justify-content: flex-end; color: white; width: 100%; font-size: 30px; font-weight: 900; padding-top: 50px;">
-          <span class="spanBox" style="font-size: 50px; padding-bottom: 30px;" id="name">길동길동띠</span>
-          <div style="height: 3px; width: 100%; background-color: #f0f0f0;"></div>
-          <span class="spanBox" style="font-size: xxx-large; padding-top: 40px;"> 성별 : <span >크레파스</span></span>
-          <span class="spanBox" style="font-size: xxx-large; padding-top: 40px;">출석 시간 : <span>2000.20.20</span></span>
-          <span style="font-size: 70px; padding-top: 110px;" class="spanBox">출 - 완</span>
+      <div
+        style="
+          display: flex;
+          align-items: end;
+          z-index: 10;
+          position: absolute;
+          bottom: 10vh;
+        "
+      >
+        <div class="innerBox" style="overflow: hidden">
+          <div
+            style="
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: flex-end;
+              color: white;
+              width: 100%;
+              font-size: 30px;
+              font-weight: 900;
+              padding-top: 50px;
+            "
+          >
+            <span
+              class="spanBox"
+              style="font-size: 50px; padding-bottom: 50px"
+              id="name"
+              >출석 여부</span
+            >
+            <div
+              style="height: 3px; width: 100%; background-color: #f0f0f0"
+            ></div>
+            <span
+              class="spanBox"
+              style="font-size: xxx-large; padding-top: 50px"
+              ><span>이름</span></span
+            >
+            <span
+              class="spanBox"
+              style="font-size: xxx-large; padding-top: 50px"
+              ><span>0000.00.00</span></span
+            >
+            <span
+              class="spanBox"
+              style="font-size: xxx-large; padding-top: 50px"
+              ><span>2000.20.20</span></span
+            >
+          </div>
         </div>
       </div>
     </div>
 
+    <div
+      class="QRtest"
+      style="
+        position: absolute;
+        width: 90px;
+        height: 90px;
+        background-color: aqua;
+        left: 30px;
+        top: 30px;
+        padding: 5px;
+      "
+    >
+      Qr 코드 인식 테스트
+    </div>
     <script src="script.js"></script>
   </body>
 </html>
