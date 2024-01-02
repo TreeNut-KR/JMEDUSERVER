@@ -38,6 +38,58 @@ function animation_on() {
     spanBox.className = "spanBox-animated";
   });
 
+
+  function QR_Read(qrcode){//QR 리딩되면 실행되게 해주세요. 매개변수 : QR값
+
+
+    try {
+      const response = axios.post("http://localhost:5002/Kiosk_getStudent", {// QR 값 주고 학생 정보 받아오기
+        qrcode
+      });
+      console.log(response);
+
+      if (response.data.success) {//response.data.name에 학생 이름 저장, response.data.birthday에 생년월일 저장, response.data.contact_parent에 부모연락처 저장
+
+
+        //값 대입 후 애니메이션 시작 구현해주세요
+
+
+
+      } else {
+        console.log('서버와 통신하였으나 실패 반환');
+      }
+    } catch (error) {
+
+      console.log(error.config);
+    }
+
+  }
+
+
+
+  function attend_submit(attend_code){//등, 하원 선택하면 실행되게 해주세요. 매개변수는 0은 등원, 1은 하원입니다.
+    try {
+      const response = axios.post("http://localhost:5002/submitAttend", {
+        name: response.data.name,
+        contact_parent: response.data.contact_parent,
+        attend_code: attend_code
+      });
+      console.log(response);
+
+      if (response.data.success) {//response.data.name에 학생 이름 저장, response.data.birthday에 생년월일 저장
+        //값 대입 후 애니메이션 시작 구현해주세요
+        console.log('성공');  
+        
+      } else {
+        console.log('서버와 통신하였으나 실패 반환');
+      }
+    } catch (error) {
+
+      console.log(error.config);
+    }
+  }
+
+
   // 타이머 설정: 1초 후에 애니메이션 종료
   timer = setTimeout(function () {
     bar1.className = "bar_1";
