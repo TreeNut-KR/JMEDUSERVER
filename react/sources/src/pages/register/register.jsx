@@ -27,15 +27,19 @@ export default function RegisterPage() {
 
   // 폼 제출 핸들러
   const handleSubmit = async (e) => {
-    e.preventDefault();
     try {
       // POST 요청을 통한 회원가입 데이터 전송
+      const YYYY = birthday.substring(0, 4);
+      const MM = birthday.substring(4, 6);
+      const DD = birthday.substring(6, 8);
+      const birthday_converted = YYYY + "-" + MM + "-" + DD;
+      console.log(birthday_converted);
       const response = await axios.post("http://localhost:5002/register", {
         name,
         id,
         pwd: password,
         sex_ism: sexIsm,
-        birthday,
+        birthday: birthday_converted,
         contact,
         is_admin: isAdmin,
       });
@@ -83,7 +87,7 @@ export default function RegisterPage() {
                 type={"radioButton"}
               />
               <ModalInputBox
-                label={"생일 (6자리)"}
+                label={"생일 (8자리)"}
                 data={birthday}
                 edit={setBirthday}
               />
