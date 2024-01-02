@@ -47,7 +47,7 @@ function animation_on() {
     spanBoxes.forEach(function (spanBox) {
       spanBox.className = "spanBox";
     });
-  }, 3000); // 3초 후에 애니메이션 종료
+  }, 10000); // 10초 후에 애니메이션 종료
 }
 //버튼 테스트 (서비스 시 삭제)
 testbutton.addEventListener("click", animation_on);
