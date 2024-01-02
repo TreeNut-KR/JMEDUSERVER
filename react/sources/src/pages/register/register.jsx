@@ -25,9 +25,17 @@ export default function RegisterPage() {
         contact,
         is_admin: isAdmin,
       });
+      alert('전송 성공');
       console.log(response.data);
+      if (response.data.success) {
+        alert('회원가입 성공');
+      } else {
+        alert('회원가입: ' + response.data.message);
+      }
     } catch (error) {
       console.error("등록 중 오류 발생:", error);
+      alert("등록 중 오류 발생");
+      alert(error);
     }
   };
 

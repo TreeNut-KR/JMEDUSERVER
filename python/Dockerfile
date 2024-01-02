@@ -9,6 +9,7 @@ RUN pip install configparser
 RUN pip install flask
 RUN pip install flask_sqlalchemy
 RUN pip install flask_socketio
+RUN pip install flask-mysql
 
 ENTRYPOINT ["python", "/src/server.py"]
 # 이미지 생성 명령어
