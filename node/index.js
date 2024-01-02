@@ -149,7 +149,7 @@ app.get('/logout', (req, res) => {
 });
 
 /////키오스크에서 학생키를 받은 경우
-app.post('/QR', (req, res) => {
+app.post('/Kiosk_getStudent', (req, res) => {
     const { qrcode } = req.body;
     db.query('SELECT * FROM student WHERE student_pk = ?', [qrcode], (err, results) => {
         if (err) {
@@ -170,7 +170,7 @@ app.post('/QR', (req, res) => {
 });
 
 /////문자API 전송 요청
-app.post('/kiost_sendmsg', (req, res) => {
+app.post('/submitAttend', (req, res) => {
     const { name, contact_parent, attend_code } = req.body;
     const msg = name+'학생이 지금 ';
     if (attend_code == 0)
