@@ -1,15 +1,29 @@
 import React, { useState } from "react";
+import Button from "../../Components/ButtonTop";
 import axios from "axios";
+import ModalInputBox from "../../Components/modal_input/register_input";
+import { Toast, notify } from "../../template/Toastify";
 
 export default function RegisterPage() {
   // 상태 관리를 위한 useState 훅
   const [name, setName] = useState("");
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
-  const [sexIsm, setSexIsm] = useState(false); // 성별
-  const [birthday, setBirthday] = useState(""); // 생일
-  const [contact, setContact] = useState(""); // 연락처
-  const [isAdmin, setIsAdmin] = useState(false); // 관리자 여부
+  const [sexIsm, setSexIsm] = useState(false);
+  const [birthday, setBirthday] = useState("");
+  const [contact, setContact] = useState("");
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  function loging() {
+    if (!name || !id || !password || sexIsm === null || !birthday || !contact) {
+      notify({
+        type: "error",
+        text: "모든 필드를 채워주세요.",
+      });
+      return;
+    }
+    handleSubmit();
+  }
 
   // 폼 제출 핸들러
   const handleSubmit = async (e) => {
@@ -25,119 +39,78 @@ export default function RegisterPage() {
         contact,
         is_admin: isAdmin,
       });
-      alert('전송 성공');
+      notify({
+        type: "success",
+        text: "전송성공.",
+      });
       console.log(response.data);
-      if (response.data.success) {
-        alert('회원가입 성공');
-      } else {
-        alert('회원가입: ' + response.data.message);
-      }
     } catch (error) {
+      notify({
+        type: "error",
+        text: "에러 발생.",
+      });
       console.error("등록 중 오류 발생:", error);
-      alert("등록 중 오류 발생");
-      alert(error);
     }
   };
 
   return (
-    <div className="flex justify-center items-center h-screen">
-      <div className="w-[450px] bg-white rounded-lg shadow-2xl p-4">
-        <h2 className="text-center text-2xl font-bold mb-4">회원가입</h2>
-        <form onSubmit={handleSubmit}>
-          {/* 이름 필드 */}
-          <div className="flex flex-col mb-4">
-            <label htmlFor="name">이름:</label>
-            <input
-              id="name"
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="p-2 border border-gray-300 rounded"
+    <>
+      <div className="absolute w-[100vw] h-[100vh] top-0 left-0 bg-black opacity-50" />
+      <div className="absolute w-[100vw] h-[100vh] top-0 left-0 flex justify-center items-center">
+        <div className="w-[450px] bg-white rounded-lg shadow-2xl pb-4">
+          <div className="flex justify-between pt-4 pr-4">
+            <span className="fontA text-3xl pl-9 pt-2">회원가입</span>
+            <Button
+              label={"X"}
+              width={50}
+              URL={"/student"}
+              bgColor={"5272F2"}
             />
           </div>
+          <div className="flex justify-center">
+            <div className="flex flex-col">
+              <ModalInputBox label={"이름"} data={name} edit={setName} />
+              <ModalInputBox label={"아이디"} data={id} edit={setId} />
+              <ModalInputBox
+                label={"비밀번호"}
+                data={password}
+                edit={setPassword}
+              />
+              <ModalInputBox
+                label={"성별"}
+                data={sexIsm}
+                edit={setSexIsm}
+                type={"radioButton"}
+              />
+              <ModalInputBox
+                label={"생일 (6자리)"}
+                data={birthday}
+                edit={setBirthday}
+              />
+              <ModalInputBox
+                label={"연락처 ('-' 없이 작성해주세요.)"}
+                data={contact}
+                edit={setContact}
+              />
+              <ModalInputBox
+                label={"관리자 여부"}
+                data={isAdmin}
+                edit={setIsAdmin}
+                type={"checkBox"}
+              />
 
-          {/* 아이디 필드 */}
-          <div className="flex flex-col mb-4">
-            <label htmlFor="id">아이디:</label>
-            <input
-              id="id"
-              type="text"
-              value={id}
-              onChange={(e) => setId(e.target.value)}
-              className="p-2 border border-gray-300 rounded"
-            />
+              <div className="flex justify-evenly pt-6">
+                <Button label={"뒤로 가기"} width={80} URL={"/sign-in"} />
+                <Button label={"신규등록"} width={80} onClick={loging} />
+              </div>
+              <span className="text-xs font-extrabold pt-3 text-center">
+                이후 교직원 관리 페이지에서 수정 가능합니다.
+              </span>
+            </div>
           </div>
-
-          {/* 비밀번호 필드 */}
-          <div className="flex flex-col mb-4">
-            <label htmlFor="password">비밀번호:</label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="p-2 border border-gray-300 rounded"
-            />
-          </div>
-
-          {/* 성별 필드 */}
-          <div className="flex flex-col mb-4">
-            <label htmlFor="sexIsm">성별 (남성일 경우 체크):</label>
-            <input
-              id="sexIsm"
-              type="checkbox"
-              checked={sexIsm}
-              onChange={(e) => setSexIsm(e.target.checked)}
-              className="mt-1"
-            />
-          </div>
-
-          {/* 생일 필드 */}
-          <div className="flex flex-col mb-4">
-            <label htmlFor="birthday">생일:</label>
-            <input
-              id="birthday"
-              type="date"
-              value={birthday}
-              onChange={(e) => setBirthday(e.target.value)}
-              className="p-2 border border-gray-300 rounded"
-            />
-          </div>
-
-          {/* 연락처 필드 */}
-          <div className="flex flex-col mb-4">
-            <label htmlFor="contact">연락처:</label>
-            <input
-              id="contact"
-              type="text"
-              value={contact}
-              onChange={(e) => setContact(e.target.value)}
-              className="p-2 border border-gray-300 rounded"
-            />
-          </div>
-
-          {/* 관리자 여부 필드 */}
-          <div className="flex flex-col mb-4">
-            <label htmlFor="isAdmin">관리자:</label>
-            <input
-              id="isAdmin"
-              type="checkbox"
-              checked={isAdmin}
-              onChange={(e) => setIsAdmin(e.target.checked)}
-              className="mt-1"
-            />
-          </div>
-
-          {/* 계정 생성 버튼 */}
-          <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600">
-            계정 생성
-          </button>
-        </form>
-
-        <p className="text-center text-sm text-gray-600 mt-4">
-          이미 계정이 있으신가요? 로그인 페이지로 이동하세요.
-        </p>
+        </div>
       </div>
-    </div>
+      <Toast />
+    </>
   );
 }
