@@ -67,12 +67,12 @@ function animation_on() {
 
 
 
-  function attend_submit(attend_code){//등, 하원 선택하면 실행되게 해주세요. 매개변수는 0은 등원, 1은 하원입니다.
+  function attend_submit(name, contact_parent, attend_code){//등, 하원 선택하면 실행되게 해주세요. attend_code는 0은 등원, 1은 하원입니다.
     try {
       const response = axios.post("http://localhost:5002/submitAttend", {
-        name: response.data.name,
-        contact_parent: response.data.contact_parent,
-        attend_code: attend_code
+        name: response,
+        contact_parent,
+        attend_code
       });
       console.log(response);
 
