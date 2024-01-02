@@ -2,16 +2,16 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-COPY ./sources/package.json ./sources/yarn.lock /app/
+COPY ./sources/package.json ./sources/package-lock.json /app/
 
-RUN yarn install
+RUN npm install
+
+RUN npm install axios
+
+RUN npm install express
 
 COPY ./sources /app
 
-RUN yarn run build
+EXPOSE 5003
 
-RUN yarn global add serve
-
-EXPOSE 5001
-
-CMD ["serve", "-s", "build", "-l", "5001"]
+CMD ["node", "index.js"]
