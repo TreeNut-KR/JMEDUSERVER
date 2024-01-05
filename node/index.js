@@ -6,6 +6,7 @@ const bcrypt = require('bcrypt');
 const mysql = require('mysql');
 const cors = require('cors');
 
+
 const app = express();
 
 // CORS 설정: 모든 출처 허용 (개발 단계에서만)
@@ -99,6 +100,33 @@ app.post('/register', async(req, res) => {
 
 /////////////////////학생조회
 app.get('/students_view', (req, res) => {
+    const { name, sex_ism, contact, contact_parent, school, payday } = req.body;
+
+    const searchStudent = 'SELECT * FROM student WHERE ';
+    if (name != '')
+    {
+        searchStudent += 'name = \''+name+'\' ';
+    }
+    if (contact != '')
+    {
+        searchStudent += 'AND contact = \''+contact+'\' ';
+    }
+    if (contact_parent != '')
+    {
+        searchStudent += 'AND contact_parent = \''+contact_parent+'\' ';
+    }
+    if (school != '')
+    {
+        school += 'AND school = \''+school+'\' ';
+    }
+    if (payday != '')
+    {
+        payday += 'AND payday = \''+payday+'\' ';
+    }
+
+
+
+
     // 'student' 테이블의 모든 데이터를 조회
     db.query('SELECT * FROM student', (error, results, fields) => {
         if (error) {
