@@ -36,6 +36,73 @@ app.use(session({
     saveUninitialized: true
 }));
 
+
+
+//학생 검색 쿼리문 제작 함수
+function makeStudentSearchQuery(body) {
+    const { student_pk, name, sex_ism, birthday, contact, contact_parent, school, payday, firstreg } = body;
+    let selectAll = true;
+    let searchStudent = 'SELECT * FROM student WHERE ';
+    let queryParams = [];
+    let conditions = [];
+
+    if (student_pk) {
+        conditions.push('student_pk = ?');
+        queryParams.push(student_pk);
+        selectAll = false;
+    }
+    if (name) {
+        conditions.push('name = ?');
+        queryParams.push(name);
+        selectAll = false;
+    }
+    if (sex_ism) {
+        conditions.push('sex_ism = ?');
+        queryParams.push(sex_ism);
+        selectAll = false;
+    }
+    if (birthday) {
+        conditions.push('birthday = ?');
+        queryParams.push(birthday);
+        selectAll = false;
+    }
+    if (contact) {
+        conditions.push('contact = ?');
+        queryParams.push(contact);
+        selectAll = false;
+    }
+    if (contact_parent) {
+        conditions.push('contact_parent = ?');
+        queryParams.push(contact_parent);
+        selectAll = false;
+    }
+    if (school) {
+        conditions.push('school = ?');
+        queryParams.push(school);
+        selectAll = false;
+    }
+    if (payday) {
+        conditions.push('payday = ?');
+        queryParams.push(payday);
+        selectAll = false;
+    }
+    if (firstreg) {
+        conditions.push('firstreg = ?');
+        queryParams.push(firstreg);
+        selectAll = false;
+    }
+
+    if (!selectAll) {
+        searchStudent += conditions.join(' AND ');
+    } else {
+        return 'SELECT * FROM student';
+    }
+
+    return { query: searchStudent, params: queryParams };
+}
+
+
+
 // 로그인 라우트
 app.post('/login', (req, res) => {
     const { username, password } = req.body;
@@ -100,35 +167,26 @@ app.post('/register', async(req, res) => {
 
 /////////////////////학생조회
 app.get('/students_view', (req, res) => {
+    const { query, params } = makeStudentSearchQuery(req.body);
+
+    db.query(query, params, (error, results, fields) => {
+        if (error) {
+            res.status(500).json({ success: false, message: '데이터베이스 오류', error: error });
+        } else {
+            res.json({ success: true, students: results });
+        }
+    });
+});
+
+
+//조건부 공지
+app.get('/condition_note', (req, res) => {
     const { name, sex_ism, contact, contact_parent, school, payday } = req.body;
-
-    const searchStudent = 'SELECT * FROM student WHERE ';
-    if (name != '')
-    {
-        searchStudent += 'name = \''+name+'\' ';
-    }
-    if (contact != '')
-    {
-        searchStudent += 'AND contact = \''+contact+'\' ';
-    }
-    if (contact_parent != '')
-    {
-        searchStudent += 'AND contact_parent = \''+contact_parent+'\' ';
-    }
-    if (school != '')
-    {
-        school += 'AND school = \''+school+'\' ';
-    }
-    if (payday != '')
-    {
-        payday += 'AND payday = \''+payday+'\' ';
-    }
+    const selectAll = true;
 
 
-
-
-    // 'student' 테이블의 모든 데이터를 조회
-    db.query('SELECT * FROM student', (error, results, fields) => {
+    // 'student' 테이블 조회 쿼리문 넣기
+    db.query(searchStudent, (error, results, fields) => {
         if (error) {
             // 데이터베이스 쿼리 중 오류 발생 시
             res.status(500).json({ success: false, message: '데이터베이스 오류', error: error });
@@ -138,6 +196,8 @@ app.get('/students_view', (req, res) => {
         }
     });
 });
+
+
 
 
 ///////학생추가
