@@ -30,8 +30,8 @@ export default function ModalInputBox(props) {
                 type="radio"
                 name={label}
                 disabled={disable}
-                checked={data === true}
-                onChange={() => edit(true)}
+                checked={data === "male"}
+                onChange={() => edit("male")}
               />
             </div>
             <div className="flex items-center gap-2">
@@ -41,8 +41,8 @@ export default function ModalInputBox(props) {
                 type="radio"
                 name={label}
                 disabled={disable}
-                checked={data === false}
-                onChange={() => edit(false)}
+                checked={data === "female"}
+                onChange={() => edit("female")}
               />
             </div>
           </div>

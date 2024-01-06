@@ -5,7 +5,7 @@ export default function InputBox(props) {
 
   return (
     <div className="py-10 border-b-2 fontA flex gap-4">
-      <div className="w-28 flex justify-end">
+      <div className="w-36 flex justify-end">
         <span>{name} : </span>
       </div>
       <input

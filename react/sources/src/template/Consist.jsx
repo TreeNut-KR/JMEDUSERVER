@@ -5,9 +5,12 @@ import Topbar from "./Topbar";
 import MainPage from "../pages/student/main";
 import LoginPage from "../pages/login/signIn";
 import RegisterPage from "../pages/register/register";
-import Product from "../pages/student/product";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import StudentEdit from "../pages/student/student-edit/studentEdit";
+import MainPageTeacher from "../pages/teacher/teacher_Check";
+import ScheduleStudnet from "../pages/student/schedule_student";
+import AttandanceStudnet from "../pages/student/attendance_student";
+import AttandanceTeacher from "../pages/teacher/attendeace_teacher";
 
 export default function Consist() {
   return (
@@ -23,10 +26,20 @@ export default function Consist() {
               <Route path="/register-page" element={<RegisterPage />} />
               {/* 학생관리 페이지 */}
               <Route path="/student" element={<MainPage />} />
-              <Route path="/class" element={<Product />} />
+              <Route path="/schedule_student" element={<ScheduleStudnet />} />
+              <Route
+                path="/attendance-student"
+                element={<AttandanceStudnet />}
+              />
               <Route
                 path="/student-edit/:studentID"
                 element={<StudentEdit />}
+              />
+              {/* 교직원 관리 페이지 */}
+              <Route path="/teacher" element={<MainPageTeacher />} />
+              <Route
+                path="/attendance-teacher"
+                element={<AttandanceTeacher />}
               />
             </Routes>
           </div>
