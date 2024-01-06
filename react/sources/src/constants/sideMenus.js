@@ -13,10 +13,14 @@ export const sideMenus = [
       },
       {
         name: "수업일정 조회",
-        href: "/class",
+        href: "/schedule_student",
       },
       {
         name: "등/하원 기록 조회",
+        href: "/attendance-student",
+      },
+      {
+        name: "학생 정보 수정",
         href: "/student-edit",
         display: "none",
       },
@@ -27,11 +31,11 @@ export const sideMenus = [
     menus: [
       {
         name: "교직원 조회",
-        href: "/aa",
+        href: "/teacher",
       },
       {
         name: "등/하원 기록 조회",
-        href: "/bb",
+        href: "/attendance-teacher",
       },
     ],
   },
@@ -40,11 +44,11 @@ export const sideMenus = [
     menus: [
       {
         name: "수정 로그 보기",
-        href: "/aaㅠㅠ",
+        href: "/log",
       },
       {
-        name: "뭐 대충대충",
-        href: "/bbㅁㄴ",
+        name: "교직원 관리",
+        href: "/staff",
       },
     ],
   },
