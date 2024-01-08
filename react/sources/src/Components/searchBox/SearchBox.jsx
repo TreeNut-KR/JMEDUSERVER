@@ -5,22 +5,27 @@ import { SEARCH_STUDENT } from "../../constants/searchFilter";
 import { useState } from "react";
 import Button from "../ButtonTop";
 import DatePickerV1 from "../datePicker/DatePicker";
+import axios from "axios";
 
 export default function SearchBox(props) {
   const today = new Date();
-  const { onSubmit, option, useDatePicker } = props;
+  const { setData, option, useDatePicker } = props;
   const [searchOption, setSearchOption] = useState("name");
   const [startDate, setStartDate] = useState(useDatePicker ? today : null);
   const [endDate, setEndDate] = useState(useDatePicker ? today : null);
 
+  const [search, setSearch] = useState({
+    text: "",
+    option: "student",
+  });
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit({
+    setSearch({
       text: e.target.elements["nameText"].value,
       option: searchOption,
-      startDate,
-      endDate,
     });
+    searchData();
   };
 
   const resetField = (e) => {
@@ -34,6 +39,22 @@ export default function SearchBox(props) {
     if (option === "student") return SEARCH_STUDENT;
     else return false;
   };
+
+  async function searchData() {
+    try {
+      const response = await axios.post(
+        "http://localhost:5002/students_search",
+        {
+          search: search,
+        }
+      );
+      setData(response.data.students);
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   return (
     <div className="w-full p-10 fontA">
       <div className="w-full h-40 border border-[#B3A492] shadow-md rounded-md p-5">
@@ -95,7 +116,7 @@ export default function SearchBox(props) {
 }
 
 SearchBox.propTypes = {
-  onSubmit: PropTypes.func.isRequired,
+  setData: PropTypes.func.isRequired,
   option: PropTypes.string,
   useDatePicker: PropTypes.bool,
 };

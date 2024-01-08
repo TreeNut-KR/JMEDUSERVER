@@ -6,6 +6,6 @@ export const SEARCH_STUDENT = {
   },
   phoneNumber: {
     name: "핸드폰 번호",
-    value: "phoneNum",
+    value: "contact",
   },
 };
