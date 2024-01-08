@@ -4,20 +4,24 @@ import moreIcon from "../../img/pending-icon.png";
 
 export default function DataTableV1(props) {
   const { styleClass, datas, columns, title, type } = props;
-  const [currentPage, setCurrentPage] = React.useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
   const totalNumber = datas ? datas.length : 0;
 
   //자세히 보기 기능
   const [expandedRowIndex, setExpandedRowIndex] = useState(-1);
 
-  //페이지당 보일 데이터 갯수 나중에 고를 수 있도록 수정할지도
-  const itemsPerPage = 10;
+  const [itemsPerPage, setItemPerPage] = useState(10);
 
-  const totalPages = Math.ceil(totalNumber / itemsPerPage);
+  const totalPages = Math.ceil(
+    parseInt(totalNumber, 10) / parseInt(itemsPerPage, 10)
+  );
 
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const currentPageData = datas ? datas.slice(startIndex, endIndex) : [];
+  const startIndex =
+    (parseInt(currentPage, 10) - 1) * parseInt(itemsPerPage, 10);
+  const endIndex = parseInt(startIndex, 10) + parseInt(itemsPerPage, 10);
+  const currentPageData = datas
+    ? datas.slice(parseInt(startIndex, 10), parseInt(endIndex, 10))
+    : [];
 
   //테이블 내의 '자세히 보기' 버튼 뜨도록 하는 기능 -------
   const toggleRowExpansion = (index) => {
@@ -74,7 +78,7 @@ export default function DataTableV1(props) {
           {totalNumber > 0 ? (
             <tbody className="px-3">
               {currentPageData.map((item, index) => (
-                <React.Fragment key={startIndex + index}>
+                <React.Fragment key={item.student_pk}>
                   <tr className="relative">
                     {columns.map((column, columnIndex) => {
                       if (column.data === "no") {
@@ -103,9 +107,7 @@ export default function DataTableV1(props) {
                         {expandedRowIndex === index && (
                           <span
                             className="absolute top-[-4px] left-[7rem] transform translate-x-[-50%] bg-[#5272F2] px-3 py-1 border rounded w-[10rem] text-white"
-                            onClick={() =>
-                              buttonEffect(datas[index].student_pk)
-                            }
+                            onClick={() => buttonEffect(item.student_pk)}
                           >
                             자세히 보기 / 수정
                           </span>
@@ -117,11 +119,21 @@ export default function DataTableV1(props) {
               ))}
             </tbody>
           ) : (
-            "데이터가 존재하지 않습니다."
+            <div className="px-6">데이터가 존재하지 않습니다.</div>
           )}
         </table>
       </div>
-      <div className="flex justify-end mt-2 relative items-center">
+      <div className="flex justify-between mt-2 relative items-center">
+        <div className="px-2 border-2 rounded-md border-[#5272F2] fontA ">
+          <select onChange={(e) => setItemPerPage(e.target.value)}>
+            <option selected value={10}>
+              10개씩 보기
+            </option>
+            <option value={15}>15개씩 보기</option>
+            <option value={20}>20개씩 보기</option>
+            <option value={10000000}>전체 보기</option>
+          </select>
+        </div>
         {currentPage > 1 && (
           <>
             <button
