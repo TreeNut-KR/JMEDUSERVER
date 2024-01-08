@@ -124,19 +124,17 @@ app.post("/students_view_detail", (req, res) => {
 //////////////////////학생 검색
 app.post("/students_search", (req, res) => {
   const { search } = req.body;
-  db.query(
-    `SELECT * FROM student ${
-      search.text != "" ? `where ${search.option} = ?` : null
-    }`,
-    [search.text],
-    (error, results) => {
-      if (error) {
-        res.status(500).json({ success: false, message: "데이터베이스 오류" });
-      } else {
-        res.json({ success: true, students: results });
-      }
+  let query = "SELECT * FROM student";
+  if (search.text != "") {
+    query = `SELECT * FROM student where ${search.option} = '${search.text}'`;
+  }
+  db.query(query, (error, results) => {
+    if (error) {
+      res.status(500).json({ success: false, message: "데이터베이스 오류" });
+    } else {
+      res.json({ success: true, students: results, search: search });
     }
-  );
+  });
 });
 
 //////////////////////학생 정보 수정
@@ -176,6 +174,21 @@ app.put("/students_view_update", (req, res) => {
       }
     }
   );
+});
+
+//////////////////////학생 정보 수정 (여러개 한번에)
+app.put("/students_view_update_all", (req, res) => {
+  const { editObject, editTarget } = req.body;
+
+  const query = `UPDATE student SET ${editObject.option} = '${editObject.text}' WHERE student_pk IN (${editTarget})`;
+
+  db.query(query, (error, results) => {
+    if (error) {
+      res.status(500).json({ success: false, message: "데이터베이스 오류" });
+    } else {
+      res.json({ success: true });
+    }
+  });
 });
 
 //조건부 공지
