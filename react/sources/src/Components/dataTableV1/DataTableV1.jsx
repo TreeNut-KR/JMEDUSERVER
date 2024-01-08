@@ -1,16 +1,66 @@
 import React, { useEffect, useRef, useState } from "react";
 import PropTypes from "prop-types";
 import moreIcon from "../../img/pending-icon.png";
+import InputBox from "../InputBox";
+import Button from "../ButtonTop";
 
 export default function DataTableV1(props) {
-  const { styleClass, datas, columns, title, type } = props;
+  const {
+    styleClass,
+    datas,
+    columns,
+    title,
+    type,
+    setStudentArray,
+    editType,
+    setEditText,
+  } = props;
   const [currentPage, setCurrentPage] = useState(1);
   const totalNumber = datas ? datas.length : 0;
 
-  //한번에 수정하기
+  //한번에 수정하기 ---------------------------------
   const [editAll, setEditAll] = useState(false);
+  const [selectedCheckboxes, setSelectedCheckboxes] = useState([]);
+  const [selectedType, setSelectedType] = useState({});
+  const [editTextDB, setEditTextDB] = useState("");
 
-  //자세히 보기 기능
+  function editAllButton() {
+    setEditText(editTextDB);
+  }
+
+  const handleMasterCheckboxChange = (e) => {
+    const checked = e.target.checked;
+    console.log(selectedType);
+    let newDataToSelect = [];
+
+    if (checked) {
+      newDataToSelect = currentPageData.map((item) => item.student_pk);
+    }
+
+    setSelectedCheckboxes(newDataToSelect);
+  };
+
+  const handleCheckboxChange = (e, studentPk) => {
+    const checked = e.target.checked;
+
+    let newSelectedCheckboxes = [...selectedCheckboxes];
+
+    if (checked) {
+      newSelectedCheckboxes.push(studentPk);
+    } else {
+      newSelectedCheckboxes = newSelectedCheckboxes.filter(
+        (pk) => pk !== studentPk
+      );
+    }
+
+    setSelectedCheckboxes(newSelectedCheckboxes);
+  };
+
+  useEffect(() => {
+    setStudentArray(selectedCheckboxes);
+  }, [selectedCheckboxes]);
+
+  //자세히 보기 기능 ---------------------------------
   const [expandedRowIndex, setExpandedRowIndex] = useState(-1);
 
   const [itemsPerPage, setItemPerPage] = useState(10);
@@ -63,19 +113,32 @@ export default function DataTableV1(props) {
   return (
     <div ref={tableRef} className="w-full p-10 pt-0 relative">
       {editAll ? (
-        <div className="w-52 h-32 absolute -top-4 -left-56 z-50 border-4 border-[#5272F2] rounded-lg p-5 bg-[#FAFBFE] fontA">
+        <div className="w-52 h-40 absolute -top-4 -left-56 z-50 border-4 border-[#5272F2] rounded-lg p-5 bg-[#FAFBFE] fontA">
           <select
             className="pb-3"
-            onChange={(e) => setItemPerPage(e.target.value)}
+            onChange={(e) => {
+              const selectedTypeName = e.target.value;
+              const selectedTypeObject = editType[selectedTypeName];
+              setSelectedType(selectedTypeObject);
+            }}
           >
-            <option selected value={10}>
-              10개씩 보기
+            <option selected value="none">
+              선택하기
             </option>
-            <option value={15}>15개씩 보기</option>
-            <option value={20}>20개씩 보기</option>
-            <option value={10000000}>전체 보기</option>
+            {Object.keys(editType).map((key) => (
+              <option key={key} value={key}>
+                {editType[key].name}
+              </option>
+            ))}
           </select>
-          <input type="text" className="w-full border-2" />
+          <InputBox
+            data={editTextDB}
+            edit={setEditTextDB}
+            type={selectedType.type}
+          />
+          <div className="flex justify-end py-3">
+            <Button label={"수정"} onClick={editAllButton} />
+          </div>
         </div>
       ) : null}
       <div className="border border-[#B3A492] rounded-md">
@@ -89,11 +152,18 @@ export default function DataTableV1(props) {
             <tr className="border-b border-[#B3A492]">
               {editAll ? (
                 <td className="pl-3" key={"index"}>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    checked={
+                      selectedCheckboxes.length === currentPageData.length &&
+                      selectedCheckboxes.length > 0
+                    }
+                    onChange={(e) => handleMasterCheckboxChange(e)}
+                  />
                 </td>
               ) : null}
               {columns.map((column, index) => (
-                <td className="px-2" key={index}>
+                <td className="px-3" key={index}>
                   {column.columnName}
                 </td>
               ))}
@@ -109,13 +179,16 @@ export default function DataTableV1(props) {
                         <input
                           type="checkbox"
                           className="relative"
-                          onClick={(e) => {}}
-                        ></input>
+                          checked={selectedCheckboxes.includes(item.student_pk)}
+                          onChange={(e) =>
+                            handleCheckboxChange(e, item.student_pk)
+                          }
+                        />
                       </td>
                     ) : null}
                     {columns.map((column, columnIndex) => {
                       return (
-                        <td className="py-2 px-2 border-b" key={columnIndex}>
+                        <td className="py-2 px-3 border-b" key={columnIndex}>
                           {item[column.data]}
                         </td>
                       );
@@ -237,4 +310,7 @@ DataTableV1.propTypes = {
   styleClass: PropTypes.string,
   columns: PropTypes.array.isRequired,
   type: PropTypes.string.isRequired,
+  setStudentArray: PropTypes.func,
+  editType: PropTypes.object,
+  setEditText: PropTypes.func,
 };

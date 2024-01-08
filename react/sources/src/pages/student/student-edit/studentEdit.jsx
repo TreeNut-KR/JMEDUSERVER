@@ -138,7 +138,7 @@ export default function StudentEdit() {
           <InputBox data={name} name={"이름"} edit={setName} />
           <InputBox
             data={sex_ism}
-            name={"전화번호"}
+            name={"성별"}
             edit={setSexIsm}
             type={"radio"}
             options={["남", "여"]}

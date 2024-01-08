@@ -5,13 +5,17 @@ export default function InputBox(props) {
   const { name, data, edit, disable, type, options } = props;
 
   return (
-    <div className="py-10 border-b-2 fontA flex gap-4">
-      <div className="w-36 flex justify-end">
-        <span>{name} : </span>
-      </div>
+    <div className={`${name ? "py-10" : null} border-b-2 fontA flex gap-4`}>
+      {name ? (
+        <div className="w-full flex justify-end">
+          <span>{name} : </span>
+        </div>
+      ) : null}
       {type === "text" ? (
         <input
-          className="w-3/4 px-4 border border-[#5272F2] rounded-md"
+          className={`${
+            name ? "w-3/4" : "w-full"
+          } px-4 border border-[#5272F2] rounded-md`}
           type="text"
           disabled={disable}
           value={data}
@@ -33,7 +37,9 @@ export default function InputBox(props) {
         ))
       ) : type === "phone" ? (
         <input
-          className="w-3/4 px-4 border border-[#5272F2] rounded-md"
+          className={`${
+            name ? "w-3/4" : "w-full"
+          } px-4 border border-[#5272F2] rounded-md`}
           type="tel"
           disabled={disable}
           value={data}
