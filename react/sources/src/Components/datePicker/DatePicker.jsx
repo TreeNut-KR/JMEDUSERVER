@@ -3,21 +3,32 @@ import "../../Css/datepicker.css";
 import DatePicker from "react-datepicker";
 import PropTypes from "prop-types";
 
+const extractDatePart = (isoString) => {
+  if (typeof isoString === "string" && isoString.includes("T")) {
+    return isoString.split("T")[0];
+  }
+
+  return isoString;
+};
+
 export default function DatePickerV1(props) {
   const { selected, onChange, className } = props;
+
+  const selectedDate = new Date(extractDatePart(selected));
 
   return (
     <DatePicker
       className={`w-32 text-lg text-center border rounded-md ml-4 custom-datepicker ${className}`}
-      selected={selected}
-      onChange={onChange} // Use onChange instead of onchange
+      selected={selectedDate}
+      onChange={onChange}
+      dateFormat="yyyy-MM-dd"
       locale={ko}
     />
   );
 }
 
 DatePickerV1.propTypes = {
-  selected: PropTypes.instanceOf(Date).isRequired,
-  onChange: PropTypes.func.isRequired, // Use onChange instead of onchange
+  selected: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired,
   className: PropTypes.string,
 };
