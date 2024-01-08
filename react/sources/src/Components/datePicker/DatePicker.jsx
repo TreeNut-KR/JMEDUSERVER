@@ -14,10 +14,15 @@ const extractDatePart = (isoString) => {
 export default function DatePickerV1(props) {
   const { selected, onChange, className } = props;
 
-  const selectedDate = new Date(extractDatePart(selected));
+  const isValidDate = (dateString) => {
+    const regex = /^\d{4}-\d{2}-\d{2}$/;
+    return regex.test(dateString);
+  };
+  const selectedDate = isValidDate(extractDatePart(selected))
+    ? new Date(extractDatePart(selected))
+    : new Date();
 
   const handleChange = (date) => {
-    // Extract the date part as a string in the "yyyy-MM-dd" format
     const newDate = date.toISOString().slice(0, 10);
     onChange(newDate);
   };
@@ -34,7 +39,7 @@ export default function DatePickerV1(props) {
 }
 
 DatePickerV1.propTypes = {
-  selected: PropTypes.string.isRequired,
+  selected: PropTypes.string,
   onChange: PropTypes.func.isRequired,
   className: PropTypes.string,
 };
