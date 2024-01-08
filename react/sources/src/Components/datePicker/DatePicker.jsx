@@ -29,7 +29,7 @@ export default function DatePickerV1(props) {
 
   return (
     <DatePicker
-      className={`w-32 text-lg text-center border rounded-md ml-4 custom-datepicker ${className}`}
+      className={`w-32 text-lg text-center border rounded-md ml-4 custom-datepicker-input ${className}`}
       selected={selectedDate}
       onChange={handleChange}
       dateFormat="yyyy-MM-dd"

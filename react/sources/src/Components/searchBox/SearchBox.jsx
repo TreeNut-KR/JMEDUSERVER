@@ -49,7 +49,6 @@ export default function SearchBox(props) {
         }
       );
       setData(response.data.students);
-      console.log(response);
     } catch (error) {
       console.error(error);
     }

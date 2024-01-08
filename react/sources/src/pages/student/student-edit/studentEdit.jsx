@@ -71,17 +71,6 @@ export default function StudentEdit() {
   // 폼 제출 핸들러
   const handleSubmit = async (e) => {
     try {
-      console.log(
-        name,
-        sex_ism,
-        birthday,
-        contact,
-        contact_parent,
-        school,
-        payday,
-        firstreg
-      );
-
       const formatDatePart = (dateString) => {
         if (dateString && dateString.includes("T")) {
           return new Date(dateString).toISOString().split("T")[0];
