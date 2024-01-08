@@ -27,7 +27,7 @@ export default function StudentEdit() {
         );
         setData(response.data.students);
       } catch (error) {
-        console.error(error);
+        window.location.reload();
       }
     };
 
