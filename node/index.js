@@ -169,17 +169,70 @@ app.post("/register", async (req, res) => {
 
 /////////////////////학생조회
 app.get("/students_view", (req, res) => {
-  const { query, params } = makeStudentSearchQuery(req.body);
+  // const { query, params } = makeStudentSearchQuery(req.body);
 
-  db.query(query, params, (error, results, fields) => {
+  db.query("SELECT * FROM student", (error, results) => {
     if (error) {
-      res
-        .status(500)
-        .json({ success: false, message: "데이터베이스 오류", error: error });
+      res.status(500).json({ success: false, message: "데이터베이스 오류" });
     } else {
       res.json({ success: true, students: results });
     }
   });
+});
+
+//////////////////////학생 자세히 보기
+app.post("/students_view_detail", (req, res) => {
+  const { student_pk } = req.body;
+  db.query(
+    "SELECT * FROM student where student_pk = ?",
+    [student_pk],
+    (error, results) => {
+      if (error) {
+        res.status(500).json({ success: false, message: "데이터베이스 오류" });
+      } else {
+        res.json({ success: true, students: results });
+      }
+    }
+  );
+});
+
+//////////////////////학생 정보 수정
+app.put("/students_view_update", (req, res) => {
+  const {
+    student_pk,
+    name,
+    sex_ism,
+    birthday,
+    contact,
+    contact_parent,
+    school,
+    payday,
+    firstreg,
+  } = req.body;
+
+  const query = `UPDATE student SET name = ?, sex_ism = ?, birthday = ?, contact = ? ,contact_parent = ?, school = ?, payday = ?, firstreg = ? WHERE student_pk = ?`;
+
+  db.query(
+    query,
+    [
+      name,
+      sex_ism,
+      birthday,
+      contact,
+      contact_parent,
+      school,
+      payday,
+      firstreg,
+      student_pk,
+    ],
+    (error, results) => {
+      if (error) {
+        res.status(500).json({ success: false, message: "데이터베이스 오류" });
+      } else {
+        res.json({ success: true });
+      }
+    }
+  );
 });
 
 //조건부 공지
