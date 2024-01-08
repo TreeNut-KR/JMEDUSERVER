@@ -7,13 +7,6 @@ import axios from "axios";
 
 export default function MainPage() {
   const [data, setData] = useState();
-  const [search, setSearch] = useState({
-    text: "",
-    option: "student",
-    startDate: "",
-    endDate: "",
-  });
-  console.log(search);
 
   useEffect(() => {
     loging();
@@ -28,27 +21,26 @@ export default function MainPage() {
       setData(response.data.students);
       console.log(response);
     } catch (error) {
-      console.error(error); // 오류 발생 시 자세한 내용을 확인
+      console.error(error);
     }
   }
+
   const columns = [
     { columnName: "이름", data: "name" },
     { columnName: "전화번호", data: "contact" },
     { columnName: "부모님 전화번호", data: "contact_parent" },
-    { columnName: "학교", data: "school" },
   ];
 
   return (
     <>
       <BasicBox>
-        <SearchBox onSubmit={setSearch} option={"student"}></SearchBox>
+        <SearchBox setData={setData} option={"student"}></SearchBox>
         <DataTableV1
           title={"학생관리 테이블"}
           columns={columns}
           datas={data}
           type="student"
         />
-        <button onClick={loging}>sd./f,sd;lasdfl;djsaf</button>
       </BasicBox>
     </>
   );
