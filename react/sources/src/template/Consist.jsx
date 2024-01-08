@@ -15,9 +15,9 @@ import AttandanceTeacher from "../pages/teacher/attendeace_teacher";
 export default function Consist() {
   return (
     <BrowserRouter>
-      <div className="w-full h-full flex flex-col">
+      <div className="w-full h-full flex flex-col bg-[#FAFBFE]">
         <Topbar />
-        <div className="flex h-full bg-[#FAFBFE]">
+        <div className="flex h-fit bg-[#FAFBFE]">
           <SideBar />
           <div className="w-full">
             <Routes>
