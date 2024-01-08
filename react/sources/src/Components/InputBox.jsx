@@ -7,7 +7,7 @@ export default function InputBox(props) {
   return (
     <div className={`${name ? "py-10" : null} border-b-2 fontA flex gap-4`}>
       {name ? (
-        <div className="w-full flex justify-end">
+        <div className="w-36 flex justify-end">
           <span>{name} : </span>
         </div>
       ) : null}
