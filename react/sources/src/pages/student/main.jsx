@@ -10,10 +10,13 @@ export default function MainPage() {
   const [data, setData] = useState();
 
   const [studnetArray, setStudentArray] = useState([]);
-  const [editText, setEditText] = useState("");
+  const [editText, setEditText] = useState({
+    text: "",
+    option: "",
+  });
 
   function asdf() {
-    console.log(studnetArray);
+    console.log(editText);
   }
 
   useEffect(() => {

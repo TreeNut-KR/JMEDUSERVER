@@ -25,7 +25,10 @@ export default function DataTableV1(props) {
   const [editTextDB, setEditTextDB] = useState("");
 
   function editAllButton() {
-    setEditText(editTextDB);
+    setEditText({
+      text: editTextDB,
+      option: selectedType.type,
+    });
   }
 
   const handleMasterCheckboxChange = (e) => {
@@ -113,12 +116,14 @@ export default function DataTableV1(props) {
   return (
     <div ref={tableRef} className="w-full p-10 pt-0 relative">
       {editAll ? (
-        <div className="w-52 h-40 absolute -top-4 -left-56 z-50 border-4 border-[#5272F2] rounded-lg p-5 bg-[#FAFBFE] fontA">
+        <div className="w-56 h-40 absolute -top-4 -left-56 z-50 border-4 border-[#5272F2] rounded-lg p-5 bg-[#FAFBFE] fontA">
           <select
             className="pb-3"
             onChange={(e) => {
+              setEditText("");
               const selectedTypeName = e.target.value;
               const selectedTypeObject = editType[selectedTypeName];
+
               setSelectedType(selectedTypeObject);
             }}
           >
@@ -135,6 +140,7 @@ export default function DataTableV1(props) {
             data={editTextDB}
             edit={setEditTextDB}
             type={selectedType.type}
+            options={["남", "여"]}
           />
           <div className="flex justify-end py-3">
             <Button label={"수정"} onClick={editAllButton} />
