@@ -7,6 +7,9 @@ export default function DataTableV1(props) {
   const [currentPage, setCurrentPage] = useState(1);
   const totalNumber = datas ? datas.length : 0;
 
+  //한번에 수정하기
+  const [editAll, setEditAll] = useState(false);
+
   //자세히 보기 기능
   const [expandedRowIndex, setExpandedRowIndex] = useState(-1);
 
@@ -58,7 +61,23 @@ export default function DataTableV1(props) {
   }
   // -------------------------------------------------------------------------
   return (
-    <div ref={tableRef} className="w-full p-10 pt-0">
+    <div ref={tableRef} className="w-full p-10 pt-0 relative">
+      {editAll ? (
+        <div className="w-52 h-32 absolute -top-4 -left-56 z-50 border-4 border-[#5272F2] rounded-lg p-5 bg-[#FAFBFE] fontA">
+          <select
+            className="pb-3"
+            onChange={(e) => setItemPerPage(e.target.value)}
+          >
+            <option selected value={10}>
+              10개씩 보기
+            </option>
+            <option value={15}>15개씩 보기</option>
+            <option value={20}>20개씩 보기</option>
+            <option value={10000000}>전체 보기</option>
+          </select>
+          <input type="text" className="w-full border-2" />
+        </div>
+      ) : null}
       <div className="border border-[#B3A492] rounded-md">
         <table
           className={`${styleClass} border-collapse rounded-md text-sm shadow-md w-full fontA `}
@@ -68,6 +87,11 @@ export default function DataTableV1(props) {
           </caption>
           <thead className="text-base font-semibold">
             <tr className="border-b border-[#B3A492]">
+              {editAll ? (
+                <td className="pl-3" key={"index"}>
+                  <input type="checkbox" />
+                </td>
+              ) : null}
               {columns.map((column, index) => (
                 <td className="px-2" key={index}>
                   {column.columnName}
@@ -80,20 +104,21 @@ export default function DataTableV1(props) {
               {currentPageData.map((item, index) => (
                 <React.Fragment key={item.student_pk}>
                   <tr className="relative">
+                    {editAll ? (
+                      <td className="pl-3">
+                        <input
+                          type="checkbox"
+                          className="relative"
+                          onClick={(e) => {}}
+                        ></input>
+                      </td>
+                    ) : null}
                     {columns.map((column, columnIndex) => {
-                      if (column.data === "no") {
-                        return (
-                          <td className="py-2 px-2 border-b" key={columnIndex}>
-                            {startIndex + index + 1}
-                          </td>
-                        );
-                      } else {
-                        return (
-                          <td className="py-2 px-2 border-b" key={columnIndex}>
-                            {item[column.data]}
-                          </td>
-                        );
-                      }
+                      return (
+                        <td className="py-2 px-2 border-b" key={columnIndex}>
+                          {item[column.data]}
+                        </td>
+                      );
                     })}
                     <td className="absolute right-1 top-[6px]">
                       <button
@@ -124,15 +149,28 @@ export default function DataTableV1(props) {
         </table>
       </div>
       <div className="flex justify-between mt-2 relative items-center">
-        <div className="px-2 border-2 rounded-md border-[#5272F2] fontA ">
-          <select onChange={(e) => setItemPerPage(e.target.value)}>
-            <option selected value={10}>
-              10개씩 보기
-            </option>
-            <option value={15}>15개씩 보기</option>
-            <option value={20}>20개씩 보기</option>
-            <option value={10000000}>전체 보기</option>
-          </select>
+        <div className="flex fontA gap-5">
+          <div className="px-2 border-2 rounded-md border-[#5272F2] fontA">
+            <select onChange={(e) => setItemPerPage(e.target.value)}>
+              <option selected value={10}>
+                10개씩 보기
+              </option>
+              <option value={15}>15개씩 보기</option>
+              <option value={20}>20개씩 보기</option>
+              <option value={10000000}>전체 보기</option>
+            </select>
+          </div>
+          <div className="flex items-center border-2 rounded-md border-[#5272F2] px-2">
+            <input
+              className="h-4 w-4"
+              type="checkbox"
+              checked={editAll}
+              onChange={() => setEditAll(!editAll)}
+            />
+            <label className="pl-3" for="scales">
+              한번에 수정하기
+            </label>
+          </div>
         </div>
         {currentPage > 1 && (
           <>
