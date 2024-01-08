@@ -27,13 +27,13 @@ export default function DataTableV1(props) {
   function editAllButton() {
     setEditText({
       text: editTextDB,
-      option: selectedType.type,
+      option: selectedType.value,
+      submit: true,
     });
   }
 
   const handleMasterCheckboxChange = (e) => {
     const checked = e.target.checked;
-    console.log(selectedType);
     let newDataToSelect = [];
 
     if (checked) {
@@ -117,10 +117,16 @@ export default function DataTableV1(props) {
     <div ref={tableRef} className="w-full p-10 pt-0 relative">
       {editAll ? (
         <div className="w-56 h-40 absolute -top-4 -left-56 z-50 border-4 border-[#5272F2] rounded-lg p-5 bg-[#FAFBFE] fontA">
+          <div
+            onClick={() => setEditAll(!editAll)}
+            className="absolute flex justify-center items-center top-0 right-0 w-10 h-6 border-l-4 border-b-4 rounded-bl-md border-[#5272F2] bg-red-500 text-white"
+          >
+            X
+          </div>
           <select
             className="pb-3"
             onChange={(e) => {
-              setEditText("");
+              setEditTextDB("");
               const selectedTypeName = e.target.value;
               const selectedTypeObject = editType[selectedTypeName];
 
