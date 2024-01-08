@@ -5,7 +5,7 @@ import moreIcon from "../../img/pending-icon.png";
 export default function DataTableV1(props) {
   const { styleClass, datas, columns, title, type } = props;
   const [currentPage, setCurrentPage] = React.useState(1);
-  const totalNumber = datas.length;
+  const totalNumber = datas ? datas.length : 0;
 
   //자세히 보기 기능
   const [expandedRowIndex, setExpandedRowIndex] = useState(-1);
@@ -17,7 +17,7 @@ export default function DataTableV1(props) {
 
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentPageData = datas.slice(startIndex, endIndex);
+  const currentPageData = datas ? datas.slice(startIndex, endIndex) : [];
 
   //테이블 내의 '자세히 보기' 버튼 뜨도록 하는 기능 -------
   const toggleRowExpansion = (index) => {
@@ -103,7 +103,9 @@ export default function DataTableV1(props) {
                         {expandedRowIndex === index && (
                           <span
                             className="absolute top-[-4px] left-[7rem] transform translate-x-[-50%] bg-[#5272F2] px-3 py-1 border rounded w-[10rem] text-white"
-                            onClick={() => buttonEffect(index + 1)}
+                            onClick={() =>
+                              buttonEffect(datas[index].student_pk)
+                            }
                           >
                             자세히 보기 / 수정
                           </span>
