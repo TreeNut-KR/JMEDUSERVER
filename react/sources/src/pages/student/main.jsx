@@ -4,9 +4,17 @@ import SearchBox from "../../Components/searchBox/SearchBox";
 import { useState } from "react";
 import BasicBox from "../../Components/manage-box/BasicBox";
 import axios from "axios";
+import { EDIT_STUDENT } from "../../constants/searchFilter";
 
 export default function MainPage() {
   const [data, setData] = useState();
+
+  const [studnetArray, setStudentArray] = useState([]);
+  const [editText, setEditText] = useState("");
+
+  function asdf() {
+    console.log(studnetArray);
+  }
 
   useEffect(() => {
     loging();
@@ -35,11 +43,15 @@ export default function MainPage() {
     <>
       <BasicBox>
         <SearchBox setData={setData} option={"student"}></SearchBox>
+        <button onClick={asdf}>aslkdfjsadlkfja;sdlkfj;das</button>
         <DataTableV1
           title={"학생관리 테이블"}
           columns={columns}
           datas={data}
           type="student"
+          setStudentArray={setStudentArray}
+          editType={EDIT_STUDENT}
+          setEditText={setEditText}
         />
       </BasicBox>
     </>
