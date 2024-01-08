@@ -81,18 +81,29 @@ export default function StudentEdit() {
         payday,
         firstreg
       );
+
+      const formatDatePart = (dateString) => {
+        if (dateString && dateString.includes("T")) {
+          return new Date(dateString).toISOString().split("T")[0];
+        }
+        return dateString;
+      };
+
+      const formattedBirthday = formatDatePart(birthday);
+      const formattedFirstreg = formatDatePart(firstreg);
+
       const response = await axios.put(
         "http://localhost:5002/students_view_update",
         JSON.stringify({
           student_pk: studentID,
           name,
           sex_ism,
-          birthday,
+          birthday: formattedBirthday,
           contact,
           contact_parent,
           school,
           payday,
-          firstreg,
+          firstreg: formattedFirstreg,
         }),
         {
           headers: {
