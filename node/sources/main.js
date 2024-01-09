@@ -1,6 +1,6 @@
 require("dotenv").config();
 const express = require("express");
-//const bodyParser = require("body-parser");
+const bodyParser = require("body-parser");
 const session = require("express-session");
 const mysql = require("mysql");
 const cors = require("cors");
@@ -10,6 +10,7 @@ const app = express();
 const auth = require('./auth');
 const kiosk = require('./kiosk');
 const logger = require('./logger');
+const manageSchool = require('./manageSchool');
 const manageStudent = require('./manageStudent');
 const manageSubject = require('./manageSubject');
 const manageTeacher = require('./manageTeacher');
@@ -51,6 +52,7 @@ app.use(
 app.use(auth);
 app.use(kiosk);
 app.use(logger);
+app.use(manageSchool);
 app.use(manageStudent);
 app.use(manageSubject);
 app.use(manageTeacher);

@@ -1,5 +1,6 @@
 //등하원 키오스크 관련 모든 것
 const db = require('./main');
+const express = require("express");
 const router = express.Router();
 const axios = require("axios");
 
@@ -8,7 +9,7 @@ const axios = require("axios");
 
 
 /////키오스크에서 학생키를 받은 경우
-app.post("/Kiosk_getStudent", (req, res) => {
+router.post("/Kiosk_getStudent", (req, res) => {
     const { qrcode } = req.body;
     db.query(
       "SELECT * FROM student WHERE student_pk = ?",
