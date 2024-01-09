@@ -2,7 +2,19 @@
 
 
 const db = require('./main');
+const express = require("express");
 const router = express.Router();
+
+
+function makeStudentSearchQuery(body){
+    const { search } = body;
+    let query = "SELECT * FROM student";
+    if (search.text != "") {
+      query = `SELECT * FROM student where ${search.option} = '${search.text}'`;
+    }
+    return query;
+
+}
 
 /////////////////////학생조회
 router.get("/students_view", (req, res) => {
@@ -18,12 +30,8 @@ router.get("/students_view", (req, res) => {
 
 
   //////////////////////학생 검색
-app.post("/students_search", (req, res) => {
-    const { search } = req.body;
-    let query = "SELECT * FROM student";
-    if (search.text != "") {
-      query = `SELECT * FROM student where ${search.option} = '${search.text}'`;
-    }
+router.post("/students_search", (req, res) => {
+    let query = makeStudentSearchQuery(res.body);
     db.query(query, (error, results) => {
       if (error) {
         res.status(500).json({ success: false, message: "데이터베이스 오류" });
@@ -147,4 +155,4 @@ router.put("/students_view_update", (req, res) => {
   });
 
 
-  module.exports = router;
+  module.exports = {router, makeStudentSearchQuery};

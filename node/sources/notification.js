@@ -1,11 +1,12 @@
 //공지
 
 const db = require('./main');
+const express = require("express");
 const router = express.Router();
 
 
 //조건부 공지
-app.get("/condition_note", (req, res) => {
+router.post("/condition_note", (req, res) => {
     const { name, sex_ism, contact, contact_parent, school, payday } = req.body;
     const selectAll = true;
   

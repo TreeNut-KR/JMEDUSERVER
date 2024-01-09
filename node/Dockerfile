@@ -12,4 +12,6 @@ RUN npm install mysql
 
 RUN npm install dotenv
 
+RUN npm install axios
+
 ENTRYPOINT [ "node", "main.js"]
