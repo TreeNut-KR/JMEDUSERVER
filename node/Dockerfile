@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY package*.json ./
 
-COPY index.js ./
+COPY ./sources ./
 
 COPY .env ./
 
@@ -12,4 +12,4 @@ RUN npm install mysql
 
 RUN npm install dotenv
 
-ENTRYPOINT [ "node", "index.js"]
+ENTRYPOINT [ "node", "main.js"]
