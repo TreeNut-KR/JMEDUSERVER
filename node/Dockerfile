@@ -14,4 +14,6 @@ RUN npm install dotenv
 
 RUN npm install axios
 
+RUN npm install node-schedule
+
 ENTRYPOINT [ "node", "main.js"]

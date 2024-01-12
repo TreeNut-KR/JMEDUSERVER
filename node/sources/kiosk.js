@@ -41,7 +41,8 @@ router.post("/Kiosk_getStudent", (req, res) => {
 /////문자API 전송 요청
 router.post("/submitAttend", (req, res) => {
     const { name, contact_parent, attend_code } = req.body;
-    let msg = name + "학생이 지금 ";
+    let now = new Date();
+    let msg = name + "학생이  "+ now.getHours()+"시 "+now.getMinutes()+"분에 ";
     if (attend_code == 0) {
       msg = msg + "등원하였습니다.";
     } else if (attend_code == 1) {
