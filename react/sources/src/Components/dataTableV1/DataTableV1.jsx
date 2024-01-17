@@ -158,8 +158,17 @@ export default function DataTableV1(props) {
           className={`${styleClass} border-collapse rounded-md text-sm shadow-md w-full fontA `}
         >
           <caption className="text-left font-extrabold px-3 text-lg">
-            {title} | <span className="text-sm"> 전체 : {totalNumber}</span>
+            {title} |{" "}
+            <span className="text-sm pr-4"> 전체 : {totalNumber}</span>
+            <Button
+              // type 종류에 따라 URL 변경 할 수 있도록 수정 해야함 (아직 type 종류 지정해 놓지 않아서 냅둠)
+              URL={"/student-add"}
+              width={130}
+              height={30}
+              label={"학생 추가하기"}
+            />
           </caption>
+
           <thead className="text-base font-semibold">
             <tr className="border-b border-[#B3A492]">
               {editAll ? (
@@ -234,7 +243,7 @@ export default function DataTableV1(props) {
         </table>
       </div>
       <div className="flex justify-between mt-2 relative items-center">
-        <div className="flex fontA gap-5">
+        <div className="flex fontA gap-5 items-center">
           <div className="px-2 border-2 rounded-md border-[#5272F2] fontA">
             <select onChange={(e) => setItemPerPage(e.target.value)}>
               <option selected value={10}>

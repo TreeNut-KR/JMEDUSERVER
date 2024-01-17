@@ -24,6 +24,11 @@ export const sideMenus = [
         href: "/student-edit",
         display: "none",
       },
+      {
+        name: "학생 추가",
+        href: "/student-add",
+        display: "none",
+      },
     ],
   },
   {
