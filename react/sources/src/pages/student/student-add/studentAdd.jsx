@@ -77,7 +77,7 @@ export default function StudentAdd() {
   return (
     <>
       <div>
-        <BasicBox>
+        <BasicBox overflow={true}>
           <div className="fixed right-20 top-[50vh] fontA flex items-center">
             <Button
               label={"<"}
