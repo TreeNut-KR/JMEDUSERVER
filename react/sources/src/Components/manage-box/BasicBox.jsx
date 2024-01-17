@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { sideMenus } from "../../constants/sideMenus";
+import PropTypes from "prop-types";
 import { useLocation } from "react-router-dom";
 
-export default function BasicBox({ children }) {
+export default function BasicBox({ children, ...props }) {
+  const { overflow } = props;
   //localstorage 로그인 정보 가져오기
   const [user, setUser] = useState(null);
   const [showDelayedContent, setShowDelayedContent] = useState(false);
@@ -58,7 +60,9 @@ export default function BasicBox({ children }) {
         ) : null}
         {showDelayedContent && (
           <div
-            className={`min-w-[50vw] overflow-hidden relative border-4 rounded-md shadow-2xl border-[#5272F2] px-10  ${
+            className={`min-w-[50vw] ${
+              overflow ? "overflow-hidden" : ""
+            } relative border-4 rounded-md shadow-2xl border-[#5272F2] px-10  ${
               !user ? "opacity-30 pointer-events-none" : ""
             }`}
           >
@@ -69,3 +73,11 @@ export default function BasicBox({ children }) {
     </>
   );
 }
+
+BasicBox.propTypes = {
+  overflow: PropTypes.bool,
+};
+
+BasicBox.defaultProps = {
+  overflow: false,
+};
