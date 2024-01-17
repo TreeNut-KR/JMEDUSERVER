@@ -58,7 +58,7 @@ export default function BasicBox({ children }) {
         ) : null}
         {showDelayedContent && (
           <div
-            className={`min-w-[50vw] border-4 rounded-md shadow-2xl border-[#5272F2] px-10  ${
+            className={`min-w-[50vw] overflow-hidden relative border-4 rounded-md shadow-2xl border-[#5272F2] px-10  ${
               !user ? "opacity-30 pointer-events-none" : ""
             }`}
           >
