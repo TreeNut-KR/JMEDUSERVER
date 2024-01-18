@@ -26,40 +26,9 @@ function isLeapYear(year) { // 윤년 계산기
 }
 
 function getNeedPaynote(){//결제일이 며칠인 학부모에게 보내면 되나요? 에 대한 값을 리턴
-    let now = new Date();
-    let todayDate = now.getDate();
-    let todayDay = now.getDay();
-
-    let prePayday = todayDay + setPrenoteDay;
-
-    if(prePayday>28 && todayDate ==2){//2월이고 일 + 미리알림일수가 28을 초과하는 경우
-        if(isLeapYear(now.getFullYear)) return prePayday - 29;//윤년인 경우
-        else return prePayday - 28;//윤년이 아닌 경우
-    }
-    else if(prePayday<31) return prePayday;
-    else{
-        switch(todayDate){
-            case 4:
-            case 6:
-            case 9:
-            case 11:
-                return prePayday - 30;
-            case 1:
-            case 3:
-            case 5:
-            case 7:
-            case 8:
-            case 10:
-            case 12:
-                if(prePayday == 31) return prePayday;
-                else return prePayday - 31;
-        }
-
-    }
-
-
-
-
+    
+    new Date(today.getTime() + setPrenoteDay * 86400000);
+    return String(threeDaysLater.getDate()).padStart(2, '0');
 }
 
 //조건부 공지
@@ -91,7 +60,7 @@ router.post("/conditional_note", async (req, res) => { // 여기에 async 추가
 
 // 매일 오전 11시에 실행
 function paydayNotification(){
-    const needPayNote = getNeedPaynote();
+    const needPayNote = parseInt(getNeedPaynote());
     let nameArray = [];
     let contact_parentArray = [];
 

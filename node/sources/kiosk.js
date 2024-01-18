@@ -3,6 +3,7 @@ const db = require('./main');
 const express = require("express");
 const router = express.Router();
 const axios = require("axios");
+const logAttend = require('./logger');
 
 
 
@@ -40,12 +41,12 @@ router.post("/Kiosk_getStudent", (req, res) => {
 
 /////문자API 전송 요청
 router.post("/submitAttend", (req, res) => {
-    const { name, contact_parent, attend_code } = req.body;
+    const { qrcode, name, contact_parent, is_Attend } = req.body;
     let now = new Date();
     let msg = name + "학생이  "+ now.getHours()+"시 "+now.getMinutes()+"분에 ";
-    if (attend_code == 0) {
+    if (is_Attend) {
       msg = msg + "등원하였습니다.";
-    } else if (attend_code == 1) {
+    } else{
       msg = msg + "하원하였습니다.";
     }
     try {
@@ -57,6 +58,13 @@ router.post("/submitAttend", (req, res) => {
     } catch (error) {
       console.log(error);
     }
+
+    //is_Late는 수업 관리 완성 후 기능 구현 때 사용
+
+    logAttend(qrcode, is_Attend, is_Late);
+
+
+
   });
 
 

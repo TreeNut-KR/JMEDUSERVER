@@ -35,17 +35,17 @@ CREATE TABLE teacher (
     PRIMARY KEY(teacher_pk)
 ) ENGINE=InnoDB CHARSET=utf8mb4;
 
--- 수강 로그 테이블
+-- 등하원 로그 테이블
 CREATE TABLE attend_log (
     attend_log_pk CHAR(36),
     student CHAR(36),
     time DATETIME,
-    is_attend BOOL,
-    is_gohome BOOL,
+    is_attend BOOL, /*true는 등원, false는 하원*/
+    is_late BOOL,
     PRIMARY KEY(attend_log_pk)
 ) ENGINE=InnoDB CHARSET=utf8mb4;
 
--- 교사 수강 로그 테이블
+-- 교사 출퇴근 로그 테이블
 CREATE TABLE teacher_attend_log (
     teacher_attend_log_pk CHAR(36),
     teacher VARCHAR(20),
