@@ -21,12 +21,10 @@ async function sendArryToAPIserver(data, sendTo) {
     }
 }
 
-function isLeapYear(year) { // 윤년 계산기
-    return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
-}
 
 function getNeedPaynote(){//결제일이 며칠인 학부모에게 보내면 되나요? 에 대한 값을 리턴
     
+    const today = new Date();
     new Date(today.getTime() + setPrenoteDay * 86400000);
     return String(threeDaysLater.getDate()).padStart(2, '0');
 }

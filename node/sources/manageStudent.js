@@ -155,4 +155,5 @@ router.put("/students_view_update", (req, res) => {
   });
 
 
-  module.exports = {router, makeStudentSearchQuery};
+  module.exports = router;
+  module.exports = makeStudentSearchQuery;
