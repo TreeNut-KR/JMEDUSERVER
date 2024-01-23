@@ -1,44 +1,50 @@
 //로그인, 로그아웃, 세션
-const db = require('./main');
+//const db = require('./main');
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
 const session = require("express-session");
+const db = require('./db');
 
-
-// 로그인 라우트
-router.post("/login", (req, res) => {
-    const { username, password } = req.body;
-    console.log(username, password);
-    db.query("SELECT * FROM teacher WHERE id = ?", [username], (err, results) => {
+//로그인 라우트
+router.post('/login', (req, res) => {
+  const { username, password } = req.body;
+  db.query('SELECT * FROM teacher WHERE id = ?', [username], (err, results) => {
       if (err) {
-        res.status(500).json({ success: false, message: "서버에러" });
-        return;
+          res.status(500).json({ success: false, message: '서버에러'});
+          return;
       }
-  
       if (results.length > 0) {
-        if (password == results[0].pwd) {
-          req.session.user = results[0];
-          res.json({ success: true, message: "로그인 성공" });
-        } else {
-          res.json({
-            success: false,
-            message: `비밀번호가 일치하지 않습니다. 필요 pw : ${results[0].pwd} 입력 pw : ${password}`,
+          bcrypt.compare(password, results[0].pwd, (err, isMatch) => {
+              if (err) {
+                  res.status(500).json({ success: false, message: '서버 에러입니다. 관리자에게 문의하십니오.'});
+                  return;
+              }
+              if (isMatch) {
+                  req.session.user = results[0];
+                  res.json({ success: true, message: '로그인 성공'});
+              } else {
+                  res.json({ success: false, message: '비밀번호가 일치하지 않습니다.'});
+              }
           });
-        }
       } else {
-        res.json({ success: false, message: "없는 ID입니다." });
+          res.json({ success: false, message: '없는 ID입니다.'});
       }
-    });
   });
+});
   
   //////회원가입
   router.post("/register", async (req, res) => {
     const { name, id, pwd, sex_ism, birthday, contact, is_admin } = req.body;
     console.log("가입 요청 들어옴");
     const hashedPassword = await bcrypt.hash(pwd, 10); // 비밀번호 해싱
+    let sex_bool;
+    if(sex_ism == 'male')
+    {
+      sex_bool = true;
+    }else sex_bool = false;
   
-    db.query("SELECT * FROM teacher WHERE id = ?", [username], (err, results) => {
+    db.query("SELECT * FROM teacher WHERE id = ?", [id], (err, results) => {
       if (results.length) {
         res.status(200).send("이미 사용중인 ID입니다.");
       } else {
@@ -49,7 +55,7 @@ router.post("/login", (req, res) => {
         // 데이터베이스에 쿼리 실행
         db.query(
           query,
-          [name, id, hashedPassword, sex_ism, birthday, contact, is_admin],
+          [name, id, hashedPassword, sex_bool, birthday, contact, is_admin],
           (err, result) => {
             if (err) {
               console.error("데이터 삽입 중 오류 발생:", err);

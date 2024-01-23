@@ -1,6 +1,6 @@
 //교직원 추가, 수정, 삭제
 
-const db = require('./main');
+const db = require('./db');
 const express = require("express");
 const router = express.Router();
 

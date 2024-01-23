@@ -1,5 +1,5 @@
 //등하원 키오스크 관련 모든 것
-const db = require('./main');
+const db = require('./db');
 const express = require("express");
 const router = express.Router();
 const axios = require("axios");
@@ -61,7 +61,7 @@ router.post("/submitAttend", (req, res) => {
 
     //is_Late는 수업 관리 완성 후 기능 구현 때 사용
 
-    logAttend(qrcode, is_Attend, is_Late);
+    logAttend(qrcode, is_Attend, is_Late, now);
 
 
 

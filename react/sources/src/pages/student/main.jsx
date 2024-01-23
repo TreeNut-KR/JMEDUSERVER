@@ -34,7 +34,7 @@ export default function MainPage() {
   //데이터 가져오기
   async function loging() {
     try {
-      const response = await axios.get(
+      const response = await axios.post(
         "http://localhost:5002/students_view",
         {}
       );
