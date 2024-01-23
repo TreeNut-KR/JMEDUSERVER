@@ -1,21 +1,20 @@
 //등하원, 접근기록 등등
 
-const db = require('./main');
+const db = require('./db');
 const express = require("express");
 const router = express.Router();
 
 
 
 
-function logAttend(qrcode, attend_code, is_late)
+function logAttend(qrcode, is_attend, is_late, now)
 {
     
-    const today = new Date();
     
     // 결과 날짜를 YYYY-MM-DD 형식으로 변환합니다.
-    const yyyy = today.getFullYear();
-    const mm = String(today.getMonth() + 1).padStart(2, '0'); // getMonth()는 0부터 시작하므로 1을 더해야 합니다.
-    const dd = String(today.getDate()).padStart(2, '0');
+    const yyyy = now.getFullYear();
+    const mm = String(now.getMonth() + 1).padStart(2, '0'); // getMonth()는 0부터 시작하므로 1을 더해야 합니다.
+    const dd = String(now.getDate()).padStart(2, '0');
     
     const time = `${yyyy}-${mm}-${dd}`;
 

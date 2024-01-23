@@ -2,7 +2,6 @@ require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const session = require("express-session");
-const mysql = require("mysql");
 const cors = require("cors");
 const app = express();
 
@@ -15,26 +14,14 @@ const manageStudent = require('./manageStudent');
 const manageSubject = require('./manageSubject');
 const manageTeacher = require('./manageTeacher');
 const notification = require('./notification');
+const db = require('./db');
 
 // CORS 설정: 모든 출처 허용 (개발 단계에서만)
 app.use(cors());
 
 const saltRounds = 10;
 
-// 데이터베이스 설정
-const db = mysql.createConnection({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_DATABASE,
-});
 
-db.connect((err) => {
-  if (err) throw err;
-  console.log("@@@@@@Connected to the MySQL server.@@@@@@");
-});
-
-module.exports = db;
 
 // 미들웨어 설정
 app.use(bodyParser.json()); // JSON 본문 처리

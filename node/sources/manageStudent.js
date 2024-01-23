@@ -1,23 +1,38 @@
 //학생 추가, 수정, 삭제
 
 
-const db = require('./main');
+const db = require('./db');
 const express = require("express");
 const router = express.Router();
 
 
-function makeStudentSearchQuery(body){
-    const { search } = body;
-    let query = "SELECT * FROM student";
-    if (search.text != "") {
-      query = `SELECT * FROM student where ${search.option} = '${search.text}'`;
-    }
-    return query;
+function makeStudentSearchQuery(text, option) {
+  //console.log(body);
+  let baseQuery = "SELECT * FROM student";
+  let whereClauses = [];
+  let queryParams = [];
 
+
+
+
+  if (text !== "") {
+    whereClauses.push(`${option} LIKE ?`);
+    queryParams.push(text);
+  }
+
+
+  if (whereClauses.length > 0) {
+    baseQuery += ' WHERE ' + whereClauses.join(' AND ');
+  }
+
+  return {
+    query: baseQuery,
+    params: queryParams
+  };
 }
 
 /////////////////////학생조회
-router.get("/students_view", (req, res) => {
+router.post("/students_view", (req, res) => {
     db.query("SELECT * FROM student", (error, results) => {
       if (error) {
         res.status(500).json({ success: false, message: "데이터베이스 오류" });
@@ -30,16 +45,20 @@ router.get("/students_view", (req, res) => {
 
 
   //////////////////////학생 검색
-router.post("/students_search", (req, res) => {
-    let query = makeStudentSearchQuery(res.body);
-    db.query(query, (error, results) => {
-      if (error) {
-        res.status(500).json({ success: false, message: "데이터베이스 오류" });
-      } else {
-        res.json({ success: true, students: results, search: search });
-      }
+  router.post("/students_search", (req, res) => {
+    const { search } = req.body; // 'search' 객체 추출
+    console.log(search);
+    const { query, params } = makeStudentSearchQuery(search.text, search.option);
+    db.query(query, params, (error, results) => {
+        if (error) {
+          res.status(500).json({ success: false, message: "데이터베이스 오류" });
+        } else {
+          res.json({ success: true, students: results, search: search });
+          console.log('-------------------------')
+          console.log(results);
+        }
+      });
     });
-  });
   
   //////////////////////학생 자세히 보기
   router.post("/students_view_detail", (req, res) => {
@@ -156,4 +175,3 @@ router.put("/students_view_update", (req, res) => {
 
 
   module.exports = router;
-  module.exports = makeStudentSearchQuery;
