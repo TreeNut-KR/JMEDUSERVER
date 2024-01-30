@@ -171,6 +171,16 @@ export default function StudentAdd() {
                 name={"학교"}
                 edit={(value) => handleInputChange(index, "school", value)}
               />
+<select 
+  value={student.grade}
+  name={"학년"} 
+  onChange={(event) => handleInputChange(index, "grade", Number(event.target.value))}
+>
+  <option value={0}>예비 1학년</option>
+  <option value={1}>1학년</option>
+  <option value={2}>2학년</option>
+  <option value={3}>3학년</option>
+</select>
               <InputBox
                 data={student.payday}
                 name={"상납일"}

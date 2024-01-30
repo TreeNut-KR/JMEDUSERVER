@@ -12,12 +12,15 @@ CREATE TABLE student (
     student_pk CHAR(36),
     name VARCHAR(20), /*이름*/
     sex_ism BOOL, /*성별*/
+    grade INT, /*예비 1학년은 0으로 설정, 1, 2, 3학년*/
     birthday DATE, /*생일*/
     contact VARCHAR(20), /*연락처*/
     contact_parent VARCHAR(20), /*부모연락처*/
     school CHAR(36), /*소속학교*/
     payday INT, /*결제일*/
     firstreg DATE, /*최초등록일*/
+    is_enable BOOL, /*활성화 여부*/
+    
     PRIMARY KEY(student_pk)
 ) ENGINE=InnoDB CHARSET=utf8mb4;
 
@@ -32,6 +35,18 @@ CREATE TABLE teacher (
     id VARCHAR(20),
     pwd VARCHAR(255),
     is_admin BOOL,
+    PRIMARY KEY(teacher_pk)
+) ENGINE=InnoDB CHARSET=utf8mb4;
+
+-- 교사 가입 승인 대기 테이블
+CREATE TABLE teacher_pending (
+    teacher_pending_pk CHAR(36),
+    name VARCHAR(20),
+    sex_ism BOOL,
+    birthday DATE,
+    contact VARCHAR(20),
+    id VARCHAR(20),
+    pwd VARCHAR(255),
     PRIMARY KEY(teacher_pk)
 ) ENGINE=InnoDB CHARSET=utf8mb4;
 
@@ -66,13 +81,27 @@ CREATE TABLE school (
 
 -- 과목 테이블
 CREATE TABLE subject (
-    subject_pk CHAR(36),
-    name VARCHAR(20),
-    time DATETIME,
-    teacher CHAR(36),
-    PRIMARY KEY(subject_pk),
-    FOREIGN KEY (teacher) REFERENCES teacher(teacher_pk)
+    subject_pk CHAR(36),/*과목코드*/
+
+    name VARCHAR(20),/*과목이름*/
+    teacher CHAR(36),/*담당강사(외부키)*/
+    school CHAR(36),/*대상학교(외부키)*/
+    grade INT,/*대상학년*/
+    is_personal BOOL,/*개인과외여부*/
+
+    week VARCHAR(3),/*요일*/
+    starttime INT,/*시작시간*/
+    endtime INT,/*종료시간*/
+
+    room VARCHAR(20)/*강의실*/
+
+    PRIMARY KEY(subject_pk),/*주키설정*/
+    FOREIGN KEY (teacher) REFERENCES teacher(teacher_pk)/*외부키 설정*/
+    FOREIGN KEY (school) REFERENCES school(school_pk)/*외부키 설정*/
 ) ENGINE=InnoDB CHARSET=utf8mb4;
+
+
+
 
 -- 학생-과목 연결 테이블
 CREATE TABLE student_subject (
