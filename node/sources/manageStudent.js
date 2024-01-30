@@ -77,6 +77,19 @@ router.post("/students_view", (req, res) => {
   });
 
 
+///////학생추가 페이지 로드
+router.post("/students_addPage", (req, res) => {
+  db.query("SELECT school_pk, name FROM school", (error, results_school) => {
+    if (error) {
+      res.status(500).json({ success: false, message: "데이터베이스 오류 : 학교 불러오기 실패" });
+    } else {
+      res.json({ success: true, schools: results_school});
+    }
+  });
+});
+
+
+
 ///////학생추가
 router.post("/students_add", (req, res) => {
     const {
@@ -92,7 +105,7 @@ router.post("/students_add", (req, res) => {
   
     // 데이터 삽입 쿼리
     const query =
-      "INSERT INTO student (student_pk, name, sex_ism, birthday, contact, contact_parent, school, payday, firstreg) VALUES (UUID(), ?, ?, ?, ?, ?, ?, ?, ?)";
+      "INSERT INTO student (student_pk, name, sex_ism, birthday, contact, contact_parent, school, grade, payday, firstreg) VALUES (UUID(), ?, ?, ?, ?, ?, ?, ?, ?, ?)";
   
     // 데이터베이스에 쿼리 실행
     db.query(
@@ -104,6 +117,7 @@ router.post("/students_add", (req, res) => {
         contact,
         contact_parent,
         school,
+        grade,
         payday,
         firstreg,
       ],
@@ -129,11 +143,12 @@ router.put("/students_view_update", (req, res) => {
       contact,
       contact_parent,
       school,
+      grade,
       payday,
       firstreg,
     } = req.body;
   
-    const query = `UPDATE student SET name = ?, sex_ism = ?, birthday = ?, contact = ? ,contact_parent = ?, school = ?, payday = ?, firstreg = ? WHERE student_pk = ?`;
+    const query = `UPDATE student SET name = ?, sex_ism = ?, birthday = ?, contact = ? ,contact_parent = ?, school = ?, grade = ? ,payday = ?, firstreg = ? WHERE student_pk = ?`;
   
     db.query(
       query,
@@ -144,6 +159,7 @@ router.put("/students_view_update", (req, res) => {
         contact,
         contact_parent,
         school,
+        grade,
         payday,
         firstreg,
         student_pk,
