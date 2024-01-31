@@ -63,7 +63,7 @@ CREATE TABLE attend_log (
 -- 교사 출퇴근 로그 테이블
 CREATE TABLE teacher_attend_log (
     teacher_attend_log_pk CHAR(36),
-    teacher VARCHAR(20),
+    teacher CHAR(36),
     time DATETIME,
     is_attend BOOL,
     PRIMARY KEY(teacher_attend_log_pk)
@@ -123,6 +123,21 @@ CREATE TABLE admin_log (
 ) ENGINE=InnoDB CHARSET=utf8mb4;
 
 
+-- 설정 테이블
+CREATE TABLE config (
+    config_pk CHAR(1),
+    logout_time INT,/*자동 로그아웃 시간 설정(분단위)*/
+    payday_prenote_toggle BOOL,
+    payday_prenote INT,
+    PRIMARY KEY(config_pk)
+) ENGINE=InnoDB CHARSET=utf8mb4;
+
+--설정 기본값 삽입(설정 데이터가 없는 경우
+INSERT INTO config (config_pk, logout_time, payday_prenote)
+SELECT * FROM (SELECT 0, 60, false, 3) AS tmp
+WHERE NOT EXISTS (
+  SELECT 1 FROM config WHERE config_pk = 0
+);
 
 
 -- 테스트용 쿼리
@@ -139,4 +154,3 @@ INSERT INTO student (student_pk, name, sex_ism, birthday, contact, contact_paren
 (UUID(), '정연우', 1, '2014-04-27', '3029462453', '9933618782', '3', 27, '2023-12-29'),
 (UUID(), '강시우', 0, '2010-11-14', '2385589254', '8290078831', '2', 21, '2023-12-29');
 
--- SOURCE var/lib/mysql/first_setting.sql

@@ -17,7 +17,7 @@ export default function LoginPage() {
 
       if (response.data.success) {
         const userData = { name: inputID, author: "admin" };
-        localStorage.setItem("user", JSON.stringify(userData));
+        //localStorage.setItem("user", JSON.stringify(userData)) //쿠키에 저장하는 것으로 수정
         alert("로그인 성공");
         window.location.href = "/student";
       } else {
