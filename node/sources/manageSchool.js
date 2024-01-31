@@ -1,6 +1,7 @@
 const db = require('./db');
 const express = require("express");
 const router = express.Router();
+const {logAttend, adminLog } = require('./logger');
 
 
 
@@ -59,4 +60,6 @@ router.post("/school_add", (req, res) => {
 
 
 
-module.exports = router;
+  module.exports = {
+    router: manageSchoolRouter
+  };

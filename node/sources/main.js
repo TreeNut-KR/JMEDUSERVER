@@ -6,14 +6,14 @@ const cors = require("cors");
 const app = express();
 
 
-const auth = require('./auth');
-const kiosk = require('./kiosk');
-const logger = require('./logger');
-const manageSchool = require('./manageSchool');
-const manageStudent = require('./manageStudent');
-const manageSubject = require('./manageSubject');
-const manageTeacher = require('./manageTeacher');
-const notification = require('./notification');
+const { router: authRouter } = require('./auth');
+const { router: kioskRouter } = require('./kiosk');
+const { router: loggerRouter} = require('./logger');
+const { router: manageSchoolRouter } = require('./manageSchool');
+const { router: manageStudentRouter } = require('./manageStudent');
+const { router: manageSubjectRouter } = require('./manageSubject');
+const { router: manageTeacherRouter } = require('./manageTeacher');
+const { router: notificationRouter } = require('./notification');
 const db = require('./db');
 
 // CORS 설정: 모든 출처 허용 (개발 단계에서만)

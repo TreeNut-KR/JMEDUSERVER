@@ -3,6 +3,7 @@
 const db = require('./db');
 const express = require("express");
 const router = express.Router();
+const {logAttend, adminLog } = require('./logger');
 
 
 
@@ -10,4 +11,7 @@ const router = express.Router();
 
 
 
-module.exports = router;
+module.exports = {
+    router: manageTeacherRouter
+  };
+  

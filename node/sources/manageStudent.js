@@ -4,6 +4,7 @@
 const db = require('./db');
 const express = require("express");
 const router = express.Router();
+const {logAttend, adminLog } = require('./logger');
 
 
 function makeStudentSearchQuery(text, option) {
@@ -190,4 +191,6 @@ router.put("/students_view_update", (req, res) => {
   });
 
 
-  module.exports = router;
+  module.exports = {
+    router: manageStudentRouter
+  };

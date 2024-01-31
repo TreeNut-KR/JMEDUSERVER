@@ -3,6 +3,7 @@
 const db = require('./db');
 const express = require("express");
 const router = express.Router();
+const {logAttend, adminLog } = require('./logger');
 
 
 
@@ -70,4 +71,9 @@ router.post("/subject_add", (req, res) => {
   });
 
 
-module.exports = router;
+  //과목에 학생 추가
+
+
+  module.exports = {
+    router: manageSubjectRouter
+  };
