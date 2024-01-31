@@ -6,7 +6,7 @@ const router = express.Router();
 
 
 
-
+//등하원기록
 function logAttend(qrcode, is_attend, is_late, now)
 {
     
@@ -40,11 +40,43 @@ function logAttend(qrcode, is_attend, is_late, now)
 
 }
 
+//관리접근기록
+function adminLog(teacher_pk, log)
+{
+  let now = new Date();
+  const yyyy = now.getFullYear();
+  const mm = String(now.getMonth() + 1).padStart(2, '0'); // getMonth()는 0부터 시작하므로 1을 더해야 합니다.
+  const dd = String(now.getDate()).padStart(2, '0');
+  const time = `${yyyy}-${mm}-${dd}`;
+
+
+  const query = "INSERT INTO admin_log (admin_log_pk, teacher, time, log) VALUES (UUID(), ?, ?, ?)";
+
+  db.query(
+    query,
+    [qrcode, time, is_attend, is_late],
+    (err, result) => {
+      if (err) {
+        console.error("데이터 삽입 중 오류 발생:", err);
+        res.status(500).send("서버 오류가 발생했습니다.");
+        return;
+      }
+      res.status(200).send("로그 완료");
+    }
+  );
 
 
 
 
 
+}
 
-module.exports = router;
-module.exports = logAttend;
+
+
+
+
+module.exports = {
+  router: router,
+  logAttend: logAttend,
+  adminLog: adminLog
+};

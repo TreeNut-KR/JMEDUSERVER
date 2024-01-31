@@ -5,6 +5,7 @@ const router = express.Router();
 const bcrypt = require("bcrypt");
 const session = require("express-session");
 const db = require('./db');
+const {logAttend, adminLog } = require('./logger');
 
 //로그인 라우트
 router.post('/login', (req, res) => {
@@ -86,4 +87,6 @@ router.get("/dashboard", (req, res) => {
     res.redirect("/login");
   });
 
-  module.exports = router;
+  module.exports = {
+    router: authRouter
+  };
