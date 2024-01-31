@@ -7,6 +7,8 @@ const session = require("express-session");
 const db = require('./db');
 const {logAttend, adminLog } = require('./logger');
 
+let logoutTime = 60;
+
 //로그인 라우트
 router.post('/login', (req, res) => {
   const { username, password } = req.body;
@@ -23,6 +25,17 @@ router.post('/login', (req, res) => {
               }
               if (isMatch) {
                   req.session.user = results[0];
+
+
+                      // 쿠키 설정
+                  res.cookie('session_id', req.session.id, {
+                    httpOnly: true,
+                    secure: false,  // HTTPS를 사용할 때만 활성화
+                    maxAge: logoutTime * 6000  // 쿠키 유효기간 설정
+                  });
+
+
+                  
                   res.json({ success: true, message: '로그인 성공'});
               } else {
                   res.json({ success: false, message: '비밀번호가 일치하지 않습니다.'});
@@ -90,3 +103,19 @@ router.get("/dashboard", (req, res) => {
   module.exports = {
     router: authRouter
   };
+
+
+
+  // 3분마다 실행
+function updateLogoutTime() {
+  db.query("SELECT * FROM config WHERE config_pk = 0", (error, results) => {
+    if (error) {
+      console.log(error);
+    } else {
+      logoutTime = results[0].logout_time;
+    }
+  });
+}
+
+// 3분은 밀리세컨드로 환산하면 180000ms입니다.
+setInterval(updateLogoutTime, 180000);

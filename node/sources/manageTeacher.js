@@ -7,8 +7,57 @@ const {logAttend, adminLog } = require('./logger');
 
 
 
-
-
+/////////////////////강사조회
+router.post("/teacher_view", (req, res) => {
+    db.query("SELECT * FROM teacher", (error, results) => {
+      if (error) {
+        res.status(500).json({ success: false, message: "데이터베이스 오류" });
+      } else {
+        res.json({ success: true, students: results });
+      }
+    });
+  });
+  
+  //////////////////////강사 정보 수정
+  router.put("/teacher_update", (req, res) => {
+      const {
+        student_pk,
+        name,
+        sex_ism,
+        birthday,
+        contact,
+        contact_parent,
+        school,
+        grade,
+        payday,
+        firstreg,
+      } = req.body;
+    
+      const query = `UPDATE student SET name = ?, sex_ism = ?, birthday = ?, contact = ? ,contact_parent = ?, school = ?, grade = ? ,payday = ?, firstreg = ? WHERE student_pk = ?`;
+    
+      db.query(
+        query,
+        [
+          name,
+          sex_ism,
+          birthday,
+          contact,
+          contact_parent,
+          school,
+          grade,
+          payday,
+          firstreg,
+          student_pk,
+        ],
+        (error, results) => {
+          if (error) {
+            res.status(500).json({ success: false, message: "데이터베이스 오류" });
+          } else {
+            res.json({ success: true });
+          }
+        }
+      );
+    });
 
 
 module.exports = {
