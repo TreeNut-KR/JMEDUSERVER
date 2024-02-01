@@ -14,7 +14,7 @@ router.post("/subject_addPage", (req, res) => {
       if (error) {
         res.status(500).json({ success: false, message: "데이터베이스 오류 : 학교 불러오기 실패" });
       } else {
-        db.query("SELECT school_pk, name FROM school", (error, results_teacher) => {
+        db.query("SELECT teacher_pk, name FROM teacher", (error, results_teacher) => {
             if (error) {
               res.status(500).json({ success: false, message: "데이터베이스 오류 : 강사 불러오기 실패" });
             } else {
@@ -35,15 +35,11 @@ router.post("/subject_add", (req, res) => {
       school,
       grade,
       is_personal,
-      week,
-      starttime,
-      endtime,
-      room,
     } = req.body;
   
     // 데이터 삽입 쿼리
     const query =
-      "INSERT INTO subject (subject_pk, name, teacher, school, grade, is_personal, week, starttime, endtime, room) VALUES (UUID(), ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+      "INSERT INTO subject (subject_pk, name, teacher, school, grade, is_personal) VALUES (UUID(), ?, ?, ?, ?, ?)";
   
     // 데이터베이스에 쿼리 실행
     db.query(
@@ -54,10 +50,6 @@ router.post("/subject_add", (req, res) => {
         school,
         grade,
         is_personal,
-        week,
-        starttime,
-        endtime,
-        room,
       ],
       (err, result) => {
         if (err) {
@@ -65,13 +57,130 @@ router.post("/subject_add", (req, res) => {
           res.status(500).send("서버 오류가 발생했습니다.");
           return;
         }
-        res.status(200).send("사용자가 성공적으로 등록되었습니다.");
+        res.status(200).send("과목이 성공적으로 등록되었습니다.");
       }
     );
   });
 
+    //과목 삭제
+router.post("/subject_remove", (req, res) => {
+    const {
+      id,
+    } = req.body;
+  
+    // 데이터 삽입 쿼리
+    const query =
+      "DELETE FROM subject WHERE subject_pk = ?";
+  
+    // 데이터베이스에 쿼리 실행
+    db.query(
+      query,
+      [
+        id,
+      ],
+      (err, result) => {
+        if (err) {
+          console.error("삭제 중 오류 발생:", err);
+          res.status(500).send("서버 오류가 발생했습니다.");
+          return;
+        }
+        res.status(200).send("삭제 완료.");
+      }
+    );
+  });
+  
+
+//////////////////////과목 수정
+router.put("/subject_update", (req, res) => {
+  const {
+    subject_pk,
+    name,
+    teacher,
+    school,
+    grade,
+    is_personal,
+  } = req.body;
+
+  const query = `UPDATE subject SET name = ?, teacher = ?, school = ?, grade = ? ,is_personal = ? WHERE subject_pk = ?`;
+
+  db.query(
+    query,
+    [
+      name,
+      teacher,
+      school,
+      grade,
+      is_personal,
+      subject_pk,
+    ],
+    (error, results) => {
+      if (error) {
+        res.status(500).json({ success: false, message: "데이터베이스 오류" });
+      } else {
+        res.json({ success: true });
+      }
+    }
+  );
+});
+
+
+
+  //과목에 학생 추가 페이지 로드
+router.post("/subject_student_addPage", (req, res) => {
+  db.query("SELECT student.student_pk, student.name, student.grade, school.name FROM student JOIN school ON student.school = school.school_pk;", (error, results_school) => {
+    if (error) {
+      res.status(500).json({ success: false, message: "데이터베이스 오류 : 학교 불러오기 실패" });
+    } else {
+      db.query("SELECT subject_pk, name, grade, school FROM student", (error, results_teacher) => {
+          if (error) {
+            res.status(500).json({ success: false, message: "데이터베이스 오류 : 강사 불러오기 실패" });
+          } else {
+            res.json({ success: true, schools: results_school, teachers: results_teacher });
+            
+          }
+        });
+    }
+  });
+});
+
+
 
   //과목에 학생 추가
+router.post("/subject_student_add", (req, res) => {
+  const {
+    student_pk,
+    subject_pk,
+  } = req.body;
+
+  // 데이터 삽입 쿼리
+  let query = "INSERT INTO student_subject (subject_student_pk, student_id, subject_id) VALUES ";
+
+
+  let params = [
+      [student_pk[0], subject_pk]
+    ];
+
+  for(var i = 1; i<student_pk.length; i++)
+    {
+      params.push([student_pk[i], subject_pk]);
+    }
+  let placeholders = params.map(() => "(UUID(), ?, ?)").join(", ");
+
+
+  // 데이터베이스에 쿼리 실행
+  db.query(query+placeholders, params.flat(), (err, result) => {
+      if (err) {
+        console.error("데이터 삽입 중 오류 발생:", err);
+        res.status(500).send("서버 오류가 발생했습니다.");
+        return;
+      }
+      res.status(200).send("성공적으로 등록되었습니다.");
+    }
+  );
+});
+
+
+
 
 
   module.exports = {
