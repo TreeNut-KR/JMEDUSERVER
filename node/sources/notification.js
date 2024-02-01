@@ -91,6 +91,6 @@ const job = schedule.scheduleJob('0 11 * * *', paydayNotification);
 
 
 module.exports = {
-    router: notificationRouter
+    router: router
   };
   

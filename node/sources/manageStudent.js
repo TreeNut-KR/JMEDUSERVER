@@ -192,5 +192,5 @@ router.put("/students_view_update", (req, res) => {
 
 
   module.exports = {
-    router: manageStudentRouter
+    router: router
   };

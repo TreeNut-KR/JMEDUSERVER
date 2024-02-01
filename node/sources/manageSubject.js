@@ -75,5 +75,5 @@ router.post("/subject_add", (req, res) => {
 
 
   module.exports = {
-    router: manageSubjectRouter
+    router: router
   };

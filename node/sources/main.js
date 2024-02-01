@@ -36,14 +36,14 @@ app.use(
 
 
 
-app.use(auth);
-app.use(kiosk);
-app.use(logger);
-app.use(manageSchool);
-app.use(manageStudent);
-app.use(manageSubject);
-app.use(manageTeacher);
-app.use(notification);
+app.use(authRouter);
+app.use(kioskRouter);
+app.use(loggerRouter);
+app.use(manageSchoolRouter);
+app.use(manageStudentRouter);
+app.use(manageSubjectRouter);
+app.use(manageTeacherRouter);
+app.use(notificationRouter);
 
 
 // 서버 시작
