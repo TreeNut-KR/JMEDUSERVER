@@ -21,7 +21,8 @@ CREATE TABLE student (
     firstreg DATE, /*최초등록일*/
     is_enable BOOL, /*활성화 여부*/
     
-    PRIMARY KEY(student_pk)
+    PRIMARY KEY(student_pk),
+    FOREIGN KEY (school) REFERENCES school(school_pk_pk)/*외부키 설정*/
 ) ENGINE=InnoDB CHARSET=utf8mb4;
 
 
@@ -89,17 +90,27 @@ CREATE TABLE subject (
     grade INT,/*대상학년*/
     is_personal BOOL,/*개인과외여부*/
 
-    week VARCHAR(3),/*요일*/
-    starttime INT,/*시작시간*/
-    endtime INT,/*종료시간*/
-
-    room VARCHAR(20)/*강의실*/
-
     PRIMARY KEY(subject_pk),/*주키설정*/
     FOREIGN KEY (teacher) REFERENCES teacher(teacher_pk)/*외부키 설정*/
     FOREIGN KEY (school) REFERENCES school(school_pk)/*외부키 설정*/
 ) ENGINE=InnoDB CHARSET=utf8mb4;
 
+
+
+-- 시간표 테이블
+CREATE TABLE plan (
+    plan_pk CHAR(36),
+
+    subject CHAR(36),
+
+    week VARCHAR(3),/*요일(형식 : MON, TUE 등)*/
+    starttime INT,/*시작시간(형식 : 19시 30분의 경우 1930)*/
+    endtime INT,/*종료시간(형식 : 시작시간과 동일)*/
+
+    room VARCHAR(20)/*강의실*/
+    PRIMARY KEY(plan_pk),
+    FOREIGN KEY (subject) REFERENCES subject(subject_pk)
+) ENGINE=InnoDB CHARSET=utf8mb4;
 
 
 
