@@ -69,5 +69,5 @@ router.post("/submitAttend", (req, res) => {
 
 
   module.exports = {
-    router: kioskRouter
+    router: router
   };

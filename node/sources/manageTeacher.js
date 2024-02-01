@@ -61,6 +61,6 @@ router.post("/teacher_view", (req, res) => {
 
 
 module.exports = {
-    router: manageTeacherRouter
+    router: router
   };
   

@@ -100,10 +100,6 @@ router.get("/dashboard", (req, res) => {
     res.redirect("/login");
   });
 
-  module.exports = {
-    router: authRouter
-  };
-
 
 
   // 3분마다 실행
@@ -119,3 +115,10 @@ function updateLogoutTime() {
 
 // 3분은 밀리세컨드로 환산하면 180000ms입니다.
 setInterval(updateLogoutTime, 180000);
+
+
+
+module.exports = {
+  router: router
+};
+

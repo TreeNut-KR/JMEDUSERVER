@@ -61,5 +61,5 @@ router.post("/school_add", (req, res) => {
 
 
   module.exports = {
-    router: manageSchoolRouter
+    router: router
   };
