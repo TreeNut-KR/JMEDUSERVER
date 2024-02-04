@@ -12,6 +12,8 @@ export default function LoginPage() {
       const response = await axios.post("http://localhost:5002/login", {
         username: inputID,
         password: inputPW,
+      }, {
+        withCredentials: true
       });
       console.log(response);
 

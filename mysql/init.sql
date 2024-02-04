@@ -5,7 +5,15 @@ SHOW WARNINGS;
 
 USE jmedu;
 
-
+-- 학교 테이블
+CREATE TABLE school (
+    school_pk CHAR(36),
+    name VARCHAR(30),
+    is_elementary BOOL,
+    is_middle BOOL,
+    is_high BOOL,
+    PRIMARY KEY(school_pk)
+) ENGINE=InnoDB CHARSET=utf8mb4;
 
 -- 학생 테이블
 CREATE TABLE student (
@@ -22,7 +30,7 @@ CREATE TABLE student (
     is_enable BOOL, /*활성화 여부*/
     
     PRIMARY KEY(student_pk),
-    FOREIGN KEY (school) REFERENCES school(school_pk_pk)/*외부키 설정*/
+    FOREIGN KEY (school) REFERENCES school(school_pk)/*외부키 설정*/
 ) ENGINE=InnoDB CHARSET=utf8mb4;
 
 
@@ -48,7 +56,7 @@ CREATE TABLE teacher_pending (
     contact VARCHAR(20),
     id VARCHAR(20),
     pwd VARCHAR(255),
-    PRIMARY KEY(teacher_pk)
+    PRIMARY KEY(teacher_pending_pk)
 ) ENGINE=InnoDB CHARSET=utf8mb4;
 
 -- 등하원 로그 테이블
@@ -70,15 +78,6 @@ CREATE TABLE teacher_attend_log (
     PRIMARY KEY(teacher_attend_log_pk)
 ) ENGINE=InnoDB CHARSET=utf8mb4;
 
--- 학교 테이블
-CREATE TABLE school (
-    school_pk CHAR(36),
-    name VARCHAR(30),
-    is_elementary BOOL,
-    is_middle BOOL,
-    is_high BOOL,
-    PRIMARY KEY(school_pk)
-) ENGINE=InnoDB CHARSET=utf8mb4;
 
 -- 과목 테이블
 CREATE TABLE subject (
@@ -104,10 +103,10 @@ CREATE TABLE plan (
     subject CHAR(36),
 
     week VARCHAR(3),/*요일(형식 : MON, TUE 등)*/
-    starttime INT,/*시작시간(형식 : 19시 30분의 경우 1930)*/
-    endtime INT,/*종료시간(형식 : 시작시간과 동일)*/
+    starttime TIME,/*시작시간(형식 : 19시 30분의 경우 1930)*/
+    endtime TIME,/*종료시간(형식 : 시작시간과 동일)*/
 
-    room VARCHAR(20)/*강의실*/
+    room VARCHAR(20),/*강의실*/
     PRIMARY KEY(plan_pk),
     FOREIGN KEY (subject) REFERENCES subject(subject_pk)
 ) ENGINE=InnoDB CHARSET=utf8mb4;
@@ -144,7 +143,7 @@ CREATE TABLE config (
 ) ENGINE=InnoDB CHARSET=utf8mb4;
 
 --설정 기본값 삽입(설정 데이터가 없는 경우
-INSERT INTO config (config_pk, logout_time, payday_prenote)
+INSERT INTO config (config_pk, logout_time, payday_prenote_toggle, payday_prenote)
 SELECT * FROM (SELECT 0, 60, false, 3) AS tmp
 WHERE NOT EXISTS (
   SELECT 1 FROM config WHERE config_pk = 0
@@ -153,15 +152,15 @@ WHERE NOT EXISTS (
 
 -- 테스트용 쿼리
 
-INSERT INTO student (student_pk, name, sex_ism, birthday, contact, contact_parent, school, payday, firstreg) VALUES
-(UUID(), '윤현우', 0, '2017-09-30', '7499762664', '2114485983', '2', 2, '2023-12-29'),
-(UUID(), '최지후', 0, '2013-07-23', '7057073914', '9496569546', '3', 22, '2023-12-29'),
-(UUID(), '윤지호', 0, '2012-02-24', '6964067984', '7407543785', '2', 14, '2023-12-29'),
-(UUID(), '이서인', 1, '2010-12-13', '9365990144', '7918873387', '2', 7, '2023-12-29'),
-(UUID(), '김서준', 0, '2015-04-16', '3102686675', '1309516715', '1', 3, '2023-12-29'),
-(UUID(), '임지호', 0, '2008-05-20', '7108684813', '6488957024', '2', 1, '2023-12-29'),
-(UUID(), '윤현진', 1, '2017-03-06', '0488810491', '9949495722', '3', 10, '2023-12-29'),
-(UUID(), '윤민준', 0, '2007-12-12', '3953807259', '9347564627', '3', 11, '2023-12-29'),
-(UUID(), '정연우', 1, '2014-04-27', '3029462453', '9933618782', '3', 27, '2023-12-29'),
-(UUID(), '강시우', 0, '2010-11-14', '2385589254', '8290078831', '2', 21, '2023-12-29');
+INSERT INTO student (student_pk, name, sex_ism, birthday, contact, contact_parent, school, payday, firstreg, is_enable) VALUES
+(UUID(), '윤현우', 0, '2017-09-30', '7499762664', '2114485983', '2', 2, '2023-12-29', true),
+(UUID(), '최지후', 0, '2013-07-23', '7057073914', '9496569546', '3', 22, '2023-12-29', true),
+(UUID(), '윤지호', 0, '2012-02-24', '6964067984', '7407543785', '2', 14, '2023-12-29', true),
+(UUID(), '이서인', 1, '2010-12-13', '9365990144', '7918873387', '2', 7, '2023-12-29', true),
+(UUID(), '김서준', 0, '2015-04-16', '3102686675', '1309516715', '1', 3, '2023-12-29', true),
+(UUID(), '임지호', 0, '2008-05-20', '7108684813', '6488957024', '2', 1, '2023-12-29', true),
+(UUID(), '윤현진', 1, '2017-03-06', '0488810491', '9949495722', '3', 10, '2023-12-29', true),
+(UUID(), '윤민준', 0, '2007-12-12', '3953807259', '9347564627', '3', 11, '2023-12-29', true),
+(UUID(), '정연우', 1, '2014-04-27', '3029462453', '9933618782', '3', 27, '2023-12-29', true),
+(UUID(), '강시우', 0, '2010-11-14', '2385589254', '8290078831', '2', 21, '2023-12-29', true);
 
