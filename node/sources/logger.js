@@ -21,7 +21,7 @@ function logAttend(qrcode, is_attend, is_late, now)
 
 
 
-    const query = "INSERT INTO attend_log (attend_log_pk, student, time, is_attend, is_late) VALUES (UUID(), ?, ?, ?, ?)";
+    const query = "INSERT INTO attend_log (student, time, is_attend, is_late) VALUES (?, ?, ?, ?)";
 
           db.query(
             query,

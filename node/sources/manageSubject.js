@@ -39,7 +39,7 @@ router.post("/subject_add", (req, res) => {
   
     // 데이터 삽입 쿼리
     const query =
-      "INSERT INTO subject (subject_pk, name, teacher, school, grade, is_personal) VALUES (UUID(), ?, ?, ?, ?, ?)";
+      "INSERT INTO subject (name, teacher, school, grade, is_personal) VALUES (?, ?, ?, ?, ?)";
   
     // 데이터베이스에 쿼리 실행
     db.query(
@@ -153,7 +153,7 @@ router.post("/subject_student_add", (req, res) => {
   } = req.body;
 
   // 데이터 삽입 쿼리
-  let query = "INSERT INTO student_subject (subject_student_pk, student_id, subject_id) VALUES ";
+  let query = "INSERT INTO student_subject (student_id, subject_id) VALUES ";
 
 
   let params = [
@@ -164,7 +164,7 @@ router.post("/subject_student_add", (req, res) => {
     {
       params.push([student_pk[i], subject_pk]);
     }
-  let placeholders = params.map(() => "(UUID(), ?, ?)").join(", ");
+  let placeholders = params.map(() => "(?, ?)").join(", ");
 
 
   // 데이터베이스에 쿼리 실행

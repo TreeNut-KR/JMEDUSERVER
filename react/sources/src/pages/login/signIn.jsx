@@ -8,18 +8,17 @@ export default function LoginPage() {
     const inputID = e.target.elements.ID.value;
     const inputPW = e.target.elements.PASSWORD.value;
 
+    /* 기존 로컬 방법
     try {
       const response = await axios.post("http://localhost:5002/login", {
         username: inputID,
         password: inputPW,
-      }, {
-        withCredentials: true
       });
       console.log(response);
 
       if (response.data.success) {
         const userData = { name: inputID, author: "admin" };
-        //localStorage.setItem("user", JSON.stringify(userData)) //쿠키에 저장하는 것으로 수정
+        localStorage.setItem("user", JSON.stringify(userData));
         alert("로그인 성공");
         window.location.href = "/student";
       } else {
@@ -40,6 +39,36 @@ export default function LoginPage() {
       }
       console.log(error.config);
     }
+    */
+    try {
+      const response = await axios.post("http://localhost:5002/login", 
+          { username: inputID, password: inputPW }, 
+          { withCredentials: true }
+      );
+      console.log(response);
+  
+      if (response.data.success) {
+          alert("로그인 성공");
+          window.location.href = "/student";
+      } else {
+          alert("로그인 실패: " + response.data.message);
+      }
+  } catch (error) {
+      if (error.response) {
+          console.log(error.response.data);
+          console.log(error.response.status);
+          console.log(error.response.headers);
+          alert("로그인 실패: " + error.response.data.message);
+      } else if (error.request) {
+          console.log(error.request);
+          alert("서버로부터 응답이 없습니다: " + error.message);
+      } else {
+          console.log("Error", error.message);
+          alert("로그인 오류: " + error.message);
+      }
+      console.log(error.config);
+  }
+
   }
 
   return (

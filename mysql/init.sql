@@ -7,7 +7,7 @@ USE jmedu;
 
 -- 학교 테이블
 CREATE TABLE school (
-    school_pk CHAR(36),
+    school_pk INT AUTO_INCREMENT,
     name VARCHAR(30),
     is_elementary BOOL,
     is_middle BOOL,
@@ -24,11 +24,10 @@ CREATE TABLE student (
     birthday DATE, /*생일*/
     contact VARCHAR(20), /*연락처*/
     contact_parent VARCHAR(20), /*부모연락처*/
-    school CHAR(36), /*소속학교*/
+    school INT, /*소속학교*/
     payday INT, /*결제일*/
     firstreg DATE, /*최초등록일*/
     is_enable BOOL, /*활성화 여부*/
-    
     PRIMARY KEY(student_pk),
     FOREIGN KEY (school) REFERENCES school(school_pk)/*외부키 설정*/
 ) ENGINE=InnoDB CHARSET=utf8mb4;
@@ -49,7 +48,7 @@ CREATE TABLE teacher (
 
 -- 교사 가입 승인 대기 테이블
 CREATE TABLE teacher_pending (
-    teacher_pending_pk CHAR(36),
+    teacher_pending_pk INT AUTO_INCREMENT,
     name VARCHAR(20),
     sex_ism BOOL,
     birthday DATE,
@@ -61,63 +60,53 @@ CREATE TABLE teacher_pending (
 
 -- 등하원 로그 테이블
 CREATE TABLE attend_log (
-    attend_log_pk CHAR(36),
+    attend_log_pk INT AUTO_INCREMENT,
     student CHAR(36),
     time DATETIME,
     is_attend BOOL, /*true는 등원, false는 하원*/
     is_late BOOL,
-    PRIMARY KEY(attend_log_pk)
+    PRIMARY KEY(attend_log_pk),
+    FOREIGN KEY (student) REFERENCES student(student_pk) /*외부키 설정*/
 ) ENGINE=InnoDB CHARSET=utf8mb4;
 
 -- 교사 출퇴근 로그 테이블
 CREATE TABLE teacher_attend_log (
-    teacher_attend_log_pk CHAR(36),
+    teacher_attend_log_pk INT AUTO_INCREMENT,
     teacher CHAR(36),
     time DATETIME,
     is_attend BOOL,
     PRIMARY KEY(teacher_attend_log_pk)
 ) ENGINE=InnoDB CHARSET=utf8mb4;
 
-
 -- 과목 테이블
 CREATE TABLE subject (
-    subject_pk CHAR(36),/*과목코드*/
-
+    subject_pk INT AUTO_INCREMENT,/*과목코드*/
     name VARCHAR(20),/*과목이름*/
     teacher CHAR(36),/*담당강사(외부키)*/
-    school CHAR(36),/*대상학교(외부키)*/
+    school INT,/*대상학교(외부키)*/
     grade INT,/*대상학년*/
     is_personal BOOL,/*개인과외여부*/
-
     PRIMARY KEY(subject_pk),/*주키설정*/
-    FOREIGN KEY (teacher) REFERENCES teacher(teacher_pk)/*외부키 설정*/
+    FOREIGN KEY (teacher) REFERENCES teacher(teacher_pk),/*외부키 설정*/
     FOREIGN KEY (school) REFERENCES school(school_pk)/*외부키 설정*/
 ) ENGINE=InnoDB CHARSET=utf8mb4;
-
-
-
 -- 시간표 테이블
 CREATE TABLE plan (
-    plan_pk CHAR(36),
-
-    subject CHAR(36),
-
+    plan_pk INT AUTO_INCREMENT,
+    subject INT,
     week VARCHAR(3),/*요일(형식 : MON, TUE 등)*/
     starttime TIME,/*시작시간(형식 : 19시 30분의 경우 1930)*/
     endtime TIME,/*종료시간(형식 : 시작시간과 동일)*/
-
     room VARCHAR(20),/*강의실*/
     PRIMARY KEY(plan_pk),
     FOREIGN KEY (subject) REFERENCES subject(subject_pk)
 ) ENGINE=InnoDB CHARSET=utf8mb4;
 
-
-
 -- 학생-과목 연결 테이블
 CREATE TABLE student_subject (
-    student_subject_pk CHAR(36),
+    student_subject_pk INT AUTO_INCREMENT,
     student_id CHAR(36),
-    subject_id CHAR(36),
+    subject_id INT,
     PRIMARY KEY(student_subject_pk),
     FOREIGN KEY (student_id) REFERENCES student(student_pk),
     FOREIGN KEY (subject_id) REFERENCES subject(subject_pk)
@@ -125,42 +114,48 @@ CREATE TABLE student_subject (
 
 -- 관리자 로그 테이블
 CREATE TABLE admin_log (
-    admin_log_pk CHAR(36),
+    admin_log_pk INT AUTO_INCREMENT,
     teacher CHAR(36),
     time DATETIME,
     log VARCHAR(255),
     PRIMARY KEY(admin_log_pk)
 ) ENGINE=InnoDB CHARSET=utf8mb4;
 
-
 -- 설정 테이블
-CREATE TABLE config (
-    config_pk CHAR(1),
+CREATE TABLE serverconf (
+    config_pk INT,
     logout_time INT,/*자동 로그아웃 시간 설정(분단위)*/
     payday_prenote_toggle BOOL,
     payday_prenote INT,
     PRIMARY KEY(config_pk)
 ) ENGINE=InnoDB CHARSET=utf8mb4;
 
---설정 기본값 삽입(설정 데이터가 없는 경우
-INSERT INTO config (config_pk, logout_time, payday_prenote_toggle, payday_prenote)
-SELECT * FROM (SELECT 0, 60, false, 3) AS tmp
-WHERE NOT EXISTS (
-  SELECT 1 FROM config WHERE config_pk = 0
-);
-
+-- 설정 기본값 삽입(설정 데이터가 없는 경우)
+INSERT INTO serverconf (config_pk, logout_time, payday_prenote_toggle, payday_prenote) SELECT 0, 60, false, 3 FROM DUAL WHERE NOT EXISTS (SELECT * FROM serverconf);
 
 -- 테스트용 쿼리
 
-INSERT INTO student (student_pk, name, sex_ism, birthday, contact, contact_parent, school, payday, firstreg, is_enable) VALUES
-(UUID(), '윤현우', 0, '2017-09-30', '7499762664', '2114485983', '2', 2, '2023-12-29', true),
-(UUID(), '최지후', 0, '2013-07-23', '7057073914', '9496569546', '3', 22, '2023-12-29', true),
-(UUID(), '윤지호', 0, '2012-02-24', '6964067984', '7407543785', '2', 14, '2023-12-29', true),
-(UUID(), '이서인', 1, '2010-12-13', '9365990144', '7918873387', '2', 7, '2023-12-29', true),
-(UUID(), '김서준', 0, '2015-04-16', '3102686675', '1309516715', '1', 3, '2023-12-29', true),
-(UUID(), '임지호', 0, '2008-05-20', '7108684813', '6488957024', '2', 1, '2023-12-29', true),
-(UUID(), '윤현진', 1, '2017-03-06', '0488810491', '9949495722', '3', 10, '2023-12-29', true),
-(UUID(), '윤민준', 0, '2007-12-12', '3953807259', '9347564627', '3', 11, '2023-12-29', true),
-(UUID(), '정연우', 1, '2014-04-27', '3029462453', '9933618782', '3', 27, '2023-12-29', true),
-(UUID(), '강시우', 0, '2010-11-14', '2385589254', '8290078831', '2', 21, '2023-12-29', true);
 
+INSERT INTO school (name, is_elementary, is_middle, is_high) VALUES 
+('학교1', true, false, false),
+('학교2', false, true, false),
+('학교3', false, false, true),
+('학교4', true, true, false),
+('학교5', false, true, true),
+('학교6', true, false, true),
+('학교7', true, true, true),
+('학교8', false, false, false),
+('학교9', true, false, false),
+('학교10', false, true, false);
+
+INSERT INTO student (student_pk, name, sex_ism, grade, birthday, contact, contact_parent, school, payday, firstreg, is_enable) VALUES 
+(UUID(), '김철수', true, 1, '2007-01-01', '01012341234', '01011111111', 1, 1, '2023-03-01', true),
+(UUID(), '박영희', false, 2, '2006-02-02', '01023452345', '01022222222', 1, 2, '2023-03-02', false),
+(UUID(), '이민지', false, 3, '2005-03-03', '01034563456', '01033333333', 2, 3, '2023-03-03', true),
+(UUID(), '최준호', true, 0, '2008-04-04', '01045674567', '01044444444', 2, 4, '2023-03-04', false),
+(UUID(), '홍길동', true, 1, '2007-05-05', '01056785678', '01055555555', 3, 5, '2023-03-05', true),
+(UUID(), '장보람', false, 2, '2006-06-06', '01067896789', '01066666666', 3, 6, '2023-03-06', false),
+(UUID(), '유재석', true, 3, '2005-07-07', '01078907890', '01077777777', 4, 7, '2023-03-07', true),
+(UUID(), '김미나', false, 0, '2008-08-08', '01089018901', '01088888888', 4, 8, '2023-03-08', false),
+(UUID(), '송기헌', true, 1, '2007-09-09', '01090129012', '01099999999', 5, 9, '2023-03-09', true),
+(UUID(), '하은지', false, 2, '2006-10-10', '01001230123', '01000000000', 5, 10, '2023-03-10', false);

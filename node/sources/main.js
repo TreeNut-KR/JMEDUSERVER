@@ -17,7 +17,10 @@ const { router: notificationRouter } = require('./notification');
 const db = require('./db');
 
 // CORS 설정: 모든 출처 허용 (개발 단계에서만)
-app.use(cors());
+app.use(cors({
+  origin: true,
+  credentials: true
+}));
 
 const saltRounds = 10;
 
