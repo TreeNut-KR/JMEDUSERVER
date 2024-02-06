@@ -11,6 +11,7 @@ let logoutTime = 60;
 
 //로그인 라우트
 router.post('/login', (req, res) => {
+  console.log("@@@로그인 라우트 실행");
   const { username, password } = req.body;
   db.query('SELECT * FROM teacher WHERE id = ?', [username], (err, results) => {
       if (err) {

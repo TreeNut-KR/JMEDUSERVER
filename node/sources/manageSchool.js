@@ -36,7 +36,7 @@ router.post("/school_add", (req, res) => {
   
     // 데이터 삽입 쿼리
     const query =
-      "INSERT INTO student (school_pk, name, is_elementary, is_middle, is_high) VALUES (UUID(), ?, ?, ?, ?)";
+      "INSERT INTO student (name, is_elementary, is_middle, is_high) VALUES (?, ?, ?, ?)";
   
     // 데이터베이스에 쿼리 실행
     db.query(
@@ -59,15 +59,15 @@ router.post("/school_add", (req, res) => {
   });
 
 
-    //학생 삭제
-router.post("/student_remove", (req, res) => {
+    //학교 삭제
+router.post("/school_remove", (req, res) => {
   const {
     id,
   } = req.body;
 
   // 데이터 삽입 쿼리
   const query =
-    "DELETE FROM student WHERE student_pk = ?";
+    "DELETE FROM school WHERE school_pk = ?";
 
   // 데이터베이스에 쿼리 실행
   db.query(
@@ -81,7 +81,7 @@ router.post("/student_remove", (req, res) => {
         res.status(500).send("서버 오류가 발생했습니다.");
         return;
       }
-      res.status(200).send("사용자가 성공적으로 등록되었습니다.");
+      res.status(200).send("학교 삭제 완료.");
     }
   );
 });
