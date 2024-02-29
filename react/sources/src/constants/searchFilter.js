@@ -51,4 +51,9 @@ export const EDIT_STUDENT = {
     type: "date",
     value: "firstreg",
   },
+  remove: {
+    name: "삭제하기",
+    type: "remove",
+    value: "remove",
+  },
 };
