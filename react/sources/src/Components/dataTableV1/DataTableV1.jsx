@@ -129,7 +129,6 @@ export default function DataTableV1(props) {
               setEditTextDB("");
               const selectedTypeName = e.target.value;
               const selectedTypeObject = editType[selectedTypeName];
-
               setSelectedType(selectedTypeObject);
             }}
           >
@@ -165,7 +164,7 @@ export default function DataTableV1(props) {
               URL={"/student-add"}
               width={130}
               height={30}
-              label={"학생 추가하기"}
+              label={"정보 추가하기"}
             />
           </caption>
 
