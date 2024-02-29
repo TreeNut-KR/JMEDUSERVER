@@ -17,9 +17,9 @@ export default function MainPage() {
     submit: false,
   });
 
-  if (editText.text && studnetArray.length > 1 && editText.submit) {
+  if (editText.text && studnetArray.length >= 1 && editText.submit) {
     dataSubmit_all();
-    setEditText({ text: "", option: "", submit: false }); // 실행 후 초기화
+    setEditText({ text: "", option: "", submit: false });
   }
 
   //배열 정수형으로 변환
@@ -47,7 +47,7 @@ export default function MainPage() {
   //데이터 수정 (한번에)
   async function dataSubmit_all() {
     try {
-      const response = await axios.put(
+      const response = await axios.post(
         "http://localhost:5002/students_view_update_all",
         { editObject: editText, editTarget: arrayToSqlInString(studnetArray) }
       );

@@ -28,12 +28,39 @@ export default function StudentAdd() {
     })
   );
 
-  function editSubmit() {
-    notify({
-      type: "success",
-      text: "수정이 완료됐습니다.",
-    });
-  }
+  // 폼 제출 핸들러
+  const handleSubmit = async (e) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:5002/students_add_multiple",
+        {
+          DataStudents,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      notify({
+        type: "success",
+        text: "전송 중.",
+      });
+
+      if (response.data.success) {
+        notify({
+          type: "success",
+          text: "전송 완료.",
+        });
+      }
+    } catch (error) {
+      notify({
+        type: "error",
+        text: "에러 발생.",
+      });
+      console.error("등록 중 오류 발생:", error);
+    }
+  };
 
   const handleAddStudent = () => {
     setDataStudents((prevDataStudents) => [
@@ -171,16 +198,7 @@ export default function StudentAdd() {
                 name={"학교"}
                 edit={(value) => handleInputChange(index, "school", value)}
               />
-<select 
-  value={student.grade}
-  name={"학년"} 
-  onChange={(event) => handleInputChange(index, "grade", Number(event.target.value))}
->
-  <option value={0}>예비 1학년</option>
-  <option value={1}>1학년</option>
-  <option value={2}>2학년</option>
-  <option value={3}>3학년</option>
-</select>
+
               <InputBox
                 data={student.payday}
                 name={"상납일"}
@@ -196,12 +214,9 @@ export default function StudentAdd() {
           ))}
 
           <div className="m-5 flex justify-end pr-10">
-            <Button label={"추가하기"} width={90} />
+            <Button label={"추가하기"} width={90} onClick={handleSubmit} />
           </div>
         </BasicBox>
-      </div>
-      <div className="m-5 flex justify-end pr-10">
-        <Button label={"-"} onClick={handleRemoveStudent} width={40} />
       </div>
       <Toast />
     </>
