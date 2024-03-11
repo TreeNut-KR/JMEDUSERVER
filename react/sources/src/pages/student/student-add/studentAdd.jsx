@@ -128,14 +128,6 @@ export default function StudentAdd() {
                 width={40}
                 bgColor={"D24545"}
               />{" "}
-              <Button
-                label={"test"}
-                onClick={() => {
-                  console.log(DataStudents);
-                }}
-                width={40}
-                bgColor={"D24545"}
-              />
             </div>
             <Button
               label={">"}

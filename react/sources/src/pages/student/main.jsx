@@ -10,18 +10,6 @@ import { Toast, notify } from "../../template/Toastify";
 export default function MainPage() {
   const [data, setData] = useState();
 
-  const [studnetArray, setStudentArray] = useState([]);
-  const [editText, setEditText] = useState({
-    text: "",
-    option: "",
-    submit: false,
-  });
-
-  if (editText.text && studnetArray.length >= 1 && editText.submit) {
-    dataSubmit_all();
-    setEditText({ text: "", option: "", submit: false });
-  }
-
   //배열 정수형으로 변환
   function arrayToSqlInString(arr) {
     return arr.map((item) => `'${item}'`).join(", ");
@@ -45,11 +33,11 @@ export default function MainPage() {
   }
 
   //데이터 수정 (한번에)
-  async function dataSubmit_all() {
+  async function dataSubmit_all(editText, studentArray) {
     try {
       const response = await axios.post(
         "http://localhost:5002/students_view_update_all",
-        { editObject: editText, editTarget: arrayToSqlInString(studnetArray) }
+        { editObject: editText, editTarget: arrayToSqlInString(studentArray) }
       );
       if (response.data.success) {
         notify({
@@ -83,9 +71,8 @@ export default function MainPage() {
           columns={columns}
           datas={data}
           type="student"
-          setStudentArray={setStudentArray}
           editType={EDIT_STUDENT}
-          setEditText={setEditText}
+          runSQL={dataSubmit_all}
         />
       </BasicBox>
       <Toast />

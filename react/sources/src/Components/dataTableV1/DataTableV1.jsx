@@ -5,16 +5,7 @@ import InputBox from "../InputBox";
 import Button from "../ButtonTop";
 
 export default function DataTableV1(props) {
-  const {
-    styleClass,
-    datas,
-    columns,
-    title,
-    type,
-    setStudentArray,
-    editType,
-    setEditText,
-  } = props;
+  const { styleClass, datas, columns, title, type, editType, runSQL } = props;
   const [currentPage, setCurrentPage] = useState(1);
   const totalNumber = datas ? datas.length : 0;
 
@@ -23,6 +14,12 @@ export default function DataTableV1(props) {
   const [selectedCheckboxes, setSelectedCheckboxes] = useState([]);
   const [selectedType, setSelectedType] = useState({});
   const [editTextDB, setEditTextDB] = useState("");
+  const [studnetArray, setStudentArray] = useState([]);
+  const [editText, setEditText] = useState({
+    text: "",
+    option: "",
+    submit: false,
+  });
 
   function editAllButton() {
     setEditText({
@@ -30,6 +27,11 @@ export default function DataTableV1(props) {
       option: selectedType.value,
       submit: true,
     });
+    if (selectedType.value === "remove") setEditText({ text: "remove" });
+    if (editText.text && studnetArray.length >= 1 && editText.submit) {
+      runSQL(editText, studnetArray);
+      setEditText({ text: "", option: "", submit: false });
+    }
   }
 
   const handleMasterCheckboxChange = (e) => {
