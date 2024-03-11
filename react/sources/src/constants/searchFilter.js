@@ -53,7 +53,7 @@ export const EDIT_STUDENT = {
   },
   remove: {
     name: "삭제하기",
-    type: "remove",
+    type: "text",
     value: "remove",
   },
 };
