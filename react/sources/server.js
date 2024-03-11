@@ -8,7 +8,7 @@ const app = express();
 app.use(cors());
 
 const connection = mysql.createConnection({
-    host: process.env.DB_HOST || 'mysql', // Docker 컨테이너 이름으로 변경
+    host: process.env.DB_HOST || 'mysql',
     user: process.env.DB_USER || 'root',
     password: process.env.DB_PASSWORD || '1234',
     database: process.env.DB_DATABASE || 'jmedu'
