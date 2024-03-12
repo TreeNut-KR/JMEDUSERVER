@@ -7,6 +7,13 @@ const session = require("express-session");
 const db = require('./db');
 const {logAttend, adminLog } = require('./logger');
 
+router.use(session({
+  secret: process.env.SESSION_SECRET,  // 세션을 암호화하기 위한 키
+  resave: false,  // 세션을 항상 저장할지 여부를 정하는 값 (보통 false로 설정)
+  saveUninitialized: true,  // 초기화되지 않은 세션을 스토어에 저장
+  cookie: { secure: false }  // HTTPS를 사용하지 않는 경우 false로 설정
+}));
+
 let logoutTime = 60;
 
 //로그인 라우트
@@ -26,10 +33,8 @@ router.post('/login', (req, res) => {
               }
               if (isMatch) {
                   req.session.user = results[0];
-
-
                       // 쿠키 설정
-                  res.cookie('session_id', req.session.id, {
+                  res.cookie('userSession', username, {
                     httpOnly: true,
                     secure: false,  // HTTPS를 사용할 때만 활성화
                     maxAge: logoutTime * 6000  // 쿠키 유효기간 설정
@@ -84,6 +89,16 @@ router.post('/login', (req, res) => {
     });
   });
   
+  //권한확인
+  function checkAuthenticated(req, res, next) {
+    if (req.session && req.session.user) {
+        // 세션에 사용자 정보가 있으면 다음 미들웨어/라우트 핸들러로 진행
+        next();
+    } else {
+        // 사용자 정보가 세션에 없으면 로그인하지 않았다고 판단하고 접근 거부
+        res.status(401).json({ success: false, message: "접근 권한이 없습니다." });
+    }
+}
   
 
 // 대시보드 라우트
@@ -120,6 +135,6 @@ setInterval(updateLogoutTime, 180000);
 
 
 module.exports = {
-  router: router
+  router: router,
+  checkAuthenticated: checkAuthenticated
 };
-

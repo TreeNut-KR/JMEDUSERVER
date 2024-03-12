@@ -16,4 +16,6 @@ RUN npm install axios
 
 RUN npm install node-schedule
 
+RUN npm install cookie-parser
+
 ENTRYPOINT [ "node", "main.js"]
