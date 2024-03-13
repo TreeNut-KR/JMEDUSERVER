@@ -9,7 +9,7 @@ const {logAttend, adminLog } = require('./logger');
 
 
 ///////과목추가페이지로드
-router.post("/subject_addPage", (req, res) => {
+router.post("/server/subject_addPage", (req, res) => {
     db.query("SELECT school_pk, name FROM school", (error, results_school) => {
       if (error) {
         res.status(500).json({ success: false, message: "데이터베이스 오류 : 학교 불러오기 실패" });
@@ -28,7 +28,7 @@ router.post("/subject_addPage", (req, res) => {
 
 
 ///////과목추가 실행
-router.post("/subject_add", (req, res) => {
+router.post("/server/subject_add", (req, res) => {
     const {
       name,
       teacher,
@@ -63,7 +63,7 @@ router.post("/subject_add", (req, res) => {
   });
 
     //과목 삭제
-router.post("/subject_remove", (req, res) => {
+router.post("/server/subject_remove", (req, res) => {
     const {
       id,
     } = req.body;
@@ -91,7 +91,7 @@ router.post("/subject_remove", (req, res) => {
   
 
 //////////////////////과목 수정
-router.put("/subject_update", (req, res) => {
+router.put("/server/subject_update", (req, res) => {
   const {
     subject_pk,
     name,
@@ -126,7 +126,7 @@ router.put("/subject_update", (req, res) => {
 
 
   //과목에 학생 추가 페이지 로드
-router.post("/subject_student_addPage", (req, res) => {
+router.post("/server/subject_student_addPage", (req, res) => {
   db.query("SELECT student.student_pk, student.name, student.grade, school.name FROM student JOIN school ON student.school = school.school_pk;", (error, results_school) => {
     if (error) {
       res.status(500).json({ success: false, message: "데이터베이스 오류 : 학교 불러오기 실패" });
@@ -146,7 +146,7 @@ router.post("/subject_student_addPage", (req, res) => {
 
 
   //과목에 학생 추가
-router.post("/subject_student_add", (req, res) => {
+router.post("/server/subject_student_add", (req, res) => {
   const {
     student_pk,
     subject_pk,

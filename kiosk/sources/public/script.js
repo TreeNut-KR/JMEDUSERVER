@@ -43,7 +43,7 @@ function animation_on() {
 
 
     try {
-      const response = axios.post("http://localhost:5002/Kiosk_getStudent", {// QR 값 주고 학생 정보 받아오기
+      const response = axios.post("http://localhost/server/Kiosk_getStudent", {// QR 값 주고 학생 정보 받아오기
         qrcode
       });
       console.log(response);
@@ -69,7 +69,7 @@ function animation_on() {
 
   function attend_submit(name, contact_parent, attend_code){//등, 하원 선택하면 실행되게 해주세요. attend_code는 0은 등원, 1은 하원입니다.
     try {
-      const response = axios.post("http://localhost:5002/submitAttend", {
+      const response = axios.post("http://localhost/server/submitAttend", {
         name: response,
         contact_parent,
         attend_code

@@ -22,7 +22,7 @@ connection.connect(err => {
     console.log('Connected to the MySQL database');
 });
 
-app.get('/getStudents', function(req, res) {
+app.get('/server/getStudents', function(req, res) {
     let sql = 'SELECT * FROM student';
     connection.query(sql, function (error, results, fields) {
         if (error) {

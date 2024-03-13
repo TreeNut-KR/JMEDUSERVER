@@ -22,7 +22,7 @@ export default function StudentEdit() {
     const loging = async () => {
       try {
         const response = await axios.post(
-          "http://localhost:5002/students_view_detail",
+          "http://localhost/server/students_view_detail",
           { student_pk: studentID }
         );
         setData(response.data.students);
@@ -82,7 +82,7 @@ export default function StudentEdit() {
       const formattedFirstreg = formatDatePart(firstreg);
 
       const response = await axios.put(
-        "http://localhost:5002/students_view_update",
+        "http://localhost/server/students_view_update",
         JSON.stringify({
           student_pk: studentID,
           name,

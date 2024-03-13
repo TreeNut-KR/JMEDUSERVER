@@ -17,7 +17,7 @@ router.use(session({
 let logoutTime = 60;
 
 //로그인 라우트
-router.post('/login', (req, res) => {
+router.post('/server/login', (req, res) => {
   console.log("@@@로그인 라우트 실행");
   const { username, password } = req.body;
   db.query('SELECT * FROM teacher WHERE id = ?', [username], (err, results) => {
@@ -54,7 +54,7 @@ router.post('/login', (req, res) => {
 });
   
   //////회원가입
-  router.post("/register", async (req, res) => {
+  router.post("/server/register", async (req, res) => {
     const { name, id, pwd, sex_ism, birthday, contact, is_admin } = req.body;
     console.log("가입 요청 들어옴");
     const hashedPassword = await bcrypt.hash(pwd, 10); // 비밀번호 해싱
@@ -102,18 +102,18 @@ router.post('/login', (req, res) => {
   
 
 // 대시보드 라우트
-router.get("/dashboard", (req, res) => {
+router.get("/server/dashboard", (req, res) => {
     if (req.session.user) {
       res.send("Welcome to your dashboard, " + req.session.user.username);
     } else {
-      res.redirect("/login");
+      res.redirect("/server/login");
     }
   });
   
   // 로그아웃 라우트
-  router.get("/logout", (req, res) => {
+  router.get("/server/logout", (req, res) => {
     req.session.destroy();
-    res.redirect("/login");
+    res.redirect("/server/login");
   });
 
 
