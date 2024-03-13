@@ -5,6 +5,7 @@ const express = require("express");
 const router = express.Router();
 const schedule = require('node-schedule');
 const axios = require('axios');
+const { checkAuthenticated } = require('./auth');
 const {logAttend, adminLog } = require('./logger');
 let setPrenoteDay = 2; //결제일 며칠 전에 알림을 보낼 것인가
 
