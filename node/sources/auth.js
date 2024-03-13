@@ -98,27 +98,10 @@ router.post('/server/login', (req, res) => {
     if (req.session && req.session.user) {
         const user = req.session.user;
 
-
-
-        db.query('SELECT * FROM teacher WHERE id = ?', [user.id], (err, results) => {
-          if (err) {
-              res.status(500).json({ success: false, message: '서버에러'});
-              return;
-          }
-          if (results.length > 0) {
-            if(results[0].is_admin){
-              next();
-            }else {
-              res.status(401).json({ success: false, message: '권한이 없습니다.'});
-            }
-
-
-          } else {
-              res.json({ success: false, message: '잘못된 접근입니다.'});
-          }
-      });
+        if(user.is_admin){
+          next();
+        }
     } else {
-        // 사용자 정보가 세션에 없으면 로그인하지 않았다고 판단하고 접근 거부
         res.status(401).json({ success: false, message: "로그인이 필요합니다." });
     }
 }
@@ -136,7 +119,7 @@ function getUsername(req) {//사용자 이름을 반환
 }
 
 
-// 대시보드 라우트
+// 사용자 이름 반환
 router.get("/server/getusername", (req, res) => {
   if (req.session && req.session.user) {
     const user = req.session.user;
