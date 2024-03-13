@@ -2,14 +2,19 @@ import React from "react";
 import axios from "axios";
 import Button from "../../Components/ButtonTop";
 
+
 export default function LoginPage() {
   async function loging(e) {
     e.preventDefault();
     const inputID = e.target.elements.ID.value;
     const inputPW = e.target.elements.PASSWORD.value;
 
+    
+
+    
+
     try {
-      const response = await axios.post("http://localhost/server/login", 
+      const response = await axios.post(`${process.env.REACT_APP_SERVER_URL}/server/login`, 
           { username: inputID, password: inputPW }, 
           { withCredentials: true }
       );
