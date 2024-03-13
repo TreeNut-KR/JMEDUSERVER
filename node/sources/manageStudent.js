@@ -29,6 +29,8 @@ function makeStudentSearchQuery(text, option) {
 
 /////////////////////학생조회
 router.post("/server/students_view", checkAuthenticated, (req, res) => {
+
+  
   db.query("SELECT * FROM student", (error, results) => {
     if (error) {
       res.status(500).json({ success: false, message: "데이터베이스 오류" });
