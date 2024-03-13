@@ -6,7 +6,7 @@ const {logAttend, adminLog } = require('./logger');
 
 
 ///////플랜추가페이지로드
-router.post("/plan_addPage", (req, res) => {
+router.post("/server/plan_addPage", (req, res) => {
     db.query("SELECT school_pk, name FROM school", (error, results_school) => {
       if (error) {
         res.status(500).json({ success: false, message: "데이터베이스 오류 : 학교 불러오기 실패" });

@@ -38,7 +38,7 @@ app.use(
 );
 
 // 로그인 라우트
-app.post("/login", (req, res) => {
+app.post("/server/login", (req, res) => {
   const { username, password } = req.body;
   console.log(username, password);
   db.query("SELECT * FROM teacher WHERE id = ?", [username], (err, results) => {
@@ -64,7 +64,7 @@ app.post("/login", (req, res) => {
 });
 
 //////회원가입
-app.post("/register", async (req, res) => {
+app.post("/server/register", async (req, res) => {
   const { name, id, pwd, sex_ism, birthday, contact, is_admin } = req.body;
   console.log("가입 요청 들어옴");
   const hashedPassword = await bcrypt.hash(pwd, 10); // 비밀번호 해싱
@@ -95,7 +95,7 @@ app.post("/register", async (req, res) => {
 });
 
 /////////////////////학생조회
-app.get("/students_view", (req, res) => {
+app.get("/server/students_view", (req, res) => {
   db.query("SELECT * FROM student", (error, results) => {
     if (error) {
       res.status(500).json({ success: false, message: "데이터베이스 오류" });
@@ -106,7 +106,7 @@ app.get("/students_view", (req, res) => {
 });
 
 //////////////////////학생 자세히 보기
-app.post("/students_view_detail", (req, res) => {
+app.post("/server/students_view_detail", (req, res) => {
   const { student_pk } = req.body;
   db.query(
     "SELECT * FROM student where student_pk = ?",
@@ -122,7 +122,7 @@ app.post("/students_view_detail", (req, res) => {
 });
 
 //////////////////////학생 검색
-app.post("/students_search", (req, res) => {
+app.post("/server/students_search", (req, res) => {
   const { search } = req.body;
   let query = "SELECT * FROM student";
   if (search.text != "") {
@@ -138,7 +138,7 @@ app.post("/students_search", (req, res) => {
 });
 
 //////////////////////학생 정보 수정
-app.put("/students_view_update", (req, res) => {
+app.put("/server/students_view_update", (req, res) => {
   const {
     student_pk,
     name,
@@ -177,7 +177,7 @@ app.put("/students_view_update", (req, res) => {
 });
 
 //////////////////////학생 정보 수정 (여러개 한번에)
-app.put("/students_view_update_all", (req, res) => {
+app.put("/server/students_view_update_all", (req, res) => {
   const { editObject, editTarget } = req.body;
 
   const query = `UPDATE student SET ${editObject.option} = '${editObject.text}' WHERE student_pk IN (${editTarget})`;
@@ -192,7 +192,7 @@ app.put("/students_view_update_all", (req, res) => {
 });
 
 //조건부 공지
-app.get("/condition_note", (req, res) => {
+app.get("/server/condition_note", (req, res) => {
   const { name, sex_ism, contact, contact_parent, school, payday } = req.body;
   const selectAll = true;
 
@@ -211,7 +211,7 @@ app.get("/condition_note", (req, res) => {
 });
 
 ///////학생추가
-app.post("/students_add", (req, res) => {
+app.post("/server/students_add", (req, res) => {
   const {
     name,
     sex_ism,
@@ -252,22 +252,22 @@ app.post("/students_add", (req, res) => {
 });
 
 // 대시보드 라우트
-app.get("/dashboard", (req, res) => {
+app.get("/server/dashboard", (req, res) => {
   if (req.session.user) {
     res.send("Welcome to your dashboard, " + req.session.user.username);
   } else {
-    res.redirect("/login");
+    res.redirect("/server/login");
   }
 });
 
 // 로그아웃 라우트
-app.get("/logout", (req, res) => {
+app.get("/server/logout", (req, res) => {
   req.session.destroy();
-  res.redirect("/login");
+  res.redirect("/server/login");
 });
 
 /////키오스크에서 학생키를 받은 경우
-app.post("/Kiosk_getStudent", (req, res) => {
+app.post("/server/Kiosk_getStudent", (req, res) => {
   const { qrcode } = req.body;
   db.query(
     "SELECT * FROM student WHERE student_pk = ?",
@@ -296,7 +296,7 @@ app.post("/Kiosk_getStudent", (req, res) => {
 });
 
 /////문자API 전송 요청
-app.post("/submitAttend", (req, res) => {
+app.post("/server/submitAttend", (req, res) => {
   const { name, contact_parent, attend_code } = req.body;
   const msg = name + "학생이 지금 ";
   if (attend_code == 0) {

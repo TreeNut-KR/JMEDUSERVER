@@ -32,7 +32,7 @@ export default function StudentAdd() {
   const handleSubmit = async (e) => {
     try {
       const response = await axios.post(
-        "http://localhost:5002/students_add_multiple",
+        "http://localhost/server/students_add_multiple",
         {
           DataStudents,
         },

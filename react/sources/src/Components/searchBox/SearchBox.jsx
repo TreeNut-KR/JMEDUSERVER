@@ -43,7 +43,7 @@ export default function SearchBox(props) {
   async function searchData() {
     try {
       const response = await axios.post(
-        "http://localhost:5002/students_search",
+        "http://localhost/server/students_search",
         {
           search: search,
         }

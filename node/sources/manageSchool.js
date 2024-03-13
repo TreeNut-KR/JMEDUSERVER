@@ -4,7 +4,7 @@ const router = express.Router();
 const { logAttend, adminLog } = require("./logger");
 
 /////////////////////학교조회
-router.post("/schools_view", (req, res) => {
+router.post("/server/schools_view", (req, res) => {
   const { is_elementary, is_middle, is_high } = req.body;
 
   db.query(
@@ -20,7 +20,7 @@ router.post("/schools_view", (req, res) => {
 });
 
 //학교 추가
-router.post("/school_add", (req, res) => {
+router.post("/server/school_add", (req, res) => {
   const { name, is_elementary, is_middle, is_high } = req.body;
 
   // 데이터 삽입 쿼리
@@ -39,7 +39,7 @@ router.post("/school_add", (req, res) => {
 });
 
 //학교 삭제
-router.post("/school_remove", (req, res) => {
+router.post("/server/school_remove", (req, res) => {
   const { id } = req.body;
 
   // 데이터 삽입 쿼리

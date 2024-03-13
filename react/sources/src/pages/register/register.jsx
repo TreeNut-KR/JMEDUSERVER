@@ -34,7 +34,7 @@ export default function RegisterPage() {
       const DD = birthday.substring(6, 8);
       const birthday_converted = YYYY + "-" + MM + "-" + DD;
       console.log(birthday_converted);
-      const response = await axios.post("http://localhost:5002/register", {
+      const response = await axios.post("http://localhost/server/register", {
         name,
         id,
         pwd: password,

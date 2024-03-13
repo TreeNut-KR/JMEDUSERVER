@@ -9,7 +9,7 @@ export default function LoginPage() {
     const inputPW = e.target.elements.PASSWORD.value;
 
     try {
-      const response = await axios.post("http://localhost:5002/login", 
+      const response = await axios.post("http://localhost/server/login", 
           { username: inputID, password: inputPW }, 
           { withCredentials: true }
       );
@@ -26,13 +26,13 @@ export default function LoginPage() {
           console.log(error.response.data);
           console.log(error.response.status);
           console.log(error.response.headers);
-          alert("로그인 실패: " + error.response.data.message);
+          alert("통신 실패: " + (error.response && error.response.data ? error.response.data.message : '알 수 없는 에러'));
       } else if (error.request) {
           console.log(error.request);
           alert("서버로부터 응답이 없습니다: " + error.message);
       } else {
           console.log("Error", error.message);
-          alert("로그인 오류: " + error.message);
+          alert("통신 오류: " + error.message);
       }
       console.log(error.config);
   }

@@ -10,7 +10,7 @@ const {logAttend, adminLog } = require('./logger');
 
 
 /////키오스크에서 학생키를 받은 경우
-router.post("/Kiosk_getStudent", (req, res) => {
+router.post("/server/Kiosk_getStudent", (req, res) => {
     const { qrcode } = req.body;
     db.query(
       "SELECT * FROM student WHERE student_pk = ?",
@@ -40,7 +40,7 @@ router.post("/Kiosk_getStudent", (req, res) => {
 
 
 /////문자API 전송 요청
-router.post("/submitAttend", (req, res) => {
+router.post("/server/submitAttend", (req, res) => {
     const { qrcode, name, contact_parent, is_Attend } = req.body;
     let now = new Date();
     let msg = name + "학생이  "+ now.getHours()+"시 "+now.getMinutes()+"분에 ";
