@@ -4,13 +4,17 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
 const session = require("express-session");
+const cookieParser = require('cookie-parser');
 const db = require('./db');
 const {logAttend, adminLog } = require('./logger');
+
+router.use(cookieParser());
 
 router.use(session({
   secret: process.env.SESSION_SECRET,  // 세션을 암호화하기 위한 키
   resave: false,  // 세션을 항상 저장할지 여부를 정하는 값 (보통 false로 설정)
   saveUninitialized: true,  // 초기화되지 않은 세션을 스토어에 저장
+  rolling: true,
   cookie: { secure: false }  // HTTPS를 사용하지 않는 경우 false로 설정
 }));
 
@@ -20,7 +24,7 @@ let logoutTime = 60;
 router.post('/server/login', (req, res) => {
   console.log("@@@로그인 라우트 실행");
   const { username, password } = req.body;
-  db.query('SELECT * FROM teacher WHERE id = ?', [username], (err, results) => {
+  db.query('SELECT * FROM teacher WHERE id = ?', async [username], (err, results) => {
       if (err) {
           res.status(500).json({ success: false, message: '서버에러'});
           return;
@@ -92,13 +96,56 @@ router.post('/server/login', (req, res) => {
   //권한확인
   function checkAuthenticated(req, res, next) {
     if (req.session && req.session.user) {
-        // 세션에 사용자 정보가 있으면 다음 미들웨어/라우트 핸들러로 진행
-        next();
+        const user = req.session.user;
+
+
+
+        db.query('SELECT * FROM teacher WHERE id = ?', [user.id], (err, results) => {
+          if (err) {
+              res.status(500).json({ success: false, message: '서버에러'});
+              return;
+          }
+          if (results.length > 0) {
+            if(results[0].is_admin){
+              next();
+            }else {
+              res.status(401).json({ success: false, message: '권한이 없습니다.'});
+            }
+
+
+          } else {
+              res.json({ success: false, message: '잘못된 접근입니다.'});
+          }
+      });
     } else {
         // 사용자 정보가 세션에 없으면 로그인하지 않았다고 판단하고 접근 거부
-        res.status(401).json({ success: false, message: "접근 권한이 없습니다." });
+        res.status(401).json({ success: false, message: "로그인이 필요합니다." });
     }
 }
+
+
+
+function getUsername(req) {//사용자 이름을 반환
+  if (req.session && req.session.user) {
+      const user = req.session.user;
+
+      return user.name;
+  } else {
+      return '';
+  }
+}
+
+
+// 대시보드 라우트
+router.get("/server/getusername", (req, res) => {
+  if (req.session && req.session.user) {
+    const user = req.session.user;
+
+    res.json({ success: true, name: user.id });
+} else {
+  res.json({ success: true, name: ''});;
+}
+});
   
 
 // 대시보드 라우트
@@ -136,5 +183,6 @@ setInterval(updateLogoutTime, 180000);
 
 module.exports = {
   router: router,
-  checkAuthenticated: checkAuthenticated
+  checkAuthenticated: checkAuthenticated,
+  getUsername: getUsername
 };
