@@ -24,7 +24,7 @@ let logoutTime = 60;
 router.post('/server/login', (req, res) => {
   console.log("@@@로그인 라우트 실행");
   const { username, password } = req.body;
-  db.query('SELECT * FROM teacher WHERE id = ?', async [username], (err, results) => {
+  db.query('SELECT * FROM teacher WHERE id = ?', [username], async (err, results) => {
       if (err) {
           res.status(500).json({ success: false, message: '서버에러'});
           return;
@@ -36,6 +36,7 @@ router.post('/server/login', (req, res) => {
                   return;
               }
               if (isMatch) {
+                
                   req.session.user = results[0];
                       // 쿠키 설정
                   res.cookie('userSession', username, {
