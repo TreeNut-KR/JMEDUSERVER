@@ -42,7 +42,7 @@ export default function RegisterPage() {
         birthday: birthday_converted,
         contact,
         is_admin: isAdmin,
-      });
+      },{headers: {'Content-Type': 'application/json; charset=utf-8'}});
       notify({
         type: "success",
         text: "전송성공.",

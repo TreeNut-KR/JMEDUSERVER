@@ -5,6 +5,7 @@ const router = express.Router();
 const bcrypt = require("bcrypt");
 const session = require("express-session");
 const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 const db = require('./db');
 const {logAttend, adminLog } = require('./logger');
 
@@ -17,6 +18,13 @@ router.use(session({
   rolling: true,
   cookie: { secure: false }  // HTTPS를 사용하지 않는 경우 false로 설정
 }));
+
+// body-parser 미들웨어를 사용하여 application/json 요청을 파싱
+router.use(bodyParser.json({ limit: '10mb', extended: true }));
+
+// application/x-www-form-urlencoded 요청을 파싱
+router.use(bodyParser.urlencoded({ limit: '10mb', extended: true, parameterLimit: 50000 }));
+
 
 let logoutTime = 60;
 
@@ -71,6 +79,7 @@ router.post('/server/login', (req, res) => {
   
     db.query("SELECT * FROM teacher WHERE id = ?", [id], (err, results) => {
       if (results.length) {
+
         res.status(200).send("이미 사용중인 ID입니다.");
       } else {
         // 데이터 삽입 쿼리
@@ -151,7 +160,7 @@ router.get("/server/dashboard", (req, res) => {
 
   // 3분마다 실행
 function updateLogoutTime() {
-  db.query("SELECT * FROM config WHERE config_pk = 0", (error, results) => {
+  db.query("SELECT * FROM serverconf WHERE config_pk = 0", (error, results) => {
     if (error) {
       console.log(error);
     } else {

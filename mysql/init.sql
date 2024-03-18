@@ -1,5 +1,7 @@
 GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '1234' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
+SET NAMES 'utf8mb4';
+
 
 
 -- jmedu 데이터베이스 생성

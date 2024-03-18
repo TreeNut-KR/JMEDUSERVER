@@ -73,7 +73,8 @@ function animation_on() {
         name: response,
         contact_parent,
         attend_code
-      });
+      },{headers: {'Content-Type': 'application/json; charset=utf-8'}}
+      );
       console.log(response);
 
       if (response.data.success) {//response.data.name에 학생 이름 저장, response.data.birthday에 생년월일 저장
