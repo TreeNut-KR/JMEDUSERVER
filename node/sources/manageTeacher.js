@@ -9,7 +9,7 @@ const {logAttend, adminLog } = require('./logger');
 
 
 /////////////////////강사조회
-router.post("/server/teacher_view", (req, res) => {
+router.post("/server/teacher_view", async (req, res) => {
     db.query("SELECT * FROM teacher", (error, results) => {
       if (error) {
         res.status(500).json({ success: false, message: "데이터베이스 오류" });
@@ -20,7 +20,7 @@ router.post("/server/teacher_view", (req, res) => {
   });
   
   //////////////////////강사 정보 수정
-  router.put("/server/teacher_update", (req, res) => {
+  router.put("/server/teacher_update", async (req, res) => {
       const {
         student_pk,
         name,

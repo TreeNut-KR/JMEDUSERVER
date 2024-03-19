@@ -29,10 +29,10 @@ router.use(bodyParser.urlencoded({ limit: '10mb', extended: true, parameterLimit
 let logoutTime = 60;
 
 //로그인 라우트
-router.post('/server/login', (req, res) => {
+router.post('/server/login', async(req, res) => {
   console.log("@@@로그인 라우트 실행");
   const { username, password } = req.body;
-  db.query('SELECT * FROM teacher WHERE id = ?', [username], async (err, results) => {
+  db.query('SELECT * FROM teacher WHERE id = ?', [username], (err, results) => {
       if (err) {
           res.status(500).json({ success: false, message: '서버에러'});
           return;
@@ -130,7 +130,7 @@ function getUsername(req) {//사용자 이름을 반환
 
 
 // 사용자 이름 반환
-router.get("/server/getusername", (req, res) => {
+router.get("/server/getusername", async (req, res) => {
   if (req.session && req.session.user) {
     const user = req.session.user;
 
@@ -142,7 +142,7 @@ router.get("/server/getusername", (req, res) => {
   
 
 // 대시보드 라우트
-router.get("/server/dashboard", (req, res) => {
+router.get("/server/dashboard", async (req, res) => {
     if (req.session.user) {
       res.send("Welcome to your dashboard, " + req.session.user.username);
     } else {
@@ -151,7 +151,7 @@ router.get("/server/dashboard", (req, res) => {
   });
   
   // 로그아웃 라우트
-  router.get("/server/logout", (req, res) => {
+  router.get("/server/logout", async (req, res) => {
     req.session.destroy();
     res.redirect("/server/login");
   });

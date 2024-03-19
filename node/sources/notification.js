@@ -24,7 +24,7 @@ async function sendArryToAPIserver(data, sendTo) {
 }
 
 
-function getNeedPaynote(){//결제일이 며칠인 학부모에게 보내면 되나요? 에 대한 값을 리턴
+async function getNeedPaynote(){//결제일이 며칠인 학부모에게 보내면 되나요? 에 대한 값을 리턴
     
     const today = new Date();
     new Date(today.getTime() + setPrenoteDay * 86400000);
@@ -59,7 +59,7 @@ router.post("/server/conditional_note", async (req, res) => { // 여기에 async
 //결제일 미리알림
 
 // 매일 오전 11시에 실행
-function paydayNotification(){
+async function paydayNotification(){
     const needPayNote = parseInt(getNeedPaynote());
     let nameArray = [];
     let contact_parentArray = [];
