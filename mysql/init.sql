@@ -149,7 +149,6 @@ INSERT INTO permissions (task_name, level) VALUES
 ('subject_student_add', 0),
 ('teacher_view', 0),
 ('teacher_update', 0),
-('subject_student_add', 0),
 ('conditional_note', 0);
 
 
