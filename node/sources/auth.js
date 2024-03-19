@@ -57,11 +57,11 @@ router.post('/server/login', async(req, res) => {
                   
                   res.json({ success: true, message: '로그인 성공'});
               } else {
-                  res.json({ success: false, message: '비밀번호가 일치하지 않습니다.'});
+                  res.json({ success: false, message: '없는 ID입니다.'});
               }
           });
       } else {
-          res.json({ success: false, message: '없는 ID입니다.'});
+          res.json({ success: false, message: '에러코드 503 : Park Geunhyae'});
       }
   });
 });
