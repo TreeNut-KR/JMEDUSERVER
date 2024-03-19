@@ -1,5 +1,6 @@
 import React from "react";
 import axios from "axios";
+import Cookies from 'js-cookie';
 import Button from "../../Components/ButtonTop";
 
 
@@ -22,6 +23,8 @@ export default function LoginPage() {
   
       if (response.data.success) {
           alert("로그인 성공");
+          const userData = { name: inputID, author: "admin" };
+          Cookies.set('user', JSON.stringify(userData), { expires: 7 });
           window.location.href = "/student";
       } else {
           alert("로그인 실패: " + response.data.message);
