@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import Cookies from 'js-cookie';
 import "../style/index.css";
 import Button from "../Components/ButtonTop";
 import LOGO from "../img/logo_final_2.png";
@@ -7,15 +8,15 @@ export default function Topbar() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
+    const storedUser = Cookies.get('user'); // 쿠키에서 'user' 쿠키 가져오기
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
+      setUser(JSON.parse(storedUser)); // 쿠키에서 가져온 문자열을 객체로 변환하여 상태 설정
     }
   }, []);
 
   function logout() {
-    localStorage.removeItem("user");
-    window.location.reload();
+    Cookies.remove('user'); // 'user' 쿠키 삭제
+    window.location.reload(); // 페이지 새로고침으로 로그아웃 반영
   }
 
   return (

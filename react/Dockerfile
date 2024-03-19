@@ -9,6 +9,8 @@ COPY ./sources/package.json ./sources/yarn.lock /app/
 
 RUN yarn install
 
+RUN yarn add js-cookie
+
 COPY ./sources /app
 
 RUN yarn run build

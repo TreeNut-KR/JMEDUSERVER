@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import Cookies from 'js-cookie';
 import { sideMenus } from "../../constants/sideMenus";
 import PropTypes from "prop-types";
 import { useLocation } from "react-router-dom";
@@ -9,9 +10,9 @@ export default function BasicBox({ children, ...props }) {
   const [user, setUser] = useState(null);
   const [showDelayedContent, setShowDelayedContent] = useState(false);
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
+    const storedUser = Cookies.get('user'); // 쿠키에서 'user' 쿠키 가져오기
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
+      setUser(JSON.parse(storedUser)); // 쿠키에서 가져온 문자열을 객체로 변환하여 상태 설정
     }
     setTimeout(() => {
       setShowDelayedContent(true);
