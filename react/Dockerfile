@@ -1,5 +1,8 @@
 FROM node:18-alpine
 
+ENV LANG en_US.UTF-8
+ENV LC_ALL en_US.UTF-8
+
 WORKDIR /app
 
 COPY ./sources/package.json ./sources/yarn.lock /app/

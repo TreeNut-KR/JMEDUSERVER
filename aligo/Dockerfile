@@ -1,4 +1,6 @@
 FROM python:3.12-bullseye
+ENV LANG en_US.UTF-8
+ENV LC_ALL en_US.UTF-8
 
 EXPOSE 5100
 

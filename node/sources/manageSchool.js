@@ -5,7 +5,7 @@ const { checkAuthenticated } = require('./auth');
 const { logAttend, adminLog } = require("./logger");
 
 /////////////////////학교조회
-router.post("/server/schools_view", (req, res) => {
+router.post("/server/schools_view", async (req, res) => {
   const { is_elementary, is_middle, is_high } = req.body;
 
   db.query(
@@ -21,7 +21,7 @@ router.post("/server/schools_view", (req, res) => {
 });
 
 //학교 추가
-router.post("/server/school_add", (req, res) => {
+router.post("/server/school_add", async (req, res) => {
   const { name, is_elementary, is_middle, is_high } = req.body;
 
   // 데이터 삽입 쿼리
@@ -40,7 +40,7 @@ router.post("/server/school_add", (req, res) => {
 });
 
 //학교 삭제
-router.post("/server/school_remove", (req, res) => {
+router.post("/server/school_remove", async (req, res) => {
   const { id } = req.body;
 
   // 데이터 삽입 쿼리

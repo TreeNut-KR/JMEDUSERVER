@@ -10,6 +10,17 @@ services:
     depends_on:
       - react
 
+  kiosk:
+    restart: always
+    build:
+      context: ./kiosk
+    ports:
+      - 5004:5004
+    expose:
+      - 5004
+    depends_on:
+      - react
+
   react:
     restart: always
     build:
@@ -18,6 +29,18 @@ services:
       - 5001:5001
     expose:
       - 5001
+    depends_on:
+      - aligo
+
+
+  aligo:
+    restart: always
+    build:
+      context: ./aligo
+    ports:
+      - 5003:5003
+    expose:
+      - 5003
     depends_on:
       - node
 

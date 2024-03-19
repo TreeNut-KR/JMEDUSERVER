@@ -8,7 +8,7 @@ const { checkAuthenticated } = require('./auth');
 
 
 //등하원기록
-function logAttend(qrcode, is_attend, is_late, now)
+async function logAttend(qrcode, is_attend, is_late, now)
 {
     
     
@@ -42,7 +42,7 @@ function logAttend(qrcode, is_attend, is_late, now)
 }
 
 //출퇴근기록
-function logAttend_teacher(qrcode, is_attend, now)
+async function logAttend_teacher(qrcode, is_attend, now)
 {
     
     
@@ -56,7 +56,7 @@ function logAttend_teacher(qrcode, is_attend, now)
 
 
 
-    const query = "INSERT INTO attend_log (teacher_attend_log_pk, teacher, time, is_attend) VALUES (UUID(), ?, ?, ?)";
+    const query = "INSERT INTO attend_log (teacher, time, is_attend) VALUES (?, ?, ?)";
 
           db.query(
             query,
@@ -78,7 +78,7 @@ function logAttend_teacher(qrcode, is_attend, now)
 
 
 //관리접근기록
-function adminLog(teacher_pk, log)
+async function adminLog(teacher_pk, log)
 {
   let now = new Date();
   const yyyy = now.getFullYear();
@@ -87,7 +87,7 @@ function adminLog(teacher_pk, log)
   const time = `${yyyy}-${mm}-${dd}`;
 
 
-  const query = "INSERT INTO admin_log (admin_log_pk, teacher, time, log) VALUES (UUID(), ?, ?, ?)";
+  const query = "INSERT INTO admin_log (teacher, time, log) VALUES (?, ?, ?)";
 
   db.query(
     query,
