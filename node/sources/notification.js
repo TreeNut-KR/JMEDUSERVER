@@ -32,7 +32,7 @@ async function getNeedPaynote(){//결제일이 며칠인 학부모에게 보내�
 }
 
 //조건부 공지
-router.post("/server/conditional_note", async (req, res) => { // 여기에 async 추가
+router.post("/server/conditional_note",checkAuthenticated("conditional_note"), async (req, res) => { // 여기에 async 추가
     let query = makeStudentSearchQuery(req.body);
     db.query(query, async (error, results) => { // 만약 여기서도 await를 사용한다면 async 추가
       if (error) {

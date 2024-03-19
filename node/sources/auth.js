@@ -84,12 +84,12 @@ router.post('/server/login', async(req, res) => {
       } else {
         // 데이터 삽입 쿼리
         const query =
-          "INSERT INTO teacher (teacher_pk, name, id, pwd, sex_ism, birthday, contact, is_admin) VALUES (UUID(), ?, ?, ?, ?, ?, ?, ?)";
+          "INSERT INTO teacher (teacher_pk, name, id, pwd, sex_ism, birthday, contact, admin_level) VALUES (UUID(), ?, ?, ?, ?, ?, ?, 0)";
   
         // 데이터베이스에 쿼리 실행
         db.query(
           query,
-          [name, id, hashedPassword, sex_bool, birthday, contact, is_admin],
+          [name, id, hashedPassword, sex_bool, birthday, contact],
           (err, result) => {
             if (err) {
               console.error("데이터 삽입 중 오류 발생:", err);
@@ -104,17 +104,35 @@ router.post('/server/login', async(req, res) => {
   });
   
   //권한확인
-  function checkAuthenticated(req, res, next) {
-    if (req.session && req.session.user) {
+  function checkAuthenticated(taskName) {
+    return function(req, res, next) {
+      if (req.session && req.session.user) {
         const user = req.session.user;
-
-        if(user.is_admin){
-          next();
-        }
-    } else {
-        res.status(401).json({ success: false, message: "로그인이 필요합니다." });
-    }
-}
+  
+        db.query(
+          "SELECT * from permissions WHERE task_name = ?;",
+          [taskName],
+          (error, results) => {
+            if (error) {
+              return res.status(503).json({ success: false, message: "데이터베이스 오류" });
+            } else {
+              if (results.length === 0) {
+                return res.status(404).json({ success: false, message: "권한 설정을 찾을 수 없습니다." });
+              }
+              
+              if (user.admin_level >= results[0].level) { 
+                next();
+              } else {
+                res.status(403).json({ success: false, message: "접근 권한이 없습니다." });
+              }
+            }
+          }
+        );
+      } else {
+        res.status(401).json({ success: false, message: "인증되지 않았습니다." });
+      }
+    };
+  }
 
 
 

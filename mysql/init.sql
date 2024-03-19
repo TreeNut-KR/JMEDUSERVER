@@ -48,21 +48,11 @@ CREATE TABLE teacher (
     contact VARCHAR(20),
     id VARCHAR(20),
     pwd VARCHAR(255),
-    is_admin BOOL,
+    admin_level INT, /* 0 : 가입 대기, 1 : 일반 강사, 2 : 관리 강사, 3 : 원장 */
     PRIMARY KEY(teacher_pk)
 ) ENGINE=InnoDB CHARSET=utf8mb4;
 
--- 교사 가입 승인 대기 테이블
-CREATE TABLE teacher_pending (
-    teacher_pending_pk INT AUTO_INCREMENT,
-    name VARCHAR(20),
-    sex_ism BOOL,
-    birthday DATE,
-    contact VARCHAR(20),
-    id VARCHAR(20),
-    pwd VARCHAR(255),
-    PRIMARY KEY(teacher_pending_pk)
-) ENGINE=InnoDB CHARSET=utf8mb4;
+
 
 -- 등하원 로그 테이블
 CREATE TABLE attend_log (
@@ -126,6 +116,43 @@ CREATE TABLE admin_log (
     log VARCHAR(255),
     PRIMARY KEY(admin_log_pk)
 ) ENGINE=InnoDB CHARSET=utf8mb4;
+
+
+-- 권한 테이블
+CREATE TABLE permissions (
+    task_name VARCHAR(255),
+    level INT,
+    PRIMARY KEY(task_name)
+) ENGINE=InnoDB CHARSET=utf8mb4;
+
+-- 권한 기본 세팅값
+INSERT INTO permissions (task_name, level) VALUES 
+('students_view', 0),
+('students_add', 0),
+('students_edit', 0),
+('students_search', 0),
+('students_view_detail', 0),
+('students_addPage', 0),
+('students_add_multiple', 0),
+('students_view_update', 0),
+('students_view_update_all', 0),
+('student_remove', 0),
+('plan_addPage', 0),
+('schools_view', 0),
+('school_add', 0),
+('school_remove', 0),
+('subject_addPage', 0),
+('subject_add', 0),
+('subject_remove', 0),
+('subject_update', 0),
+('subject_student_addPage', 0),
+('subject_student_add', 0),
+('teacher_view', 0),
+('teacher_update', 0),
+('subject_student_add', 0),
+('conditional_note', 0);
+
+
 
 -- 설정 테이블
 CREATE TABLE serverconf (

@@ -28,7 +28,7 @@ function makeStudentSearchQuery(text, option) {
 }
 
 /////////////////////학생조회
-router.post("/server/students_view", checkAuthenticated, async  (req, res) => {
+router.post("/server/students_view", checkAuthenticated("students_view"), async  (req, res) => {
 
   
   db.query("SELECT * FROM student", (error, results) => {
@@ -41,7 +41,7 @@ router.post("/server/students_view", checkAuthenticated, async  (req, res) => {
 });
 
 //////////////////////학생 검색
-router.post("/server/students_search", async (req, res) => {
+router.post("/server/students_search",checkAuthenticated("students_search"), async (req, res) => {
   const { search } = req.body; // 'search' 객체 추출
   console.log(search);
   const { query, params } = makeStudentSearchQuery(search.text, search.option);
@@ -57,7 +57,7 @@ router.post("/server/students_search", async (req, res) => {
 });
 
 //////////////////////학생 자세히 보기
-router.post("/server/students_view_detail", async (req, res) => {
+router.post("/server/students_view_detail", checkAuthenticated("students_view_detail"),async (req, res) => {
   const { student_pk } = req.body;
   db.query(
     "SELECT * from student WHERE student_pk = ?;",
@@ -73,7 +73,7 @@ router.post("/server/students_view_detail", async (req, res) => {
 });
 
 ///////학생추가 페이지 로드
-router.post("/server/students_addPage", async (req, res) => {
+router.post("/server/students_addPage", checkAuthenticated("students_addPage"),async (req, res) => {
   db.query("SELECT school_pk, name FROM school", (error, results_school) => {
     if (error) {
       res.status(500).json({
@@ -87,7 +87,7 @@ router.post("/server/students_addPage", async (req, res) => {
 });
 
 ///////학생추가
-router.post("/server/students_add", async (req, res) => {
+router.post("/server/students_add", checkAuthenticated("students_add"),async (req, res) => {
   const {
     name,
     sex_ism,
@@ -128,7 +128,7 @@ router.post("/server/students_add", async (req, res) => {
 });
 
 /////////////학생 추가 (여러명)
-router.post("/server/students_add_multiple", async  (req, res) => {
+router.post("/server/students_add_multiple",checkAuthenticated("students_add_multiple"), async  (req, res) => {
   const studentsData = req.body.DataStudents;
   console.log(studentsData);
   // 데이터 삽입 쿼리
@@ -162,7 +162,7 @@ router.post("/server/students_add_multiple", async  (req, res) => {
 });
 
 //////////////////////학생 정보 수정
-router.put("/server/students_view_update", async (req, res) => {
+router.put("/server/students_view_update",checkAuthenticated("students_view_update"), async (req, res) => {
   const {
     student_pk,
     name,
@@ -201,7 +201,7 @@ router.put("/server/students_view_update", async (req, res) => {
 });
 
 //////////////////////학생 정보 수정 (여러개 한번에)
-router.post("/server/students_view_update_all", async (req, res) => {
+router.post("/server/students_view_update_all",checkAuthenticated("students_view_update_all"), async (req, res) => {
   const { editObject, editTarget } = req.body;
 
   let query;
@@ -222,7 +222,7 @@ router.post("/server/students_view_update_all", async (req, res) => {
 });
 
 //학생 삭제
-router.post("/server/student_remove", async (req, res) => {
+router.post("/server/student_remove",checkAuthenticated("student_remove"), async (req, res) => {
   const { id } = req.body;
 
   // 데이터 삽입 쿼리
