@@ -1,4 +1,5 @@
 const iconclick = document.querySelector(".menu_icon");
+const axios = require('axios');
 let bar1 = document.querySelector(".bar_1_nonanima");
 let bar2 = document.querySelector(".bar_2_nonanima");
 let bar3 = document.querySelector(".bar_3_nonanima");
@@ -7,6 +8,8 @@ let spanBoxes = document.querySelectorAll(".spanBox");
 let menu_icon = document.querySelector(".menu_icon");
 
 let testbutton = document.querySelector(".QRtest");
+
+let qrTemp = "";
 
 var toggle = 0;
 let timer = null; // 타이머를 저장할 변수
@@ -39,20 +42,21 @@ function animation_on() {
   });
 
 
-  function QR_Read(qrcode){//QR 리딩되면 실행되게 해주세요. 매개변수 : QR값
-
+  function QR_Read(qrcode){//QR 리딩되면 실행. 매개변수로 리딩된 값 넣기
 
     try {
-      const response = axios.post("http://localhost/server/Kiosk_getStudent", {// QR 값 주고 학생 정보 받아오기
+      const response = axios.get("http://localhost/server/Kiosk_getStudent", {
         qrcode
       });
       console.log(response);
 
-      if (response.data.success) {//response.data.name에 학생 이름 저장, response.data.birthday에 생년월일 저장, response.data.contact_parent에 부모연락처 저장
+      if (response.data.success) {//성공 시 html에 값 변동 반영
 
-
-        //값 대입 후 애니메이션 시작 구현해주세요
-
+        qrTemp = qrcode;
+        document.getElementById('name').textContent = response.data.name;
+        document.getElementById('birthday').textContent = response.data.birthday;
+        document.getElementById('result').textContent = "등원/하원 여부를 선택하세요";
+        animation_on();//UI의 애니메이션 구동 (갈아엎을거면 지우기)
 
 
       } else {
@@ -62,23 +66,24 @@ function animation_on() {
 
       console.log(error.config);
     }
-
   }
 
 
-
-  function attend_submit(name, contact_parent, attend_code){//등, 하원 선택하면 실행되게 해주세요. attend_code는 0은 등원, 1은 하원입니다.
+// 등/하원 버튼을 눌렀을 경우 실행. is_atted는 등원의 경우 true, 하원의 경우 false
+  function attend_submit(is_attend){
     try {
       const response = axios.post("http://localhost/server/submitAttend", {
-        name: response,
-        contact_parent,
-        attend_code
-      },{headers: {'Content-Type': 'application/json; charset=utf-8'}}
-      );
-      console.log(response);
+        qrTemp,
+        is_attend
+      });
+      if (response.data.success) {
+        if(is_attend){
+          document.getElementById('result').textContent = "등원 처리되었습니다.";
+        }else{
+          document.getElementById('result').textContent = "하원 처리되었습니다.";
+        }
 
-      if (response.data.success) {//response.data.name에 학생 이름 저장, response.data.birthday에 생년월일 저장
-        //값 대입 후 애니메이션 시작 구현해주세요
+
         console.log('성공');  
         
       } else {
@@ -88,6 +93,7 @@ function animation_on() {
 
       console.log(error.config);
     }
+    qrTemp = "";
   }
 
 
@@ -99,6 +105,7 @@ function animation_on() {
     inner_box.className = "innerBox";
     spanBoxes.forEach(function (spanBox) {
       spanBox.className = "spanBox";
+      qrTemp = "";
     });
   }, 10000); // 10초 후에 애니메이션 종료
 }
