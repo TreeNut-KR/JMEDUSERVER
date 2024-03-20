@@ -7,7 +7,7 @@ const port = 5004;
 app.use(express.static('public'));
 
 // 루트 URL ('/server/')에 대한 요청을 처리합니다.
-app.get('/server/', (req, res) => {
+app.get('/kiosk/', (req, res) => {
     res.sendFile(__dirname + '/public/index.html');
 });
 
