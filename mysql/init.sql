@@ -81,11 +81,12 @@ CREATE TABLE subject (
     teacher CHAR(36),/*담당강사(외부키)*/
     school INT,/*대상학교(외부키)*/
     grade INT,/*대상학년*/
-    is_personal BOOL,/*개인과외여부*/
+    is_personal BOOL,/*1대1 과외식 수업 여부*/
     PRIMARY KEY(subject_pk),/*주키설정*/
     FOREIGN KEY (teacher) REFERENCES teacher(teacher_pk),/*외부키 설정*/
     FOREIGN KEY (school) REFERENCES school(school_pk)/*외부키 설정*/
 ) ENGINE=InnoDB CHARSET=utf8mb4;
+
 -- 시간표 테이블
 CREATE TABLE plan (
     plan_pk INT AUTO_INCREMENT,
@@ -138,6 +139,9 @@ INSERT INTO permissions (task_name, level) VALUES
 ('students_view_update_all', 0),
 ('student_remove', 0),
 ('plan_addPage', 0),
+('plan_add', 0),
+('plan_update', 0),
+('plan_remove', 0),
 ('schools_view', 0),
 ('school_add', 0),
 ('school_remove', 0),
