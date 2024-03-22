@@ -50,8 +50,8 @@ router.post("/server/students_search",checkAuthenticated("students_search"), asy
       res.status(500).json({ success: false, message: "데이터베이스 오류" });
     } else {
       res.json({ success: true, students: results, search: search });
-      console.log("-------------------------");
-      console.log(results);
+      const logMsg = "전체 학생 목록을 조회했습니다.";
+      adminLog(req.session.user, logMsg);
     }
   });
 });

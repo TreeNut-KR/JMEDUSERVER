@@ -10,7 +10,7 @@ const {logAttend, adminLog } = require('./logger');
 
 
 ///////과목추가페이지로드
-router.post("/server/subject_addPage",checkAuthenticated("subject_addPage"),async (req, res) => {
+router.post("/server/subject/add/Page",checkAuthenticated("subject_addPage"),async (req, res) => {
     db.query("SELECT school_pk, name FROM school", (error, results_school) => {
       if (error) {
         res.status(500).json({ success: false, message: "데이터베이스 오류 : 학교 불러오기 실패" });
@@ -29,7 +29,7 @@ router.post("/server/subject_addPage",checkAuthenticated("subject_addPage"),asyn
 
 
 ///////과목추가 실행
-router.post("/server/subject_add",checkAuthenticated("subject_add"), async (req, res) => {
+router.post("/server/subject/add",checkAuthenticated("subject_add"), async (req, res) => {
     const {
       name,
       teacher,
@@ -64,7 +64,7 @@ router.post("/server/subject_add",checkAuthenticated("subject_add"), async (req,
   });
 
     //과목 삭제
-router.post("/server/subject_remove",checkAuthenticated("subject_remove"), async (req, res) => {
+router.post("/server/subject/remove",checkAuthenticated("subject_remove"), async (req, res) => {
     const {
       id,
     } = req.body;
@@ -92,7 +92,7 @@ router.post("/server/subject_remove",checkAuthenticated("subject_remove"), async
   
 
 //////////////////////과목 수정
-router.put("/server/subject_update",checkAuthenticated("subject_update"), async (req, res) => {
+router.put("/server/subject/update",checkAuthenticated("subject_update"), async (req, res) => {
   const {
     subject_pk,
     name,

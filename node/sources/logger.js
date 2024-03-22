@@ -82,7 +82,7 @@ async function adminLog(teacher_pk, log)
 {
   let now = new Date();
   const yyyy = now.getFullYear();
-  const mm = String(now.getMonth() + 1).padStart(2, '0'); // getMonth()는 0부터 시작하므로 1을 더해야 합니다.
+  const mm = String(now.getMonth() + 1).padStart(2, '0'); // getMonth()는 0부터 시작하므로 1을 플러스
   const dd = String(now.getDate()).padStart(2, '0');
   const time = `${yyyy}-${mm}-${dd}`;
 
@@ -91,7 +91,7 @@ async function adminLog(teacher_pk, log)
 
   db.query(
     query,
-    [qrcode, time, is_attend, is_late],
+    [teacher_pk, time, log],
     (err, result) => {
       if (err) {
         console.error("데이터 삽입 중 오류 발생:", err);
