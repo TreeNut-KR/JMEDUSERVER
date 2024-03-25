@@ -41,7 +41,7 @@ router.post("/server/plan", checkAuthenticated("plan"),async (req, res) => {
 
 
 ///////플랜추가페이지로드
-router.post("/server/plan/add", checkAuthenticated("plan_addPage"),async (req, res) => {
+router.post("/server/plan/add/Page", checkAuthenticated("plan_addPage"),async (req, res) => {
   const query = `
     SELECT 
       s.subject_pk,
@@ -69,7 +69,7 @@ router.post("/server/plan/add", checkAuthenticated("plan_addPage"),async (req, r
 });
 
 //플랜 추가
-router.post("/server/school/add", checkAuthenticated("school_add"),async (req, res) => {
+router.post("/server/plan/add", checkAuthenticated("plan_add"),async (req, res) => {
   const { subject, week, starttine, endtime, room } = req.body;
 
   // 데이터 삽입 쿼리
