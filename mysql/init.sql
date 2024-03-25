@@ -60,7 +60,7 @@ CREATE TABLE attend_log (
     student CHAR(36),
     time DATETIME,
     is_attend BOOL, /*true는 등원, false는 하원*/
-    is_late BOOL,
+    is_late BOOL DEFAULT NULL,
     PRIMARY KEY(attend_log_pk),
     FOREIGN KEY (student) REFERENCES student(student_pk) /*외부키 설정*/
 ) ENGINE=InnoDB CHARSET=utf8mb4;
@@ -71,7 +71,8 @@ CREATE TABLE teacher_attend_log (
     teacher CHAR(36),
     time DATETIME,
     is_attend BOOL,
-    PRIMARY KEY(teacher_attend_log_pk)
+    PRIMARY KEY(teacher_attend_log_pk),
+    FOREIGN KEY (teacher) REFERENCES teacher(teacher_pk) /*외부키 설정*/
 ) ENGINE=InnoDB CHARSET=utf8mb4;
 
 -- 과목 테이블
@@ -95,9 +96,37 @@ CREATE TABLE plan (
     starttime TIME,/*시작시간(형식 : 19시 30분의 경우 1930)*/
     endtime TIME,/*종료시간(형식 : 시작시간과 동일)*/
     room VARCHAR(20),/*강의실*/
+    is_ended BOOL DEFAULT NULL,
+    delected_at DATE DEFAULT NULL,
     PRIMARY KEY(plan_pk),
     FOREIGN KEY (subject) REFERENCES subject(subject_pk)
 ) ENGINE=InnoDB CHARSET=utf8mb4;
+
+
+-- 과목 수강날 기록 테이블
+CREATE TABLE subject_executed (
+    subject_executed_pk INT AUTO_INCREMENT,
+    plan INT,
+    teacher CHAR(36),
+    started DATETIME,
+    ended DATETIME DEFAULT NULL,
+    PRIMARY KEY(subject_executed_pk),
+    FOREIGN KEY (plan) REFERENCES plan(plan_pk),
+    FOREIGN KEY (teacher) REFERENCES teacher(teacher_pk)
+) ENGINE=InnoDB CHARSET=utf8mb4;
+
+-- 과목별 수강 출석자 기록 테이블
+CREATE TABLE subject_executed_attenders (
+    subject_executed_attenders_pk INT AUTO_INCREMENT,
+    subject_executed INT,
+    student CHAR(36),
+    is_attended BOOL,
+    PRIMARY KEY(subject_executed_attenders_pk),
+    FOREIGN KEY (subject_executed) REFERENCES subject_executed(subject_executed_pk),
+    FOREIGN KEY (student) REFERENCES student(student_pk)
+) ENGINE=InnoDB CHARSET=utf8mb4;
+
+-- 시간 수강 테이블
 
 -- 학생-과목 연결 테이블
 CREATE TABLE student_subject (
@@ -115,7 +144,8 @@ CREATE TABLE admin_log (
     teacher CHAR(36),
     time DATETIME,
     log VARCHAR(255),
-    PRIMARY KEY(admin_log_pk)
+    PRIMARY KEY(admin_log_pk),
+    FOREIGN KEY (teacher) REFERENCES teacher(teacher_pk)
 ) ENGINE=InnoDB CHARSET=utf8mb4;
 
 
