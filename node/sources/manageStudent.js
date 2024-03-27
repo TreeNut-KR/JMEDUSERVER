@@ -50,7 +50,7 @@ router.post("/server/students_search",checkAuthenticated("students_search"), asy
       res.status(500).json({ success: false, message: "데이터베이스 오류" });
     } else {
       res.json({ success: true, students: results, search: search });
-      const logMsg = "작업 : 전체 학생 목록을 조회했습니다.";
+      const logMsg = "전체 학생 목록을 조회했습니다.";
       adminLog(req.session.user, logMsg);
     }
   });
@@ -67,6 +67,8 @@ router.post("/server/students_view_detail", checkAuthenticated("students_view_de
         res.status(500).json({ success: false, message: "데이터베이스 오류" });
       } else {
         res.json({ success: true, students: results });
+        const logMsg = "학생 자세히 보기를 했습니다. 학생 코드 : "+student_pk;
+        adminLog(req.session.user, logMsg);
       }
     }
   );
@@ -123,6 +125,8 @@ router.post("/server/students_add", checkAuthenticated("students_add"),async (re
         return;
       }
       res.status(200).send("사용자가 성공적으로 등록되었습니다.");
+      const logMsg = "새로운 학생을 추가했습니다. 이름 : "+name+", 전화번호 : "+contact;
+      adminLog(req.session.user, logMsg);
     }
   );
 });
