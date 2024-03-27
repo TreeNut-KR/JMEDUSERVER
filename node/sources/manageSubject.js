@@ -10,7 +10,7 @@ const {logAttend, adminLog } = require('./logger');
 
 
 ///////과목추가페이지로드
-router.post("/server/subject/add/Page",checkAuthenticated("subject_addPage"),async (req, res) => {
+router.post("/server/subject/add/Page",checkAuthenticated("subject_add"),async (req, res) => {
     db.query("SELECT school_pk, name FROM school", (error, results_school) => {
       if (error) {
         res.status(500).json({ success: false, message: "데이터베이스 오류 : 학교 불러오기 실패" });
@@ -126,8 +126,13 @@ router.put("/server/subject/update",checkAuthenticated("subject_update"), async 
 
 
 
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
   //과목에 학생 추가 페이지 로드
-router.post("/server/subject_student_addPage",checkAuthenticated("subject_student_addPage"), async (req, res) => {
+router.post("/server/subject_student_addPage",checkAuthenticated("subject_student_add"), async (req, res) => {
   db.query("SELECT student.student_pk, student.name, student.grade, school.name FROM student JOIN school ON student.school = school.school_pk;", (error, results_school) => {
     if (error) {
       res.status(500).json({ success: false, message: "데이터베이스 오류 : 학교 불러오기 실패" });
@@ -143,6 +148,9 @@ router.post("/server/subject_student_addPage",checkAuthenticated("subject_studen
     }
   });
 });
+
+
+
 
 
 

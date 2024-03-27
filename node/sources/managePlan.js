@@ -34,6 +34,7 @@ router.post("/server/plan", checkAuthenticated("plan"),async (req, res) => {
         res.status(500).json({ success: false, message: "데이터베이스 오류" });
       } else {
         res.json({ success: true, school: results });
+        adminLog(req.session.user, "시간표를 조회했습니다.");
       }
     }
   );
@@ -41,7 +42,7 @@ router.post("/server/plan", checkAuthenticated("plan"),async (req, res) => {
 
 
 ///////플랜추가페이지로드
-router.post("/server/plan/add/Page", checkAuthenticated("plan_addPage"),async (req, res) => {
+router.post("/server/plan/add/Page", checkAuthenticated("plan_add"),async (req, res) => {
   const query = `
     SELECT 
       s.subject_pk,

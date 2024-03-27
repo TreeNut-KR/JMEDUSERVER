@@ -39,6 +39,29 @@ router.post("/server/school/add", checkAuthenticated("school_add"),async (req, r
   });
 });
 
+//학교 수정
+router.post("/server/school/update", checkAuthenticated("school_update"), async (req, res) => {
+  const { name, is_elementary, is_middle, is_high, school_pk } = req.body;
+
+  const query =
+    "UPDATE plan SET name = ?, is_elementary = ?, is_middle = ?, is_high = ? WHERE school_pk = ?";
+
+  db.query(query, [name, is_elementary, is_middle, is_high, school_pk], (err, result) => {
+    if (err) {
+      console.error("데이터 수정 중 오류 발생:", err);
+      res.status(500).send("서버 오류가 발생했습니다.");
+      return;
+    }
+    if (result.affectedRows === 0) {
+      res.status(404).send("해당하는 학교가 없습니다.");
+    } else {
+      res.status(200).send("학교가 성공적으로 수정되었습니다.");
+    }
+  });
+});
+
+
+
 //학교 삭제
 router.post("/server/school/remove", checkAuthenticated("school_remove"),async (req, res) => {
   const { id } = req.body;

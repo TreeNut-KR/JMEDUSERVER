@@ -80,7 +80,7 @@ async function logAttend_teacher(qrcode, is_attend, now)
 //관리접근기록
 async function adminLog(teacher_session, log)
 {
-  const teacher_pk = teacher_session.teacher_pk;
+  const teacher_id = teacher_session.id;
   let now = new Date();
   const yyyy = now.getFullYear();
   const mm = String(now.getMonth() + 1).padStart(2, '0'); // getMonth()는 0부터 시작하므로 1을 플러스
@@ -92,7 +92,7 @@ async function adminLog(teacher_session, log)
 
   db.query(
     query,
-    [teacher_pk, time, log],
+    [teacher_id, time, log],
     (err, result) => {
       if (err) {
         console.error("데이터 삽입 중 오류 발생:", err);

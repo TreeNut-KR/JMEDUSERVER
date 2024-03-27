@@ -100,47 +100,40 @@ router.post("/server/checkAttend/Page2", checkAuthenticated("checkAttend"), asyn
 
 
 
+
+
+
+
+
 //강사가 수정한 로그를 강의 출석부에 반영
 router.post("/server/checkAttend/submit", checkAuthenticated("checkAttend"), async (req, res) => {
-  const { plan } = req.body;
-
+  const { plan, teacher, studentList } = req.body;
   try {
-    // 해당 수업을 듣는 모든 학생 불러오기
-    const [students] = await db.promise().query(`
-      SELECT ss.student_id
-      FROM student_subject ss
-      JOIN plan p ON ss.subject_id = p.subject
-      WHERE p.plan_pk = ?;
-    `, [plan]);
-
-    if (students.length === 0) {
-      res.status(404).send("해당 수업을 듣는 학생이 없습니다.");
-      return;
-    }
-
-    console.log("1차 쿼리 완료. 2차 쿼리 실행");
-
-    // 학생의 이름, 생년월일, 출석기록 가져오기
-    const studentIds = students.map(row => row.student_id);
-    const placeholders = studentIds.map(() => '?').join(',');
-    const query2 = `
-      SELECT al.*, s.name, s.birthday
-      FROM attend_log al
-      INNER JOIN (
-        SELECT student, MAX(time) AS max_time
-        FROM attend_log
-        WHERE student IN (${placeholders}) AND time >= CURDATE()
-        GROUP BY student
-      ) AS latest_records ON al.student = latest_records.student AND al.time = latest_records.max_time
-      INNER JOIN student s ON al.student = s.student_pk
-      WHERE al.time >= CURDATE();
-    `;
-
-    const [attendances] = await db.promise().query(query2, studentIds);
-
-    res.status(200).send(attendances);
-  } catch (err) {
-    console.error("데이터 처리 중 오류 발생:", err);
-    res.status(500).send("서버 오류가 발생했습니다.");
+    const subjectExecutedPk = await insertSubjectExecuted(plan, teacher);
+    await insertSubjectExecutedAttenders(subjectExecutedPk, studentList);
+  } catch (error) {
+    console.error('DB 작업 중 오류 발생:', error);
   }
 });
+
+
+// subject_executed 테이블에 강의 실시된 기록 하기
+async function insertSubjectExecuted(plan, teacher) {
+  const now = new Date().toISOString().slice(0, 19).replace('T', ' ');
+  const [rows] = await pool.query(
+    'INSERT INTO subject_executed (plan, teacher, started) VALUES (?, ?, ?)',
+    [plan, teacher, now]
+  );
+  return rows.insertId;
+}
+
+//그 실행된 강의에 대한 출석 기록
+async function insertSubjectExecutedAttenders(subjectExecutedPk, studentList) {
+  const values = studentList.map(({ student, is_attended }) => [subjectExecutedPk, student, is_attended]);
+  const query = `
+    INSERT INTO subject_executed_attenders (subject_executed, student, is_attended) 
+    VALUES ${values.map(() => '(?, ?, ?)').join(', ')}
+  `;
+  await pool.query(query, values.flat());
+}
+
