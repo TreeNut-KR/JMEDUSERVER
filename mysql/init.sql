@@ -18,6 +18,7 @@ CREATE TABLE school (
     is_elementary BOOL,
     is_middle BOOL,
     is_high BOOL,
+    deleted_at DATE DEFAULT NULL,
     PRIMARY KEY(school_pk)
 ) ENGINE=InnoDB CHARSET=utf8mb4;
 
@@ -34,6 +35,7 @@ CREATE TABLE student (
     payday INT, /*결제일*/
     firstreg DATE, /*최초등록일*/
     is_enable BOOL, /*활성화 여부*/
+    deleted_at DATE DEFAULT NULL,
     PRIMARY KEY(student_pk),
     FOREIGN KEY (school) REFERENCES school(school_pk)/*외부키 설정*/
 ) ENGINE=InnoDB CHARSET=utf8mb4;
@@ -49,6 +51,7 @@ CREATE TABLE teacher (
     id VARCHAR(20),
     pwd VARCHAR(255),
     admin_level INT, /* 0 : 가입 대기, 1 : 일반 강사, 2 : 관리 강사, 3 : 원장 */
+    deleted_at DATE DEFAULT NULL,
     PRIMARY KEY(teacher_pk)
 ) ENGINE=InnoDB CHARSET=utf8mb4;
 
@@ -83,6 +86,7 @@ CREATE TABLE subject (
     school INT,/*대상학교(외부키)*/
     grade INT,/*대상학년*/
     is_personal BOOL,/*1대1 과외식 수업 여부*/
+    deleted_at DATE DEFAULT NULL,
     PRIMARY KEY(subject_pk),/*주키설정*/
     FOREIGN KEY (teacher) REFERENCES teacher(teacher_pk),/*외부키 설정*/
     FOREIGN KEY (school) REFERENCES school(school_pk)/*외부키 설정*/
@@ -97,7 +101,7 @@ CREATE TABLE plan (
     endtime TIME,/*종료시간(형식 : 시작시간과 동일)*/
     room VARCHAR(20),/*강의실*/
     is_ended BOOL DEFAULT NULL,
-    delected_at DATE DEFAULT NULL,
+    deleted_at DATE DEFAULT NULL,
     PRIMARY KEY(plan_pk),
     FOREIGN KEY (subject) REFERENCES subject(subject_pk)
 ) ENGINE=InnoDB CHARSET=utf8mb4;

@@ -18,7 +18,7 @@ function makeStudentSearchQuery(text, option) {
   }
 
   if (whereClauses.length > 0) {
-    baseQuery += " WHERE " + whereClauses.join(" AND ");
+    baseQuery += " WHERE deleted_at IS NULL" + whereClauses.join(" AND ");
   }
 
   return {
@@ -31,11 +31,12 @@ function makeStudentSearchQuery(text, option) {
 router.post("/server/students_view", checkAuthenticated("students_view"), async  (req, res) => {
 
   
-  db.query("SELECT * FROM student", (error, results) => {
+  db.query("SELECT * FROM student WHERE deleted_at IS NULL", (error, results) => {
     if (error) {
       res.status(500).json({ success: false, message: "데이터베이스 오류" });
     } else {
       res.json({ success: true, students: results });
+      adminLog(req.session.user, "전체 학생 목록을 조회했습니다.");
     }
   });
 });
@@ -60,7 +61,7 @@ router.post("/server/students_search",checkAuthenticated("students_search"), asy
 router.post("/server/students_view_detail", checkAuthenticated("students_view_detail"),async (req, res) => {
   const { student_pk } = req.body;
   db.query(
-    "SELECT * from student WHERE student_pk = ?;",
+    "SELECT * from student WHERE student_pk = ? AND deleted_at IS NULL;",
     [student_pk],
     (error, results) => {
       if (error) {
@@ -76,7 +77,7 @@ router.post("/server/students_view_detail", checkAuthenticated("students_view_de
 
 ///////학생추가 페이지 로드
 router.post("/server/students_addPage", checkAuthenticated("students_addPage"),async (req, res) => {
-  db.query("SELECT school_pk, name FROM school", (error, results_school) => {
+  db.query("SELECT school_pk, name FROM school WHERE deleted_at IS NULL", (error, results_school) => {
     if (error) {
       res.status(500).json({
         success: false,
@@ -163,6 +164,7 @@ router.post("/server/students_add_multiple",checkAuthenticated("students_add_mul
   });
 
   res.status(200).send("사용자가 성공적으로 등록되었습니다.");
+  adminLog(req.session.user, "여러 명의 학생 정보를 추가했습니다.");
 });
 
 //////////////////////학생 정보 수정
@@ -199,6 +201,7 @@ router.put("/server/students_view_update",checkAuthenticated("students_view_upda
         res.status(500).json({ success: false, message: "데이터베이스 오류" });
       } else {
         res.json({ success: true });
+        adminLog(req.session.user, "학생 정보를 수정했습니다. 학생 코드 : "+student_pk);
       }
     }
   );
@@ -221,6 +224,7 @@ router.post("/server/students_view_update_all",checkAuthenticated("students_view
       res.status(500).json({ success: false, message: "데이터베이스 오류" });
     } else {
       res.json({ success: true });
+      adminLog(req.session.user, "여러 명의 학생 정보를 수정했습니다.");
     }
   });
 });
@@ -230,7 +234,7 @@ router.post("/server/student_remove",checkAuthenticated("student_remove"), async
   const { id } = req.body;
 
   // 데이터 삽입 쿼리
-  const query = "DELETE FROM student WHERE student_pk = ?";
+  const query = "UPDATE student SET deleted_at = CURDATE(),  WHERE student_pk = ?";
 
   // 데이터베이스에 쿼리 실행
   db.query(query, [id], (err, result) => {
