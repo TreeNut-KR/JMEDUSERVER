@@ -71,7 +71,7 @@ router.post("/server/subject/remove",checkAuthenticated("subject_remove"), async
   
     // 데이터 삽입 쿼리
     const query =
-      "DELETE FROM subject WHERE subject_pk = ?";
+      "UPDATE subject SET deleted_at = CURDATE() WHERE subject_pk = ?";
   
     // 데이터베이스에 쿼리 실행
     db.query(
@@ -86,6 +86,7 @@ router.post("/server/subject/remove",checkAuthenticated("subject_remove"), async
           return;
         }
         res.status(200).send("삭제 완료.");
+        adminLog(req.session.user, "과목을 삭제했습니다. 과목 코드 : "+id);
       }
     );
   });
@@ -119,6 +120,7 @@ router.put("/server/subject/update",checkAuthenticated("subject_update"), async 
         res.status(500).json({ success: false, message: "데이터베이스 오류" });
       } else {
         res.json({ success: true });
+        adminLog(req.session.user, "과목 정보를 수정했습니다. 과목 코드 : "+subject_pk);
       }
     }
   );
@@ -133,11 +135,11 @@ router.put("/server/subject/update",checkAuthenticated("subject_update"), async 
 
   //과목에 학생 추가 페이지 로드
 router.post("/server/subject_student_addPage",checkAuthenticated("subject_student_add"), async (req, res) => {
-  db.query("SELECT student.student_pk, student.name, student.grade, school.name FROM student JOIN school ON student.school = school.school_pk;", (error, results_school) => {
+  db.query("SELECT student.student_pk, student.name, student.grade, school.name FROM student JOIN school ON student.school = school.school_pk WHERE student.deleted_at IS NULL;", (error, results_school) => {
     if (error) {
       res.status(500).json({ success: false, message: "데이터베이스 오류 : 학교 불러오기 실패" });
     } else {
-      db.query("SELECT subject_pk, name, grade, school FROM student", (error, results_teacher) => {
+      db.query("SELECT subject_pk, name, grade, school FROM student WHERE deleted_at IS NULL", (error, results_teacher) => {
           if (error) {
             res.status(500).json({ success: false, message: "데이터베이스 오류 : 강사 불러오기 실패" });
           } else {
