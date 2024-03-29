@@ -18,9 +18,9 @@ CREATE TABLE school (
     is_elementary BOOL,
     is_middle BOOL,
     is_high BOOL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT NULL,
-    deleted_at TIMESTAMP DEFAULT NULL,
+    created_at DATE DEFAULT NULL,
+    updated_at DATE DEFAULT NULL,
+    deleted_at DATE DEFAULT NULL,
     PRIMARY KEY(school_pk)
 ) ENGINE=InnoDB CHARSET=utf8mb4;
 
@@ -37,9 +37,9 @@ CREATE TABLE student (
     payday INT, /*결제일*/
     firstreg DATE, /*최초등록일*/
     is_enable BOOL, /*활성화 여부*/
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT NULL,
-    deleted_at TIMESTAMP DEFAULT NULL,
+    created_at DATE DEFAULT NULL,
+    updated_at DATE DEFAULT NULL,
+    deleted_at DATE DEFAULT NULL,
     PRIMARY KEY(student_pk),
     FOREIGN KEY (school) REFERENCES school(school_pk)/*외부키 설정*/
 ) ENGINE=InnoDB CHARSET=utf8mb4;
@@ -55,9 +55,9 @@ CREATE TABLE teacher (
     id VARCHAR(20),
     pwd VARCHAR(255),
     admin_level INT, /* 0 : 가입 대기, 1 : 일반 강사, 2 : 관리 강사, 3 : 원장 */
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT NULL,
-    deleted_at TIMESTAMP DEFAULT NULL,
+    created_at DATE DEFAULT NULL,
+    updated_at DATE DEFAULT NULL,
+    deleted_at DATE DEFAULT NULL,
     PRIMARY KEY(teacher_pk)
 ) ENGINE=InnoDB CHARSET=utf8mb4;
 
@@ -92,9 +92,9 @@ CREATE TABLE subject (
     school INT,/*대상학교(외부키)*/
     grade INT,/*대상학년*/
     is_personal BOOL,/*1대1 과외식 수업 여부*/
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT NULL,
-    deleted_at TIMESTAMP DEFAULT NULL,
+    created_at DATE DEFAULT NULL,
+    updated_at DATE DEFAULT NULL,
+    deleted_at DATE DEFAULT NULL,
     PRIMARY KEY(subject_pk),/*주키설정*/
     FOREIGN KEY (teacher) REFERENCES teacher(teacher_pk),/*외부키 설정*/
     FOREIGN KEY (school) REFERENCES school(school_pk)/*외부키 설정*/
@@ -109,9 +109,9 @@ CREATE TABLE plan (
     endtime TIME,/*종료시간(형식 : 시작시간과 동일)*/
     room VARCHAR(20),/*강의실*/
     is_ended BOOL DEFAULT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT NULL,
-    deleted_at TIMESTAMP DEFAULT NULL,
+    created_at DATE DEFAULT NULL,
+    updated_at DATE DEFAULT NULL,
+    deleted_at DATE DEFAULT NULL,
     PRIMARY KEY(plan_pk),
     FOREIGN KEY (subject) REFERENCES subject(subject_pk)
 ) ENGINE=InnoDB CHARSET=utf8mb4;
@@ -124,9 +124,9 @@ CREATE TABLE subject_executed (
     teacher CHAR(36),
     started DATETIME,
     ended DATETIME DEFAULT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT NULL,
-    deleted_at TIMESTAMP DEFAULT NULL,
+    created_at DATE DEFAULT NULL,
+    updated_at DATE DEFAULT NULL,
+    deleted_at DATE DEFAULT NULL,
     PRIMARY KEY(subject_executed_pk),
     FOREIGN KEY (plan) REFERENCES plan(plan_pk),
     FOREIGN KEY (teacher) REFERENCES teacher(teacher_pk)
@@ -138,9 +138,9 @@ CREATE TABLE subject_executed_attenders (
     subject_executed INT,
     student CHAR(36),
     is_attended BOOL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT NULL,
-    deleted_at TIMESTAMP DEFAULT NULL,
+    created_at DATE DEFAULT NULL,
+    updated_at DATE DEFAULT NULL,
+    deleted_at DATE DEFAULT NULL,
     PRIMARY KEY(subject_executed_attenders_pk),
     FOREIGN KEY (subject_executed) REFERENCES subject_executed(subject_executed_pk),
     FOREIGN KEY (student) REFERENCES student(student_pk)
@@ -155,9 +155,9 @@ CREATE TABLE student_subject (
     student_subject_pk INT AUTO_INCREMENT,
     student_id CHAR(36),
     subject_id INT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT NULL,
-    deleted_at TIMESTAMP DEFAULT NULL,
+    created_at DATE DEFAULT NULL,
+    updated_at DATE DEFAULT NULL,
+    deleted_at DATE DEFAULT NULL,
     PRIMARY KEY(student_subject_pk),
     FOREIGN KEY (student_id) REFERENCES student(student_pk),
     FOREIGN KEY (subject_id) REFERENCES subject(subject_pk)
@@ -242,7 +242,7 @@ CREATE TRIGGER before_school_update
 BEFORE UPDATE ON school
 FOR EACH ROW
 BEGIN
-    SET NEW.updated_at = CURDATE();
+    SET NEW.updated_at = NULL;
 END;
 
 -- 학생 테이블 업데이트 트리거
@@ -250,7 +250,7 @@ CREATE TRIGGER before_student_update
 BEFORE UPDATE ON student
 FOR EACH ROW
 BEGIN
-    SET NEW.updated_at = CURDATE();
+    SET NEW.updated_at = NULL;
 END;
 
 -- 교사 테이블 업데이트 트리거
@@ -258,7 +258,7 @@ CREATE TRIGGER before_teacher_update
 BEFORE UPDATE ON teacher
 FOR EACH ROW
 BEGIN
-    SET NEW.updated_at = CURDATE();
+    SET NEW.updated_at = NULL;
 END;
 
 -- 과목 테이블 업데이트 트리거
@@ -266,7 +266,7 @@ CREATE TRIGGER before_subject_update
 BEFORE UPDATE ON subject
 FOR EACH ROW
 BEGIN
-    SET NEW.updated_at = CURDATE();
+    SET NEW.updated_at = NULL;
 END;
 
 -- 시간표 테이블 업데이트 트리거
@@ -274,7 +274,7 @@ CREATE TRIGGER before_plan_update
 BEFORE UPDATE ON plan
 FOR EACH ROW
 BEGIN
-    SET NEW.updated_at = CURDATE();
+    SET NEW.updated_at = NULL;
 END;
 
 -- 과목 수강날 기록 테이블 업데이트 트리거
@@ -282,7 +282,7 @@ CREATE TRIGGER before_subject_executed_update
 BEFORE UPDATE ON subject_executed
 FOR EACH ROW
 BEGIN
-    SET NEW.updated_at = CURDATE();
+    SET NEW.updated_at = NULL;
 END;
 
 -- 과목별 수강 출석자 기록 테이블 업데이트 트리거
@@ -290,7 +290,7 @@ CREATE TRIGGER before_subject_executed_attenders_update
 BEFORE UPDATE ON subject_executed_attenders
 FOR EACH ROW
 BEGIN
-    SET NEW.updated_at = CURDATE();
+    SET NEW.updated_at = NULL;
 END;
 
 -- 학생-과목 연결 테이블 업데이트 트리거
@@ -298,7 +298,7 @@ CREATE TRIGGER before_student_subject_update
 BEFORE UPDATE ON student_subject
 FOR EACH ROW
 BEGIN
-    SET NEW.updated_at = CURDATE();
+    SET NEW.updated_at = NULL;
 END;
 
 
