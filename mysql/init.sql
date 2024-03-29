@@ -148,15 +148,17 @@ CREATE TABLE subject_executed_attenders (
 
 -- 시간 수강 테이블
 
+
+
 -- 학생-과목 연결 테이블
 CREATE TABLE student_subject (
     student_subject_pk INT AUTO_INCREMENT,
     student_id CHAR(36),
     subject_id INT,
-    PRIMARY KEY(student_subject_pk),
     created_at DATE DEFAULT CURDATE(),
     updated_at DATE DEFAULT NULL,
     deleted_at DATE DEFAULT NULL,
+    PRIMARY KEY(student_subject_pk),
     FOREIGN KEY (student_id) REFERENCES student(student_pk),
     FOREIGN KEY (subject_id) REFERENCES subject(subject_pk)
 ) ENGINE=InnoDB CHARSET=utf8mb4;
@@ -178,6 +180,14 @@ CREATE TABLE permissions (
     level INT,
     PRIMARY KEY(task_name)
 ) ENGINE=InnoDB CHARSET=utf8mb4;
+
+-- ㄹㅇ 테이블
+CREATE TABLE permissions (
+    task_name VARCHAR(255),
+    level INT,
+    PRIMARY KEY(task_name)
+) ENGINE=InnoDB CHARSET=utf8mb4;
+
 
 -- 권한 기본 세팅값
 INSERT INTO permissions (task_name, level) VALUES 
@@ -214,11 +224,12 @@ CREATE TABLE serverconf (
     logout_time INT,/*자동 로그아웃 시간 설정(분단위)*/
     payday_prenote_toggle BOOL,
     payday_prenote INT,
+    payday_notemsg VARCHAR(255),
     PRIMARY KEY(config_pk)
 ) ENGINE=InnoDB CHARSET=utf8mb4;
 
 -- 설정 기본값 삽입(설정 데이터가 없는 경우)
-INSERT INTO serverconf (config_pk, logout_time, payday_prenote_toggle, payday_prenote) SELECT 0, 60, false, 3 FROM DUAL WHERE NOT EXISTS (SELECT * FROM serverconf);
+INSERT INTO serverconf (config_pk, logout_time, payday_prenote_toggle, payday_prenote, payday_notemsg) SELECT 0, 60, false, 3, "{student} 학생 학부모님 안녕하세요? 학생의 등록비 납부일이 {remain}일 남았습니다. " FROM DUAL WHERE NOT EXISTS (SELECT * FROM serverconf);
 
 -- 테스트용 쿼리
 

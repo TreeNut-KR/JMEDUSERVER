@@ -7,13 +7,16 @@ const schedule = require('node-schedule');
 const axios = require('axios');
 const { checkAuthenticated } = require('./auth');
 const {logAttend, adminLog } = require('./logger');
+const { send, sendMass } = require('./sendApi');
 let setPrenoteDay = 2; //결제일 며칠 전에 알림을 보낼 것인가
 
 
 
 
+
+
 async function sendArryToAPIserver(data, sendTo) {
-    const url = 'http://localhost:5100'+sendTo; // 서버의 URL
+    const url = 'http://localhost:5003'+sendTo; // 서버의 URL
 
     try {
         const response = await axios.post(url, data);
@@ -24,7 +27,7 @@ async function sendArryToAPIserver(data, sendTo) {
 }
 
 
-async function getNeedPaynote(){//결제일이 며칠인 학부모에게 보내면 되나요? 에 대한 값을 리턴
+function getNeedPaynote(){//결제일이 며칠인 학부모에게 보내면 되나요? 에 대한 값을 리턴
     
     const today = new Date();
     new Date(today.getTime() + setPrenoteDay * 86400000);
@@ -42,7 +45,7 @@ router.post("/server/conditional_note",checkAuthenticated("conditional_note"), a
             try {
                 const contact_parent = results[i].contact_parent;
                 const name = results[i].name;
-                const response = await axios.post("http://localhost:5100/input", {
+                const response = await axios.post("http://localhost:5003/input", {
                     contact_parent,
                     msg,
                 });
@@ -61,23 +64,28 @@ router.post("/server/conditional_note",checkAuthenticated("conditional_note"), a
 // 매일 오전 11시에 실행
 async function paydayNotification(){
     const needPayNote = parseInt(getNeedPaynote());
-    let nameArray = [];
-    let contact_parentArray = [];
+    let paydayMsgSample = "";
+    let msgArray = [];
+    let receivers = [];
+    db.query("SELECT payday_notemsg FROM serverconf WHERE config_pk = 0", (error, results_msg) => {
+      if (error) {
+        console.log(error);
+      } else {
+        paydayMsgSample = results_msg[0].payday_notemsg;
+        paydayMsgSample.replace("&", needPayNote.toString());
+        db.query("SELECT * FROM teacher WHERE payday = ?", [needPayNote], (err, results) => {
 
-    db.query("SELECT * FROM teacher WHERE payday = ?", [needPayNote], (err, results) => {
 
-
-        for(var i = 0; i<results.length;i++){
-            nameArray.push(results[i].name);
-            contact_parentArray.push(results[i].contact_parent);
-
-        }        
-        res.json({ success: true, message: "수신 성공" });
+            for(var i = 0; i<results.length;i++){
+                msgArray.push(paydayMsgSample.replace("%", results[i].name));
+                receivers.push(results[i].contact_parent);
+    
+            }        
+            ///성공 시 여기에 보내는 함수 호출
+        });
+      }
     });
-
-    sendArryToAPIserver(nameArray, '/paynote_name');
-    sendArryToAPIserver(contact_parentArray, '/paynote_contact');
-}
+  }
 
 
 
@@ -90,8 +98,8 @@ const job = schedule.scheduleJob('0 11 * * *', paydayNotification);
 
 
 
-
 module.exports = {
-    router: router
+    router: router,
+    sendArryToAPIserver: sendArryToAPIserver
   };
   
