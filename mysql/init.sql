@@ -181,13 +181,6 @@ CREATE TABLE permissions (
     PRIMARY KEY(task_name)
 ) ENGINE=InnoDB CHARSET=utf8mb4;
 
--- ㄹㅇ 테이블
-CREATE TABLE permissions (
-    task_name VARCHAR(255),
-    level INT,
-    PRIMARY KEY(task_name)
-) ENGINE=InnoDB CHARSET=utf8mb4;
-
 
 -- 권한 기본 세팅값
 INSERT INTO permissions (task_name, level) VALUES 
