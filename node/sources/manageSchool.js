@@ -27,7 +27,7 @@ router.post("/server/school/add", checkAuthenticated("school_add"),async (req, r
 
   // 데이터 삽입 쿼리
   const query =
-    "INSERT INTO student (name, is_elementary, is_middle, is_high) VALUES (?, ?, ?, ?)";
+    "INSERT INTO student (name, is_elementary, is_middle, is_high, created_at) VALUES (?, ?, ?, ?, NOW())";
 
   // 데이터베이스에 쿼리 실행
   db.query(query, [name, is_elementary, is_middle, is_high], (err, result) => {
@@ -46,7 +46,7 @@ router.post("/server/school/update", checkAuthenticated("school_update"), async 
   const { name, is_elementary, is_middle, is_high, school_pk } = req.body;
 
   const query =
-    "UPDATE school SET name = ?, is_elementary = ?, is_middle = ?, is_high = ? WHERE school_pk = ?";
+    "UPDATE school SET name = ?, is_elementary = ?, is_middle = ?, is_high = ?, updated_at = NOW() WHERE school_pk = ?";
 
   db.query(query, [name, is_elementary, is_middle, is_high, school_pk], (err, result) => {
     if (err) {
@@ -71,7 +71,7 @@ router.post("/server/school/remove", checkAuthenticated("school_remove"),async (
   const { id } = req.body;
 
   // 데이터 삽입 쿼리
-  const query = "UPDATE school SET deleted_at = CURDATE() WHERE school_pk = ?;";
+  const query = "UPDATE school SET deleted_at = NOW() WHERE school_pk = ?;";
 
   // 데이터베이스에 쿼리 실행
   db.query(query, [id], (err, result) => {

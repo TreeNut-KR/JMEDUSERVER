@@ -34,7 +34,7 @@ router.post("/server/teacher_view",checkAuthenticated("teacher_view"), async (re
         firstreg,
       } = req.body;
     
-      const query = `UPDATE student SET name = ?, sex_ism = ?, birthday = ?, contact = ? ,contact_parent = ?, school = ?, grade = ? ,payday = ?, firstreg = ? WHERE student_pk = ?`;
+      const query = `UPDATE student SET name = ?, sex_ism = ?, birthday = ?, contact = ? ,contact_parent = ?, school = ?, grade = ? ,payday = ?, firstreg = ?, updated_at = NOW() WHERE student_pk = ?`;
     
       db.query(
         query,
