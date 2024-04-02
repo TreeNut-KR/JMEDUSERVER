@@ -14,7 +14,7 @@ const db = mysql.createConnection({
     if (err) throw err;
 
     
-    console.log("@@@@@@Connected to the MySQL server.@@@@@@");
+    console.log("데이터베이스가 성공적으로 연결되었습니다.");
   });
   
   module.exports = db;

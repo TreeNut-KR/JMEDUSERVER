@@ -51,5 +51,5 @@ app.use(notificationRouter);
 
 // 서버 시작
 app.listen(5002, () => {
-  console.log("Server is running on port 5002");
+  console.log("서버가 5002번 포트에서 실행됩니다.");
 });
