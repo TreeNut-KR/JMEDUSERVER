@@ -104,7 +104,7 @@ router.post("/server/students_add", checkAuthenticated("students_add"),async (re
 
   // 데이터 삽입 쿼리
   const query =
-    "INSERT INTO student (student_pk, name, sex_ism, birthday, contact, contact_parent, school, payday, firstreg) VALUES (UUID(), ?, ?, ?, ?, ?, ?, ?, ?);";
+    "INSERT INTO student (student_pk, name, sex_ism, birthday, contact, contact_parent, school, payday, firstreg, created_at) VALUES (UUID(), ?, ?, ?, ?, ?, ?, ?, ?, NOW());";
 
   // 데이터베이스에 쿼리 실행
   db.query(
@@ -138,7 +138,7 @@ router.post("/server/students_add_multiple",checkAuthenticated("students_add_mul
   console.log(studentsData);
   // 데이터 삽입 쿼리
   const query =
-    "INSERT INTO student (student_pk, name, sex_ism, birthday, contact, contact_parent, school, payday, firstreg) VALUES (UUID(), ?, ?, ?, ?, ?, ?, ?, ?)";
+    "INSERT INTO student (student_pk, name, sex_ism, birthday, contact, contact_parent, school, payday, firstreg, created_at) VALUES (UUID(), ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
   console.log(studentsData);
   // 학생 데이터를 각각 데이터베이스에 삽입
   studentsData.forEach((student) => {
@@ -181,7 +181,7 @@ router.put("/server/students_view_update",checkAuthenticated("students_view_upda
     firstreg,
   } = req.body;
 
-  const query = `UPDATE student SET name = ?, sex_ism = ?, birthday = ?, contact = ? ,contact_parent = ?, school = ?,payday = ?, firstreg = ? WHERE student_pk = ?`;
+  const query = `UPDATE student SET name = ?, sex_ism = ?, birthday = ?, contact = ? ,contact_parent = ?, school = ?,payday = ?, firstreg = ?, updated_at = NOW() WHERE student_pk = ?`;
 
   db.query(
     query,
@@ -234,7 +234,7 @@ router.post("/server/student_remove",checkAuthenticated("student_remove"), async
   const { id } = req.body;
 
   // 데이터 삽입 쿼리
-  const query = "UPDATE student SET deleted_at = CURDATE(),  WHERE student_pk = ?";
+  const query = "UPDATE student SET deleted_at = NOW(),  WHERE student_pk = ?";
 
   // 데이터베이스에 쿼리 실행
   db.query(query, [id], (err, result) => {

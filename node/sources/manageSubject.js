@@ -11,7 +11,7 @@ const {logAttend, adminLog } = require('./logger');
 
 ///////과목추가페이지로드
 router.post("/server/subject/add/Page",checkAuthenticated("subject_add"),async (req, res) => {
-    db.query("SELECT school_pk, name FROM school", (error, results_school) => {
+    db.query("SELECT school_pk, name FROM school WHERE deleted_at IS NULL", (error, results_school) => {
       if (error) {
         res.status(500).json({ success: false, message: "데이터베이스 오류 : 학교 불러오기 실패" });
       } else {
@@ -40,7 +40,7 @@ router.post("/server/subject/add",checkAuthenticated("subject_add"), async (req,
   
     // 데이터 삽입 쿼리
     const query =
-      "INSERT INTO subject (name, teacher, school, grade, is_personal) VALUES (?, ?, ?, ?, ?)";
+      "INSERT INTO subject (name, teacher, school, grade, is_personal, created_at) VALUES (?, ?, ?, ?, ?, NOW())";
   
     // 데이터베이스에 쿼리 실행
     db.query(
@@ -71,7 +71,7 @@ router.post("/server/subject/remove",checkAuthenticated("subject_remove"), async
   
     // 데이터 삽입 쿼리
     const query =
-      "UPDATE subject SET deleted_at = CURDATE() WHERE subject_pk = ?";
+      "UPDATE subject SET deleted_at = NOW() WHERE subject_pk = ?";
   
     // 데이터베이스에 쿼리 실행
     db.query(
@@ -103,7 +103,7 @@ router.put("/server/subject/update",checkAuthenticated("subject_update"), async 
     is_personal,
   } = req.body;
 
-  const query = `UPDATE subject SET name = ?, teacher = ?, school = ?, grade = ? ,is_personal = ? WHERE subject_pk = ?`;
+  const query = `UPDATE subject SET name = ?, teacher = ?, school = ?, grade = ? ,is_personal = ?, updated_at = NOW() WHERE subject_pk = ?`;
 
   db.query(
     query,
@@ -164,7 +164,7 @@ router.post("/server/subject_student_add",checkAuthenticated("subject_student_ad
   } = req.body;
 
   // 데이터 삽입 쿼리
-  let query = "INSERT INTO student_subject (student_id, subject_id) VALUES ";
+  let query = "INSERT INTO student_subject (student_id, subject_id, created_at) VALUES ";
 
 
   let params = [
@@ -175,7 +175,7 @@ router.post("/server/subject_student_add",checkAuthenticated("subject_student_ad
     {
       params.push([student_pk[i], subject_pk]);
     }
-  let placeholders = params.map(() => "(?, ?)").join(", ");
+  let placeholders = params.map(() => "(?, ?, NOW())").join(", ");
 
 
   // 데이터베이스에 쿼리 실행

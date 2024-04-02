@@ -26,7 +26,9 @@ router.post("/server/plan", checkAuthenticated("plan"),async (req, res) => {
   INNER JOIN 
     teacher t ON sub.teacher = t.teacher_pk
   INNER JOIN 
-    school sc ON sub.school = sc.school_pk;
+    school sc ON sub.school = sc.school_pk
+  WHERE 
+    p.deleted_at IS NULL;
   `;
 
   db.query(query, (error, results) => {
@@ -57,6 +59,8 @@ router.post("/server/plan/add/Page", checkAuthenticated("plan_add"),async (req, 
       teacher t ON s.teacher = t.teacher_pk
     INNER JOIN 
       school sc ON s.school = sc.school_pk;
+    WHERE
+      s.deleted_at IS NULL;
   `;
 
   db.query(query, (error, results) => {
@@ -75,7 +79,7 @@ router.post("/server/plan/add", checkAuthenticated("plan_add"),async (req, res) 
 
   // 데이터 삽입 쿼리
   const query =
-    "INSERT INTO plan (subject, week, starttime, endtime, room) VALUES (?, ?, ?, ?, ?)";
+    "INSERT INTO plan (subject, week, starttime, endtime, room, created_at) VALUES (?, ?, ?, ?, ?, NOW())";
 
   // 데이터베이스에 쿼리 실행
   db.query(query, [subject, week, starttine, endtime, room], (err, result) => {
@@ -93,7 +97,7 @@ router.post("/server/plan/update", checkAuthenticated("plan_update"), async (req
   const { plan_pk, subject, week, starttime, endtime, room } = req.body;
 
   const query =
-    "UPDATE plan SET subject = ?, week = ?, starttime = ?, endtime = ?, room = ? WHERE plan_pk = ?";
+    "UPDATE plan SET subject = ?, week = ?, starttime = ?, endtime = ?, room = ?, updated_at = NOW() WHERE plan_pk = ?";
 
   db.query(query, [subject, week, starttime, endtime, room, plan_pk], (err, result) => {
     if (err) {
@@ -113,7 +117,7 @@ router.post("/server/plan/update", checkAuthenticated("plan_update"), async (req
 router.post("/server/plan/remove", checkAuthenticated("plan_remove"), async (req, res) => {
   // 요청 바디로부터 id 추출
   const { plan_pk } = req.body;
-  const query = "DELETE FROM plan WHERE plan_pk = ?";
+  const query = "UPDATE plan SET deleted_at = NOW() WHERE plan_pk = ?";
   db.query(query, [plan_pk], (err, result) => {
     if (err) {
       console.error("데이터 삭제 중 오류 발생:", err);
