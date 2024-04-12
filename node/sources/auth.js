@@ -11,12 +11,17 @@ const {logAttend, adminLog } = require('./logger');
 
 router.use(cookieParser());
 
+let logoutTime = 60;
 router.use(session({
   secret: process.env.SESSION_SECRET,  // 세션을 암호화하기 위한 키
   resave: false,  // 세션을 항상 저장할지 여부를 정하는 값 (보통 false로 설정)
   saveUninitialized: true,  // 초기화되지 않은 세션을 스토어에 저장
   rolling: true,
-  cookie: { secure: false }  // HTTPS를 사용하지 않는 경우 false로 설정
+  cookie: { 
+    secure: false,
+    HttpOnly: false,
+    maxAge: 1000 * 60 * logoutTime },
+    name: 'jmedusession'
 }));
 
 // body-parser 미들웨어를 사용하여 application/json 요청을 파싱
@@ -26,7 +31,7 @@ router.use(bodyParser.json({ limit: '10mb', extended: true }));
 router.use(bodyParser.urlencoded({ limit: '10mb', extended: true, parameterLimit: 50000 }));
 
 
-let logoutTime = 60;
+
 
 //로그인 라우트
 router.post('/server/login', async(req, res) => {
@@ -45,16 +50,7 @@ router.post('/server/login', async(req, res) => {
               }
               if (isMatch) {
                 
-                  req.session.user = results[0];
-                      // 쿠키 설정
-                  res.cookie('userSession', username, {
-                    httpOnly: true,
-                    secure: false,  // HTTPS를 사용할 때만 활성화
-                    maxAge: logoutTime * 6000  // 쿠키 유효기간 설정
-                  });
-
-
-                  
+                  req.session.user = {username: results[0].id, admin_level: results[0].admin_level};              
                   res.json({ success: true, message: '로그인 성공'});
               } else {
                   res.json({ success: false, message: '없는 ID입니다.'});
@@ -106,30 +102,40 @@ router.post('/server/login', async(req, res) => {
   //권한확인
   function checkAuthenticated(taskName) {
     return function(req, res, next) {
-      if (req.session && req.session.user) {
+      console.log("check함수 실행됨");
+      if (req.session.user) {
         const user = req.session.user;
+        
   
         db.query(
           "SELECT * from permissions WHERE task_name = ?;",
           [taskName],
           (error, results) => {
             if (error) {
+              console.log("---------- 권한 확인 쿼리에서 오류 발생 ---------");
+              console.log(error);
+              console.log("------------------------------------------");
               return res.status(503).json({ success: false, message: "데이터베이스 오류" });
             } else {
               if (results.length === 0) {
+                console.log("권한 설정에 오류가 있음");
                 return res.status(404).json({ success: false, message: "권한 설정을 찾을 수 없습니다." });
+
               }
               
               if (user.admin_level >= results[0].level) { 
                 next();
               } else {
-                res.status(403).json({ success: false, message: "접근 권한이 없습니다." });
+                console.log("접근 권한이 없음");
+                return res.status(403).json({ success: false, message: "접근 권한이 없습니다." });
               }
             }
           }
         );
+        
       } else {
-        res.status(401).json({ success: false, message: "인증되지 않았습니다." });
+        console.log("로그아웃 상태임");
+        return res.status(401).json({ success: false, message: "로그아웃 상태입니다." });
       }
     };
   }

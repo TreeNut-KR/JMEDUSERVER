@@ -29,10 +29,15 @@ function makeStudentSearchQuery(text, option) {
 
 /////////////////////학생조회
 router.post("/server/students_view", checkAuthenticated("students_view"), async  (req, res) => {
+  console.log("학생 조회가 실행되었음");
 
   
   db.query("SELECT * FROM student WHERE deleted_at IS NULL", (error, results) => {
     if (error) {
+      console.log("학생 조회에서 오류 발생");
+      console.log("-------------------에러 코드 -------------------");
+      console.log(error);
+      console.log("----------------------------------------------");
       res.status(500).json({ success: false, message: "데이터베이스 오류" });
     } else {
       res.json({ success: true, students: results });
