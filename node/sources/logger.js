@@ -29,11 +29,9 @@ async function logAttend(qrcode, is_attend, is_late, now)
             [qrcode, time, is_attend, is_late],
             (err, result) => {
               if (err) {
-                console.error("데이터 삽입 중 오류 발생:", err);
-                res.status(500).send("서버 오류가 발생했습니다.");
+                console.error("출결 로그 중 오류 발생:", err);
                 return;
               }
-              res.status(200).send("로그 완료");
             }
           );
 
@@ -64,10 +62,8 @@ async function logAttend_teacher(qrcode, is_attend, now)
             (err, result) => {
               if (err) {
                 console.error("데이터 삽입 중 오류 발생:", err);
-                res.status(500).send("서버 오류가 발생했습니다.");
                 return;
               }
-              res.status(200).send("로그 완료");
             }
           );
 
@@ -96,10 +92,8 @@ async function adminLog(teacher_session, log)
     (err, result) => {
       if (err) {
         console.error("데이터 삽입 중 오류 발생:", err);
-        res.status(500).send("서버 오류가 발생했습니다.");
         return;
       }
-      res.status(200).send("로그 완료");
     }
   );
 
