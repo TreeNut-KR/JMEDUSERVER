@@ -21,10 +21,7 @@ export default function StudentEdit() {
   useEffect(() => {
     const loging = async () => {
       try {
-        const response = await axios.post(
-          "http://localhost/server/students_view_detail",
-          { student_pk: studentID }
-        );
+        const response = await axios.post("http://localhost/server/students_view_detail", { student_pk: studentID });
         setData(response.data.students);
       } catch (error) {
         // window.location.reload();
@@ -125,39 +122,13 @@ export default function StudentEdit() {
       <BasicBox>
         <div className="pt-3">
           <InputBox data={name} name={"이름"} edit={setName} />
-          <InputBox
-            data={sex_ism}
-            name={"성별"}
-            edit={setSexIsm}
-            type={"radio"}
-            options={["남", "여"]}
-          />
-          <InputBox
-            data={birthday}
-            name={"생일 (8자)"}
-            edit={setBirthday}
-            type={"date"}
-          />
-          <InputBox
-            data={contact}
-            name={"전화번호"}
-            edit={setContact}
-            type={"phone"}
-          />
-          <InputBox
-            data={contact_parent}
-            name={"전화번호 (가족)"}
-            edit={setContact_parent}
-            type={"phone"}
-          />
+          <InputBox data={sex_ism} name={"성별"} edit={setSexIsm} type={"radio"} options={["남", "여"]} />
+          <InputBox data={birthday} name={"생일 (8자)"} edit={setBirthday} type={"date"} />
+          <InputBox data={contact} name={"전화번호"} edit={setContact} type={"phone"} />
+          <InputBox data={contact_parent} name={"전화번호 (가족)"} edit={setContact_parent} type={"phone"} />
           <InputBox data={school} name={"학교"} edit={setSchool} />
           <InputBox data={payday} name={"상납일"} edit={setPayday} />
-          <InputBox
-            data={firstreg}
-            name={"firstreg"}
-            edit={setFirstreg}
-            type={"date"}
-          />
+          <InputBox data={firstreg} name={"firstreg"} edit={setFirstreg} type={"date"} />
         </div>
         <div className="m-5 flex justify-end pr-10">
           <Button label={"수정하기"} onClick={handleSubmit} width={90} />

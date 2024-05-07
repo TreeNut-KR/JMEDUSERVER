@@ -4,7 +4,7 @@ import SearchBox from "../../Components/searchBox/SearchBox";
 import { useState } from "react";
 import BasicBox from "../../Components/manage-box/BasicBox";
 import axios from "axios";
-import { EDIT_STUDENT } from "../../constants/searchFilter";
+import { EDIT_TEACHER } from "../../constants/searchFilter";
 import { Toast, notify } from "../../template/Toastify";
 
 export default function MainPageTeacher() {
@@ -22,11 +22,8 @@ export default function MainPageTeacher() {
   //데이터 가져오기
   async function loging() {
     try {
-      const response = await axios.post(
-        "http://localhost/server/students_view",
-        {}
-      );
-      setData(response.data.students);
+      const response = await axios.post("http://localhost/server/teacher_view", {});
+      setData(response.data.teachers);
     } catch (error) {
       console.error(error);
     }
@@ -35,10 +32,10 @@ export default function MainPageTeacher() {
   //데이터 수정 (한번에)
   async function dataSubmit_all(editText, studentArray) {
     try {
-      const response = await axios.post(
-        "http://localhost/server/students_view_update_all",
-        { editObject: editText, editTarget: arrayToSqlInString(studentArray) }
-      );
+      const response = await axios.post("http://localhost/server/teachers_view_update_all", {
+        editObject: editText,
+        editTarget: arrayToSqlInString(studentArray),
+      });
       if (response.data.success) {
         notify({
           type: "success",
@@ -64,13 +61,13 @@ export default function MainPageTeacher() {
   return (
     <>
       <BasicBox>
-        <SearchBox setData={setData} option={"student"}></SearchBox>
+        <SearchBox setData={setData} option={"teacher"}></SearchBox>
         <DataTableV1
           title={"교직원관리 테이블"}
           columns={columns}
           datas={data}
           type="teacher"
-          editType={EDIT_STUDENT}
+          editType={EDIT_TEACHER}
           runSQL={dataSubmit_all}
         />
       </BasicBox>
