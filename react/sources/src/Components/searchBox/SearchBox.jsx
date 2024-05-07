@@ -1,7 +1,7 @@
 import React from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import PropTypes from "prop-types";
-import { SEARCH_STUDENT } from "../../constants/searchFilter";
+import { SEARCH_STUDENT, SEARCH_TEACHER } from "../../constants/searchFilter";
 import { useState } from "react";
 import Button from "../ButtonTop";
 import DatePickerV1 from "../datePicker/DatePicker";
@@ -37,18 +37,22 @@ export default function SearchBox(props) {
 
   const filterOption = (option) => {
     if (option === "student") return SEARCH_STUDENT;
+    else if (option === "teacher") return SEARCH_TEACHER;
+    else return false;
+  };
+
+  const endPoint = (option) => {
+    if (option === "student") return "students_search";
+    else if (option === "teacher") return "teachers_search";
     else return false;
   };
 
   async function searchData() {
     try {
-      const response = await axios.post(
-        "http://localhost/server/students_search",
-        {
-          search: search,
-        }
-      );
-      setData(response.data.students);
+      const response = await axios.post(`http://localhost/server/${endPoint(option)}`, {
+        search: search,
+      });
+      setData(response.data.datas);
     } catch (error) {
       console.error(error);
     }
@@ -57,10 +61,7 @@ export default function SearchBox(props) {
   return (
     <div className="w-full p-10 fontA">
       <div className="w-full h-40 border border-[#B3A492] shadow-md rounded-md p-5">
-        <form
-          className="flex gap-4 w-full flex-col"
-          onSubmit={(e) => handleSubmit(e)}
-        >
+        <form className="flex gap-4 w-full flex-col" onSubmit={(e) => handleSubmit(e)}>
           <div className="w-full flex">
             <select
               className="w-24 mr-5 rounded-md border border-[#B3A492]"
@@ -68,11 +69,7 @@ export default function SearchBox(props) {
               id=""
             >
               {Object.values(filterOption(option)).map((filter) => (
-                <option
-                  key={filter.value}
-                  value={filter.value}
-                  className="fontA"
-                >
+                <option key={filter.value} value={filter.value} className="fontA">
                   {filter.name}
                 </option>
               ))}
@@ -89,21 +86,13 @@ export default function SearchBox(props) {
               {useDatePicker ? (
                 <>
                   <span className="fontA text-lg">날짜 : </span>
-                  <DatePickerV1
-                    selected={startDate}
-                    onChange={(e) => setStartDate(e)}
-                  />
+                  <DatePickerV1 selected={startDate} onChange={(e) => setStartDate(e)} />
                   <span className="px-10">~</span>
-                  <DatePickerV1
-                    selected={endDate}
-                    onChange={(e) => setEndDate(e)}
-                  />
+                  <DatePickerV1 selected={endDate} onChange={(e) => setEndDate(e)} />
                 </>
               ) : null}
             </div>
-            <button className="text-xs w-16 h-10 px-2 rounded-md border bg-[#5272F2] text-white">
-              검색
-            </button>
+            <button className="text-xs w-16 h-10 px-2 rounded-md border bg-[#5272F2] text-white">검색</button>
             <Button onClick={resetField} label={"초기화"}>
               초기화
             </Button>
