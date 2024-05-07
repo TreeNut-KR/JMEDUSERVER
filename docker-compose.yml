@@ -38,9 +38,9 @@ services:
     build:
       context: ./aligo
     ports:
-      - 5003:5003
+      - 5100:5100
     expose:
-      - 5003
+      - 5100
     depends_on:
       - node
 

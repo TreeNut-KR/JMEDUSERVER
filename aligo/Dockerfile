@@ -5,13 +5,9 @@ ENV LC_ALL en_US.UTF-8
 EXPOSE 5100
 
 COPY ./sources /src
+COPY .env /src/.env
 
-RUN pip install requests
-RUN pip install configparser
-RUN pip install flask
-RUN pip install flask_sqlalchemy
-RUN pip install flask_socketio
-RUN pip install flask-mysql
+RUN pip install --no-cache-dir fastapi uvicorn mysql-connector-python python-dotenv requests
 
 ENTRYPOINT ["python", "/src/server.py"]
 # 이미지 생성 명령어
