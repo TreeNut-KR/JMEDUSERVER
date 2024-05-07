@@ -8,10 +8,11 @@ import RegisterPage from "../pages/register/register";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import StudentEdit from "../pages/student/student-edit/studentEdit";
 import MainPageTeacher from "../pages/teacher/teacher_Check";
-import ScheduleStudnet from "../pages/student/schedule_student";
+
 import AttandanceStudnet from "../pages/student/attendance_student";
 import AttandanceTeacher from "../pages/teacher/attendeace_teacher";
 import StudentAdd from "../pages/student/student-add/studentAdd";
+import SubjectSchedule from "../pages/subject/subject_schedule";
 
 export default function Consist() {
   return (
@@ -28,7 +29,6 @@ export default function Consist() {
               {/* --- 학생 ---  */}
               {/* 학생관리 페이지 */}
               <Route path="/student" element={<MainPage />} />
-              <Route path="/schedule_student" element={<ScheduleStudnet />} />
               <Route
                 path="/attendance-student"
                 element={<AttandanceStudnet />}
@@ -42,6 +42,7 @@ export default function Consist() {
               <Route path="/student-add" element={<StudentAdd />} />
               {/* --- 교직원 ---  */}
               {/* 교직원 관리 페이지 */}
+              <Route path="/schedule" element={<SubjectSchedule />} />
               <Route path="/teacher" element={<MainPageTeacher />} />
               <Route
                 path="/attendance-teacher"

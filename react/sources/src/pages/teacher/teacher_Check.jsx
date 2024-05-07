@@ -1,70 +1,80 @@
-import React from "react";
+import React, { useEffect } from "react";
 import DataTableV1 from "../../Components/dataTableV1/DataTableV1";
 import SearchBox from "../../Components/searchBox/SearchBox";
 import { useState } from "react";
 import BasicBox from "../../Components/manage-box/BasicBox";
+import axios from "axios";
+import { EDIT_STUDENT } from "../../constants/searchFilter";
+import { Toast, notify } from "../../template/Toastify";
 
 export default function MainPageTeacher() {
-  const [search, setSearch] = useState({
-    text: "",
-    option: "student",
-    startDate: "",
-    endDate: "",
-  });
-  console.log(search);
+  const [data, setData] = useState();
 
+  //배열 정수형으로 변환
+  function arrayToSqlInString(arr) {
+    return arr.map((item) => `'${item}'`).join(", ");
+  }
+
+  useEffect(() => {
+    loging();
+  }, []);
+
+  //데이터 가져오기
+  async function loging() {
+    try {
+      const response = await axios.post(
+        "http://localhost/server/students_view",
+        {}
+      );
+      setData(response.data.students);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  //데이터 수정 (한번에)
+  async function dataSubmit_all(editText, studentArray) {
+    try {
+      const response = await axios.post(
+        "http://localhost/server/students_view_update_all",
+        { editObject: editText, editTarget: arrayToSqlInString(studentArray) }
+      );
+      if (response.data.success) {
+        notify({
+          type: "success",
+          text: "수정이 완료됐습니다. 확인을 위해서는 새로고침을 해주세요",
+        });
+      } else {
+        notify({
+          type: "error",
+          text: "수정 중 오류발생.",
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  //데이터 테이블에 보일 컬럼
   const columns = [
-    { columnName: "no", data: "no" },
     { columnName: "이름", data: "name" },
-    { columnName: "모시깽", data: "hi" },
-    { columnName: "저시깽", data: "name" },
-    { columnName: "응애", data: "name" },
-  ];
-
-  const data = [
-    { name: "hello", hi: "hi" },
-    { name: "hellasdfasfsdfo" },
-    { name: "hello" },
-    { name: "hello" },
-    { name: "hello" },
-    { name: "hello", hi: "hi" },
-    { name: "hellasdfasfsdfo" },
-    { name: "hello" },
-    { name: "hello" },
-    { name: "hello" },
-    { name: "hello", hi: "hi" },
-    { name: "hellasdfasfsdfo" },
-    { name: "hello" },
-    { name: "hello" },
-    { name: "hello" },
-    { name: "hello", hi: "hi" },
-    { name: "hellasdfasfsdfo" },
-    { name: "hello" },
-    { name: "hello" },
-    { name: "hello" },
-    { name: "hello", hi: "hi" },
-    { name: "hellasdfasfsdfo" },
-    { name: "hello" },
-    { name: "hello" },
-    { name: "hello" },
-    { name: "hello", hi: "hi" },
-    { name: "hellasdfasfsdfo" },
-    { name: "hello" },
-    { name: "hello" },
-    { name: "hello" },
+    { columnName: "성별", data: "sex_ism" },
   ];
 
   return (
     <>
       <BasicBox>
-        <SearchBox onSubmit={setSearch} option={"student"}></SearchBox>
+        <SearchBox setData={setData} option={"student"}></SearchBox>
         <DataTableV1
-          title={"학생관리 테이블"}
+          title={"교직원관리 테이블"}
           columns={columns}
           datas={data}
-          type="student"
+          type="teacher"
+          editType={EDIT_STUDENT}
+          runSQL={dataSubmit_all}
         />
       </BasicBox>
+      <Toast />
     </>
   );
 }

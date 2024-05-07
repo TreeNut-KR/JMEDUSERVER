@@ -7,20 +7,8 @@ import axios from "axios";
 import { EDIT_STUDENT } from "../../constants/searchFilter";
 import { Toast, notify } from "../../template/Toastify";
 
-export default function ScheduleStudent() {
+export default function SubjectSchedule() {
   const [data, setData] = useState();
-
-  const [studnetArray, setStudentArray] = useState([]);
-  const [editText, setEditText] = useState({
-    text: "",
-    option: "",
-    submit: false,
-  });
-
-  if (editText.text && studnetArray.length > 1 && editText.submit) {
-    dataSubmit_all();
-    setEditText({ text: "", option: "", submit: false }); // 실행 후 초기화
-  }
 
   //배열 정수형으로 변환
   function arrayToSqlInString(arr) {
@@ -35,7 +23,7 @@ export default function ScheduleStudent() {
   async function loging() {
     try {
       const response = await axios.post(
-        "http://localhost/server/students_view",
+        "http://localhost/server/subject_view",
         {}
       );
       setData(response.data.students);
@@ -45,11 +33,11 @@ export default function ScheduleStudent() {
   }
 
   //데이터 수정 (한번에)
-  async function dataSubmit_all() {
+  async function dataSubmit_all(editText, studentArray) {
     try {
-      const response = await axios.put(
+      const response = await axios.post(
         "http://localhost/server/students_view_update_all",
-        { editObject: editText, editTarget: arrayToSqlInString(studnetArray) }
+        { editObject: editText, editTarget: arrayToSqlInString(studentArray) }
       );
       if (response.data.success) {
         notify({
@@ -73,19 +61,19 @@ export default function ScheduleStudent() {
     { columnName: "전화번호", data: "contact" },
     { columnName: "부모님 전화번호", data: "contact_parent" },
   ];
+  console.log(data);
 
   return (
     <>
       <BasicBox>
         <SearchBox setData={setData} option={"student"}></SearchBox>
         <DataTableV1
-          title={"수업 일정 테이블"}
+          title={"수업관리 테이블"}
           columns={columns}
           datas={data}
           type="student"
-          setStudentArray={setStudentArray}
           editType={EDIT_STUDENT}
-          setEditText={setEditText}
+          runSQL={dataSubmit_all}
         />
       </BasicBox>
       <Toast />
