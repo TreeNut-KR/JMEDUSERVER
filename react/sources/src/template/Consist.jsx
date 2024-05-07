@@ -13,6 +13,7 @@ import AttandanceStudnet from "../pages/student/attendance_student";
 import AttandanceTeacher from "../pages/teacher/attendeace_teacher";
 import StudentAdd from "../pages/student/student-add/studentAdd";
 import SubjectSchedule from "../pages/subject/subject_schedule";
+import TeacherEdit from "../pages/teacher/teacher-edit/teacherEdit";
 
 export default function Consist() {
   return (
@@ -29,25 +30,18 @@ export default function Consist() {
               {/* --- 학생 ---  */}
               {/* 학생관리 페이지 */}
               <Route path="/student" element={<MainPage />} />
-              <Route
-                path="/attendance-student"
-                element={<AttandanceStudnet />}
-              />
+              <Route path="/attendance-student" element={<AttandanceStudnet />} />
               {/* 학생정보 수정 페이지 */}
-              <Route
-                path="/student-edit/:studentID"
-                element={<StudentEdit />}
-              />
+              <Route path="/student-edit/:studentID" element={<StudentEdit />} />
               {/* 학생 추가 페이지 */}
               <Route path="/student-add" element={<StudentAdd />} />
               {/* --- 교직원 ---  */}
               {/* 교직원 관리 페이지 */}
               <Route path="/schedule" element={<SubjectSchedule />} />
               <Route path="/teacher" element={<MainPageTeacher />} />
-              <Route
-                path="/attendance-teacher"
-                element={<AttandanceTeacher />}
-              />
+              <Route path="/attendance-teacher" element={<AttandanceTeacher />} />
+              {/* 교직원 정보 수정 페이지 */}
+              <Route path="/teacher-edit/:teacherID" element={<TeacherEdit />} />
             </Routes>
           </div>
         </div>
