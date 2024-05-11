@@ -17,6 +17,25 @@ router.post("/server/teacher_view", checkAuthenticated("teacher_view"), async (r
   });
 });
 
+//////////////////////교사 검색
+router.post("/server/teachers_search", checkAuthenticated("teachers_search"), async (req, res) => {
+  const { search } = req.body;
+  console.log(search);
+  db.query(
+    `SELECT * FROM teacher WHERE ${search.option} = ? AND deleted_at IS NULL;`,
+    [search.text],
+    (error, results) => {
+      if (error) {
+        res.status(500).json({ success: false, message: "데이터베이스 오류" });
+      } else {
+        res.json({ success: true, datas: results, search: search });
+        const logMsg = "교사 목록을 검색했습니다.";
+        adminLog(req.session.user, logMsg);
+      }
+    }
+  );
+});
+
 //////////////////////강사 정보 수정
 router.put("/server/teacher_update", checkAuthenticated("teacher_update"), async (req, res) => {
   const { teacher_pk, name, sex_ism, birthday, contact, contact_parent, school, grade, payday, firstreg } = req.body;
