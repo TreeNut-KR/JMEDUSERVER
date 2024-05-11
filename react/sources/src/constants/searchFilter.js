@@ -24,6 +24,22 @@ export const SEARCH_TEACHER = {
     value: "contact",
   },
 };
+
+//강사 검색 필터
+export const SEARCH_SUBJECT = {
+  teacher_name: {
+    name: "담당교수",
+    value: "teacher_name",
+  },
+  grade: {
+    name: "학년",
+    value: "grade",
+  },
+  name: {
+    name: "수업 명",
+    value: "name",
+  },
+};
 //학생 컬럼
 export const EDIT_STUDENT = {
   name: {
@@ -72,6 +88,7 @@ export const EDIT_STUDENT = {
     value: "remove",
   },
 };
+
 //강사 컬럼
 export const EDIT_TEACHER = {
   name: {
@@ -94,6 +111,15 @@ export const EDIT_TEACHER = {
     type: "phone",
     value: "contact",
   },
+  remove: {
+    name: "삭제하기",
+    type: "text",
+    value: "remove",
+  },
+};
+
+//강사 컬럼
+export const EDIT_SUBJECT = {
   remove: {
     name: "삭제하기",
     type: "text",
