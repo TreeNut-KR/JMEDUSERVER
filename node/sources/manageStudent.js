@@ -47,18 +47,21 @@ router.post("/server/students_view", checkAuthenticated("students_view"), async 
 
 //////////////////////학생 검색
 router.post("/server/students_search", checkAuthenticated("students_search"), async (req, res) => {
-  const { search } = req.body; // 'search' 객체 추출
+  const { search } = req.body;
   console.log(search);
-  const { query, params } = makeStudentSearchQuery(search.text, search.option);
-  db.query(query, params, (error, results) => {
-    if (error) {
-      res.status(500).json({ success: false, message: "데이터베이스 오류" });
-    } else {
-      res.json({ success: true, datas: results, search: search });
-      const logMsg = "학생 목록을 검색했습니다.";
-      adminLog(req.session.user, logMsg);
+  db.query(
+    `SELECT * FROM student WHERE ${search.option} = ? AND deleted_at IS NULL;`,
+    [search.text],
+    (error, results) => {
+      if (error) {
+        res.status(500).json({ success: false, message: "데이터베이스 오류" });
+      } else {
+        res.json({ success: true, datas: results, search: search });
+        const logMsg = "학생 목록을 검색했습니다.";
+        adminLog(req.session.user, logMsg);
+      }
     }
-  });
+  );
 });
 
 //////////////////////학생 자세히 보기
