@@ -1,7 +1,7 @@
 import React from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import PropTypes from "prop-types";
-import { SEARCH_STUDENT, SEARCH_TEACHER } from "../../constants/searchFilter";
+import { SEARCH_STUDENT, SEARCH_TEACHER, SEARCH_SUBJECT } from "../../constants/searchFilter";
 import { useState } from "react";
 import Button from "../ButtonTop";
 import DatePickerV1 from "../datePicker/DatePicker";
@@ -38,12 +38,14 @@ export default function SearchBox(props) {
   const filterOption = (option) => {
     if (option === "student") return SEARCH_STUDENT;
     else if (option === "teacher") return SEARCH_TEACHER;
+    else if (option === "subject") return SEARCH_SUBJECT;
     else return false;
   };
 
   const endPoint = (option) => {
     if (option === "student") return "students_search";
     else if (option === "teacher") return "teachers_search";
+    else if (option === "subject") return "subjects_search";
     else return false;
   };
 
