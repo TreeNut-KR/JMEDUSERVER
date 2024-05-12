@@ -4,23 +4,11 @@ import SearchBox from "../../Components/searchBox/SearchBox";
 import { useState } from "react";
 import BasicBox from "../../Components/manage-box/BasicBox";
 import axios from "axios";
-import { EDIT_STUDENT } from "../../constants/searchFilter";
+import { EDIT_SUBJECT } from "../../constants/searchFilter";
 import { Toast, notify } from "../../template/Toastify";
 
-export default function ScheduleStudent() {
+export default function ClassManageTeacher() {
   const [data, setData] = useState();
-
-  const [studnetArray, setStudentArray] = useState([]);
-  const [editText, setEditText] = useState({
-    text: "",
-    option: "",
-    submit: false,
-  });
-
-  if (editText.text && studnetArray.length > 1 && editText.submit) {
-    dataSubmit_all();
-    setEditText({ text: "", option: "", submit: false }); // 실행 후 초기화
-  }
 
   //배열 정수형으로 변환
   function arrayToSqlInString(arr) {
@@ -34,23 +22,20 @@ export default function ScheduleStudent() {
   //데이터 가져오기
   async function loging() {
     try {
-      const response = await axios.post(
-        "http://localhost/server/students_view",
-        {}
-      );
-      setData(response.data.students);
+      const response = await axios.post("http://localhost/server/subjects_view", {});
+      setData(response.data.subjects);
     } catch (error) {
       console.error(error);
     }
   }
 
   //데이터 수정 (한번에)
-  async function dataSubmit_all() {
+  async function dataSubmit_all(editText, studentArray) {
     try {
-      const response = await axios.put(
-        "http://localhost/server/students_view_update_all",
-        { editObject: editText, editTarget: arrayToSqlInString(studnetArray) }
-      );
+      const response = await axios.post("http://localhost/server/subjects_view_update_all", {
+        editObject: editText,
+        editTarget: arrayToSqlInString(studentArray),
+      });
       if (response.data.success) {
         notify({
           type: "success",
@@ -69,23 +54,22 @@ export default function ScheduleStudent() {
 
   //데이터 테이블에 보일 컬럼
   const columns = [
-    { columnName: "이름", data: "name" },
-    { columnName: "전화번호", data: "contact" },
-    { columnName: "부모님 전화번호", data: "contact_parent" },
+    { columnName: "과목이름", data: "name" },
+    { columnName: "학년", data: "grade" },
+    { columnName: "담당강사", data: "teacher_name" },
   ];
-
+  console.log(data);
   return (
     <>
       <BasicBox>
-        <SearchBox setData={setData} option={"student"}></SearchBox>
+        <SearchBox setData={setData} option={"subject"}></SearchBox>
         <DataTableV1
-          title={"수업 일정 테이블"}
+          title={"강의 목록 테이블"}
           columns={columns}
           datas={data}
-          type="student"
-          setStudentArray={setStudentArray}
-          editType={EDIT_STUDENT}
-          setEditText={setEditText}
+          type="subject"
+          editType={EDIT_SUBJECT}
+          runSQL={dataSubmit_all}
         />
       </BasicBox>
       <Toast />

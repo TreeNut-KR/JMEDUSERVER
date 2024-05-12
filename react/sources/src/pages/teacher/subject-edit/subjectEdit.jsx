@@ -6,41 +6,49 @@ import { Toast, notify } from "../../../template/Toastify";
 import Button from "../../../Components/ButtonTop";
 import axios from "axios";
 
-export default function StudentEdit() {
+export default function SubjectEdit() {
   const [data, setData] = useState(null);
-  const { studentID } = useParams();
+  const [teachers, setTeachers] = useState(null);
+  const { subjectID } = useParams();
   const [name, setName] = useState("");
-  const [sex_ism, setSexIsm] = useState("");
-  const [birthday, setBirthday] = useState("");
-  const [contact, setContact] = useState("");
-  const [contact_parent, setContact_parent] = useState("");
   const [school, setSchool] = useState("");
-  const [payday, setPayday] = useState("");
-  const [firstreg, setFirstreg] = useState("");
+  const [grade, setGrade] = useState("");
+
+  //date 형식 맞춰주는 함수
+  const formatDatePart = (dateString) => {
+    if (dateString && dateString.includes("T")) {
+      return new Date(dateString).toISOString().split("T")[0];
+    }
+    return dateString;
+  };
 
   useEffect(() => {
     const loging = async () => {
       try {
-        const response = await axios.post("http://localhost/server/students_view_detail", { student_pk: studentID });
-        setData(response.data.students);
+        const response = await axios.post("http://localhost/server/subjects_view_detail", { subject_pk: subjectID });
+        setData(response.data.subjects);
+        const teachersResponse = await axios.post("http://localhost/server/teacher_view", {});
+        const teachersData = teachersResponse.data.teachers;
+
+        const formattedTeachers = teachersData.map((teacher) => ({
+          ...teacher,
+          birthday: formatDatePart(teacher.birthday),
+        }));
+        setTeachers(formattedTeachers);
+        console.log(teachers, formattedTeachers);
       } catch (error) {
         // window.location.reload();
       }
     };
 
     loging();
-  }, [studentID]);
+  }, [subjectID]);
 
   useEffect(() => {
     function setDefaultData() {
       setName(data[0].name);
-      setSexIsm(data[0].sex_ism);
-      setBirthday(data[0].birthday);
-      setContact(data[0].contact);
-      setContact_parent(data[0].contact_parent);
       setSchool(data[0].school);
-      setPayday(data[0].payday);
-      setFirstreg(data[0].firstreg);
+      setGrade(data[0].grade);
     }
     if (data && data[0]) {
       setDefaultData();
@@ -68,28 +76,13 @@ export default function StudentEdit() {
   // 폼 제출 핸들러
   const handleSubmit = async (e) => {
     try {
-      const formatDatePart = (dateString) => {
-        if (dateString && dateString.includes("T")) {
-          return new Date(dateString).toISOString().split("T")[0];
-        }
-        return dateString;
-      };
-
-      const formattedBirthday = formatDatePart(birthday);
-      const formattedFirstreg = formatDatePart(firstreg);
-
       const response = await axios.put(
-        "http://localhost/server/students_view_update",
+        "http://localhost/server/subjects_view_update",
         JSON.stringify({
-          student_pk: studentID,
+          subject_pk: subjectID,
           name,
-          sex_ism,
-          birthday: formattedBirthday,
-          contact,
-          contact_parent,
           school,
-          payday,
-          firstreg: formattedFirstreg,
+          grade,
         }),
         {
           headers: {
@@ -121,14 +114,10 @@ export default function StudentEdit() {
     <>
       <BasicBox>
         <div className="pt-3">
-          <InputBox data={name} name={"이름"} edit={setName} />
-          <InputBox data={sex_ism} name={"성별"} edit={setSexIsm} type={"radio"} options={["남", "여"]} />
-          <InputBox data={birthday} name={"생일 (8자)"} edit={setBirthday} type={"date"} />
-          <InputBox data={contact} name={"전화번호"} edit={setContact} type={"phone"} />
-          <InputBox data={contact_parent} name={"전화번호 (가족)"} edit={setContact_parent} type={"phone"} />
+          <InputBox data={name} name={"강의 명"} edit={setName} />
           <InputBox data={school} name={"학교"} edit={setSchool} />
-          <InputBox data={payday} name={"상납일"} edit={setPayday} />
-          <InputBox data={firstreg} name={"firstreg"} edit={setFirstreg} type={"date"} />
+          <InputBox data={grade} name={"강의 학년"} edit={setGrade} />
+          <InputBox data={grade} name={"테스트"} edit={setGrade} type={"picker"} subData_picker={teachers} />
         </div>
         <div className="m-5 flex justify-end pr-10">
           <Button label={"수정하기"} onClick={handleSubmit} width={90} />
