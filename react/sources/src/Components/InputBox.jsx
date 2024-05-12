@@ -59,7 +59,12 @@ export default function InputBox(props) {
             disabled={true}
             value={data}
           />
-          <button onClick={() => setHoverBoxVisible(!hoverBoxVisible)}>asd</button>
+          <button
+            className="text-sm px-2 rounded-md border w-[4rem] h-[2rem] bg-[#5272F2]"
+            onClick={() => setHoverBoxVisible(!hoverBoxVisible)}
+          >
+            수정하기
+          </button>
 
           {hoverBoxVisible && (
             <div className="w-fit h-40 absolute -top-4 -left-56 z-50 border-4 border-[#5272F2] rounded-lg p-5 bg-[#FAFBFE] fontA">
