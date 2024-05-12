@@ -3,17 +3,7 @@ import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 
 export default function Button(props) {
-  const {
-    styleClass,
-    onClick,
-    disabled,
-    label,
-    URL,
-    width,
-    height,
-    fontColor,
-    bgColor,
-  } = props;
+  const { styleClass, onClick, disabled, label, URL, width, height, fontColor, bgColor } = props;
 
   let cssStyle = "text-sm fontA h-10 px-2 rounded-md border ";
 
