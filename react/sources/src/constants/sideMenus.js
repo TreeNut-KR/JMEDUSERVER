@@ -11,10 +11,7 @@ export const sideMenus = [
         name: "학생 조회",
         href: "/student",
       },
-      {
-        name: "수업일정 조회",
-        href: "/schedule_student",
-      },
+
       {
         name: "등/하원 기록 조회",
         href: "/attendance-student",
@@ -39,8 +36,8 @@ export const sideMenus = [
         href: "/teacher",
       },
       {
-        name: "등/하원 기록 조회",
-        href: "/attendance-teacher",
+        name: "수업일정 조회",
+        href: "/manage_subject",
       },
     ],
   },
