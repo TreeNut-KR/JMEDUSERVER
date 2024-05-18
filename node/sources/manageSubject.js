@@ -46,15 +46,19 @@ router.post("/server/subjects_search", checkAuthenticated("subjects_search"), as
 router.post("/server/subjects_view_detail", checkAuthenticated("subjects_view_detail"), async (req, res) => {
   const { subject_pk } = req.body;
   console.log(req.body);
-  db.query("SELECT * from subject WHERE subject_pk = ?", [subject_pk], (error, results) => {
-    if (error) {
-      res.status(500).json({ success: false, message: "데이터베이스 오류" });
-    } else {
-      res.json({ success: true, subjects: results });
-      const logMsg = "과목 자세히 보기를 했습니다. 과목 코드 : " + subject_pk;
-      adminLog(req.session.user, logMsg);
+  db.query(
+    "SELECT subject.*, (SELECT name FROM teacher WHERE teacher.teacher_pk = subject.teacher) AS teacher_name FROM subject WHERE subject.subject_pk = ?",
+    [subject_pk],
+    (error, results) => {
+      if (error) {
+        res.status(500).json({ success: false, message: "데이터베이스 오류" });
+      } else {
+        res.json({ success: true, subjects: results });
+        const logMsg = "과목 자세히 보기를 했습니다. 과목 코드 : " + subject_pk;
+        adminLog(req.session.user, logMsg);
+      }
     }
-  });
+  );
 });
 
 //////////////////////과목 정보 수정 (여러개 한번에)
@@ -111,7 +115,7 @@ router.post("/server/subject/add", checkAuthenticated("subject_add"), async (req
       res.status(500).send("서버 오류가 발생했습니다.");
       return;
     }
-    res.status(200).send("과목이 성공적으로 등록되었습니다.");
+    res.status(200).send(req.session.user, "과목이 성공적으로 등록되었습니다.");
   });
 });
 

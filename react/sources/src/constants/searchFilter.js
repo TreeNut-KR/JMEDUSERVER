@@ -25,6 +25,14 @@ export const SEARCH_TEACHER = {
   },
 };
 
+//스케쥴 검색 필터
+export const SEARCH_SCHEDULE = {
+  name: {
+    name: "강의 명",
+    value: "subject_name",
+  },
+};
+
 //강사 검색 필터
 export const SEARCH_SUBJECT = {
   teacher_name: {
@@ -120,6 +128,15 @@ export const EDIT_TEACHER = {
 
 //강사 컬럼
 export const EDIT_SUBJECT = {
+  remove: {
+    name: "삭제하기",
+    type: "text",
+    value: "remove",
+  },
+};
+
+//스케쥴 컬럼
+export const EDIT_SCHEDULE = {
   remove: {
     name: "삭제하기",
     type: "text",

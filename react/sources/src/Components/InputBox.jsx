@@ -3,17 +3,29 @@ import DatePickerV1 from "./datePicker/DatePicker";
 import { useState } from "react";
 
 export default function InputBox(props) {
-  const { name, data, edit, disable, type, options, subData_picker } = props;
+  const { name, data, table, edit, disable, type, options, subData_picker } = props;
 
   //picker 호버기능 on/off
   const [hoverBoxVisible, setHoverBoxVisible] = useState(false);
   //이 기능 선생, 학생 불러오는데만 쓰는데 쓸 값이 같아서 내비둠
-  const columnsToShow = ["name", "birthday"];
-  const columnTitles = {
-    name: "이름",
-    birthday: "생년월일",
-  };
+  const setPK = `${table}_pk`;
 
+  let columnsToShow = "";
+  let columnTitles = "";
+
+  if (table === "subject") {
+    columnsToShow = ["name", "teacher_name"];
+    columnTitles = {
+      name: "강의 이름",
+      teacher_name: "담당 강사",
+    };
+  } else if (table === "teacher") {
+    columnsToShow = ["name", "birthday"];
+    columnTitles = {
+      name: "이름",
+      birthday: "생년월일",
+    };
+  }
   return (
     <div className={`${name ? "py-10" : null} border-b-2 fontA flex gap-4 relative`}>
       {name ? (
@@ -60,7 +72,7 @@ export default function InputBox(props) {
             value={data}
           />
           <button
-            className="text-sm px-2 rounded-md border w-[4rem] h-[2rem] bg-[#5272F2]"
+            className="text-sm px-2 rounded-md border-2 w-[100px] h-[2rem] bg-[#FAFBFE] border-[#5272F2] fontA"
             onClick={() => setHoverBoxVisible(!hoverBoxVisible)}
           >
             수정하기
@@ -76,7 +88,7 @@ export default function InputBox(props) {
               </div>
               <table>
                 <thead>
-                  <tr className="border-b-2 border-[#5272F2]">
+                  <tr className="border-b-2 border-[#5272F2] table w-full">
                     {columnsToShow.map((column) => (
                       <th className="pr-4" key={column}>
                         {columnTitles[column]}
@@ -84,14 +96,14 @@ export default function InputBox(props) {
                     ))}
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="block max-h-[100px] overflow-y-scroll">
                   {subData_picker.map((item, index) => (
                     <tr
-                      className="border-b"
+                      className="border-b table w-full"
                       key={index}
                       onClick={() => {
                         setHoverBoxVisible(false);
-                        edit(item.name);
+                        edit({ name: item.name, pk: item[setPK] });
                       }}
                     >
                       {columnsToShow.map((column) => (
@@ -119,6 +131,7 @@ InputBox.propTypes = {
   type: PropTypes.string,
   options: PropTypes.arrayOf(PropTypes.string),
   subData_picker: PropTypes.array,
+  table: PropTypes.string,
 };
 
 InputBox.defaultProps = {
