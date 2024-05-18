@@ -36,13 +36,17 @@ export default function DataTableV1(props) {
   }
 
   //data 안의 pk 값 이름 재설정
-  const modifiedData = datas.map((item) => {
-    return {
-      ...item,
-      data_pk: item[type + "_pk"],
-    };
-  });
-
+  let modifiedData;
+  if (datas) {
+    modifiedData = datas.map((item) => {
+      return {
+        ...item,
+        data_pk: item[type + "_pk"],
+      };
+    });
+  } else {
+    modifiedData = [];
+  }
   //에드온 버튼
   const handleMasterCheckboxChange = (e) => {
     const checked = e.target.checked;
@@ -82,6 +86,7 @@ export default function DataTableV1(props) {
 
   const startIndex = (parseInt(currentPage, 10) - 1) * parseInt(itemsPerPage, 10);
   const endIndex = parseInt(startIndex, 10) + parseInt(itemsPerPage, 10);
+
   const currentPageData = modifiedData ? modifiedData.slice(parseInt(startIndex, 10), parseInt(endIndex, 10)) : [];
 
   //테이블 내의 '자세히 보기' 버튼 뜨도록 하는 기능 -------

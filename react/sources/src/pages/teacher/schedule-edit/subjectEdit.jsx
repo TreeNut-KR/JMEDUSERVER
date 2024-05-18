@@ -6,7 +6,7 @@ import { Toast, notify } from "../../../template/Toastify";
 import Button from "../../../Components/ButtonTop";
 import axios from "axios";
 
-export default function SubjectEdit() {
+export default function ScheduleEdit() {
   const [data, setData] = useState(null);
   const [teachers, setTeachers] = useState(null);
   const { subjectID } = useParams();

@@ -1,14 +1,11 @@
-const db = require('./db');
+const db = require("./db");
 const express = require("express");
 const router = express.Router();
-const { checkAuthenticated } = require('./auth');
-const {logAttend, adminLog } = require('./logger');
-
-
-
+const { checkAuthenticated } = require("./auth");
+const { logAttend, adminLog } = require("./logger");
 
 //플랜 조회
-router.post("/server/plan", checkAuthenticated("plan"),async (req, res) => {
+router.post("/server/schedules_search", checkAuthenticated("schedules_search"), async (req, res) => {
   const query = `
   SELECT 
   p.plan_pk,
@@ -32,19 +29,17 @@ router.post("/server/plan", checkAuthenticated("plan"),async (req, res) => {
   `;
 
   db.query(query, (error, results) => {
-      if (error) {
-        res.status(500).json({ success: false, message: "데이터베이스 오류" });
-      } else {
-        res.json({ success: true, school: results });
-        adminLog(req.session.user, "시간표를 조회했습니다.");
-      }
+    if (error) {
+      res.status(500).json({ success: false, message: "데이터베이스 오류" });
+    } else {
+      res.json({ success: true, schedules: results });
+      adminLog(req.session.user, "시간표를 조회했습니다.");
     }
-  );
+  });
 });
 
-
 ///////플랜추가페이지로드
-router.post("/server/plan/add/Page", checkAuthenticated("plan_add"),async (req, res) => {
+router.post("/server/plan/add/Page", checkAuthenticated("plan_add"), async (req, res) => {
   const query = `
     SELECT 
       s.subject_pk,
@@ -64,22 +59,20 @@ router.post("/server/plan/add/Page", checkAuthenticated("plan_add"),async (req, 
   `;
 
   db.query(query, (error, results) => {
-      if (error) {
-        res.status(500).json({ success: false, message: "데이터베이스 오류" });
-      } else {
-        res.json({ success: true, school: results });
-      }
+    if (error) {
+      res.status(500).json({ success: false, message: "데이터베이스 오류" });
+    } else {
+      res.json({ success: true, school: results });
     }
-  );
+  });
 });
 
 //플랜 추가
-router.post("/server/plan/add", checkAuthenticated("plan_add"),async (req, res) => {
+router.post("/server/plan/add", checkAuthenticated("plan_add"), async (req, res) => {
   const { subject, week, starttine, endtime, room } = req.body;
 
   // 데이터 삽입 쿼리
-  const query =
-    "INSERT INTO plan (subject, week, starttime, endtime, room, created_at) VALUES (?, ?, ?, ?, ?, NOW())";
+  const query = "INSERT INTO plan (subject, week, starttime, endtime, room, created_at) VALUES (?, ?, ?, ?, ?, NOW())";
 
   // 데이터베이스에 쿼리 실행
   db.query(query, [subject, week, starttine, endtime, room], (err, result) => {
@@ -132,9 +125,6 @@ router.post("/server/plan/remove", checkAuthenticated("plan_remove"), async (req
   });
 });
 
-
-
-
 module.exports = {
-    router: router
-  };
+  router: router,
+};
