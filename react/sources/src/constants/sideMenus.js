@@ -36,12 +36,27 @@ export const sideMenus = [
         href: "/teacher",
       },
       {
+        name: "교직원 정보 수정",
+        href: "/teacher-edit",
+        display: "none",
+      },
+      {
         name: "수업 조회",
         href: "/manage_subject",
       },
       {
+        name: "수업 추가",
+        href: "/subject-add",
+        display: "none",
+      },
+      {
         name: "수업 일정 조회",
         href: "/manage_schedule",
+      },
+      {
+        name: "수업 일정 추가",
+        href: "/schedule-add",
+        display: "none",
       },
     ],
   },
