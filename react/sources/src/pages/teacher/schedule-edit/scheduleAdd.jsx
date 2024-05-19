@@ -52,6 +52,7 @@ export default function ScheduleAdd() {
   // 폼 제출 핸들러
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log(DataSubjects);
     try {
       const response = await axios.post("http://localhost/server/plan/add", DataSubjects, {
         headers: {
@@ -101,7 +102,14 @@ export default function ScheduleAdd() {
           <InputBox
             data={DataSubjects.starttime}
             name={"시작 시간"}
+            type={"time"}
             edit={(value) => handleChange("starttime", value)}
+          />
+          <InputBox
+            data={DataSubjects.endtime}
+            name={"종료 시간"}
+            type={"time"}
+            edit={(value) => handleChange("endtime", value)}
           />
           <InputBox data={DataSubjects.room} name={"room"} edit={(value) => handleChange("room", value)} />
         </div>
