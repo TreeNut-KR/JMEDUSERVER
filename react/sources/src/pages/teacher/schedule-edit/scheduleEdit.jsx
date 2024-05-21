@@ -8,20 +8,20 @@ import axios from "axios";
 
 export default function ScheduleEdit() {
   const [data, setData] = useState(null);
-  const [teachers, setTeachers] = useState(null);
-  const { subjectID } = useParams();
-  const [name, setName] = useState("");
-  const [school, setSchool] = useState("");
-  const [grade, setGrade] = useState("");
-  const [tinyInt, setTinyInt] = useState("");
+  const [subjects, setSubjects] = useState([]);
+  const { scheduleID } = useParams();
+  const [subject, setSubject] = useState("");
+  const [week, setWeek] = useState("");
+  const [starttime, setStartTime] = useState("");
+  const [endtime, setEndTime] = useState("");
+  const [room, setRoom] = useState("");
+  const [is_ended, setEnded] = useState("");
 
   const [teacher, setTeacher] = useState("");
   const [PK, setPK] = useState("");
   //선생 정보 핸들러
-  const handleTeacherChange = (newTeacher) => {
-    console.log(newTeacher);
-    setTeacher(newTeacher.name);
-    setPK(newTeacher.pk);
+  const handleTeacherChange = (newSubject) => {
+    setSubject(newSubject.name);
   };
 
   //date 형식 맞춰주는 함수
@@ -35,33 +35,25 @@ export default function ScheduleEdit() {
   useEffect(() => {
     const loging = async () => {
       try {
-        const response = await axios.post("http://localhost/server/subjects_view_detail", { subject_pk: subjectID });
-        setData(response.data.subjects);
-        const teachersResponse = await axios.post("http://localhost/server/teacher_view", {});
-        const teachersData = teachersResponse.data.teachers;
-
-        const formattedTeachers = teachersData.map((teacher) => ({
-          ...teacher,
-          birthday: formatDatePart(teacher.birthday),
-        }));
-        setTeachers(formattedTeachers);
-        console.log(teachers, formattedTeachers);
+        const subjectsResponse = await axios.post("http://localhost/server/subjects_view", {});
+        const subjectsData = subjectsResponse.data.subjects;
+        setSubjects(subjectsData);
       } catch (error) {
         // window.location.reload();
       }
     };
 
     loging();
-  }, [subjectID]);
+  }, [scheduleID]);
 
   useEffect(() => {
     function setDefaultData() {
-      setName(data[0].name);
-      setSchool(data[0].school);
-      setGrade(data[0].grade);
-      setTeacher(data[0].teacher_name);
-      setTinyInt(data[0].is_personal);
-      setPK(data[0].teacher);
+      setSubject(data[0].name);
+      setStartTime(data[0].school);
+      setWeek(data[0].grade);
+      setEndTime(data[0].teacher_name);
+      setEnded(data[0].is_personal);
+      setRoom(data[0].teacher);
     }
     if (data && data[0]) {
       setDefaultData();
@@ -92,12 +84,13 @@ export default function ScheduleEdit() {
       const response = await axios.put(
         "http://localhost/server/subject/update",
         JSON.stringify({
-          subject_pk: subjectID,
-          name,
-          school,
-          teacher: PK,
-          grade,
-          tinyInt,
+          plan_pk: scheduleID,
+          subject,
+          week,
+          starttime,
+          endtime,
+          room,
+          is_ended,
         }),
         {
           headers: {
@@ -129,18 +122,19 @@ export default function ScheduleEdit() {
     <>
       <BasicBox>
         <div className="pt-3">
-          <InputBox data={name} name={"강의 명"} edit={setName} />
-          <InputBox data={school} name={"학교"} edit={setSchool} />
-          <InputBox data={grade} name={"강의 학년"} edit={setGrade} />
           <InputBox
-            data={teacher}
-            name={"테스트"}
+            data={subject}
+            name={"수업 이름"}
             edit={handleTeacherChange}
             type={"picker"}
-            table={"teacher"}
-            subData_picker={teachers}
+            table={"subject"}
+            subData_picker={subjects}
           />
-          <InputBox data={tinyInt} name={"int(1)값"} edit={setTinyInt} />
+          <InputBox data={week} name={"week"} edit={setWeek} />
+          <InputBox data={starttime} name={"시작 시간"} edit={setStartTime} type={"time"} />
+          <InputBox data={endtime} name={"종료 시간"} edit={setEndTime} type={"time"} />
+          <InputBox data={room} name={"room"} edit={setRoom} />
+          <InputBox data={is_ended} type={"radio"} options={["예", "아니요"]} name={"종료 여부"} edit={setEnded} />
         </div>
         <div className="m-5 flex justify-end pr-10">
           <Button label={"수정하기"} onClick={handleSubmit} width={90} />
