@@ -5,7 +5,7 @@ import { Toast, notify } from "../../../template/Toastify";
 import Button from "../../../Components/ButtonTop";
 import axios from "axios";
 
-export default function ScheduleAdd() {
+export default function PlanAdd() {
   const [DataSubjects, setDataSubjects] = useState({
     subject: "",
     week: "",
@@ -41,7 +41,7 @@ export default function ScheduleAdd() {
         const subjectsData = subjectsResponse.data.subjects;
         setSubjects(subjectsData);
       } catch (error) {
-        console.error("Error fetching teachers:", error);
+        console.error("오류발생", error);
       }
     };
 
@@ -53,7 +53,7 @@ export default function ScheduleAdd() {
     e.preventDefault();
     console.log(DataSubjects);
     try {
-      const response = await axios.post("http://localhost/server/plan/add", DataSubjects, {
+      const response = await axios.post("http://localhost/server/schedule_add", DataSubjects, {
         headers: {
           "Content-Type": "application/json",
         },

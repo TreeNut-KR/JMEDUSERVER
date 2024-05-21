@@ -16,8 +16,8 @@ import ClassManageTeacher from "../pages/teacher/manage_subject";
 import SubjectEdit from "../pages/teacher/subject-edit/subjectEdit";
 import SubjectAdd from "../pages/teacher/subject-edit/subjectAdd";
 import ManageSchedule from "../pages/teacher/manage_schedule";
-import ScheduleAdd from "../pages/teacher/schedule-edit/scheduleAdd";
-import ScheduleEdit from "../pages/teacher/schedule-edit/scheduleEdit";
+import PlanAdd from "../pages/teacher/schedule-edit/planAdd";
+import PlanEdit from "../pages/teacher/schedule-edit/PlanEdit";
 
 export default function Consist() {
   return (
@@ -48,11 +48,11 @@ export default function Consist() {
               <Route path="/manage_schedule" element={<ManageSchedule />} />
               {/* 교직원 정보 수정 페이지 */}
               <Route path="/teacher-edit/:teacherID" element={<TeacherEdit />} />
-              <Route path="/schedule-edit/:scheduleID" element={<ScheduleEdit />} />
+              <Route path="/plan-edit/:scheduleID" element={<PlanEdit />} />
               {/* 수업 정보 수정/추가 페이지 */}
               <Route path="/subject-edit/:subjectID" element={<SubjectEdit />} />
               <Route path="/subject-add" element={<SubjectAdd />} />
-              <Route path="/schedule-add" element={<ScheduleAdd />} />
+              <Route path="/plan-add" element={<PlanAdd />} />
             </Routes>
           </div>
         </div>

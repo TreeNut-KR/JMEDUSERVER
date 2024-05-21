@@ -55,7 +55,12 @@ export const sideMenus = [
       },
       {
         name: "수업 일정 추가",
-        href: "/schedule-add",
+        href: "/plan-add",
+        display: "none",
+      },
+      {
+        name: "수업 일정 수정",
+        href: "/plan-edit",
         display: "none",
       },
     ],

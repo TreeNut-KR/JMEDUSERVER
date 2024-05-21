@@ -36,6 +36,7 @@ export default function DataTableV1(props) {
   }
 
   //data 안의 pk 값 이름 재설정
+  console.log(datas);
   let modifiedData;
   if (datas) {
     modifiedData = datas.map((item) => {
