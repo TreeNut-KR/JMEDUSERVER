@@ -17,7 +17,7 @@ import SubjectEdit from "../pages/teacher/subject-edit/subjectEdit";
 import SubjectAdd from "../pages/teacher/subject-edit/subjectAdd";
 import ManageSchedule from "../pages/teacher/manage_schedule";
 import ScheduleAdd from "../pages/teacher/schedule-edit/scheduleAdd";
-import ScheduleEdit from "../pages/teacher/schedule-edit/subjectEdit";
+import ScheduleEdit from "../pages/teacher/schedule-edit/scheduleEdit";
 
 export default function Consist() {
   return (

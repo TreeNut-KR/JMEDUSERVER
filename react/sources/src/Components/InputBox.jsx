@@ -26,6 +26,34 @@ export default function InputBox(props) {
       birthday: "생년월일",
     };
   }
+  //----------------------------------------
+
+  //시간 타입을 위해서 추가한 코드
+  const [value, setValue] = useState(data);
+
+  const handleChange = (e) => {
+    let input = e.target.value.replace(/\D/g, "");
+    if (input.length > 4) input = input.slice(0, 4);
+
+    let hours = input.slice(0, 2);
+    let minutes = input.slice(2, 4);
+
+    if (hours.length === 2 && parseInt(hours, 10) > 12) {
+      hours = "24";
+    }
+
+    if (minutes.length === 2 && parseInt(minutes, 10) > 59) {
+      minutes = "60";
+    }
+
+    input = hours + (minutes.length ? ":" + minutes : "");
+
+    setValue(input);
+    edit(input);
+  };
+
+  // -------------------------
+
   return (
     <div className={`${name ? "py-10" : null} border-b-2 fontA flex gap-4 relative`}>
       {name ? (
@@ -71,6 +99,17 @@ export default function InputBox(props) {
           }}
           pattern="[0-9]{3}-[0-9]{4}-[0-9]{4}"
         />
+      ) : type === "time" ? (
+        <>
+          <input
+            className={`w-1/4 px-4 border border-[#5272F2] rounded-md`}
+            type="tel"
+            disabled={disable}
+            value={data}
+            onChange={handleChange}
+            placeholder="HH:MM"
+          />
+        </>
       ) : type === "picker" ? (
         <>
           <input
@@ -105,22 +144,30 @@ export default function InputBox(props) {
                   </tr>
                 </thead>
                 <tbody className="block max-h-[100px] overflow-y-scroll">
-                  {subData_picker.map((item, index) => (
-                    <tr
-                      className="border-b table w-full"
-                      key={index}
-                      onClick={() => {
-                        setHoverBoxVisible(false);
-                        edit({ name: item.name, pk: item[setPK] });
-                      }}
-                    >
-                      {columnsToShow.map((column) => (
-                        <td className="pr-4" key={column}>
-                          {item[column]}
-                        </td>
-                      ))}
+                  {!subData_picker ? (
+                    <tr>
+                      <td colSpan={columnsToShow.length} className="text-center p-4">
+                        <div>데이터가 존재하지 않습니다</div>
+                      </td>
                     </tr>
-                  ))}
+                  ) : (
+                    subData_picker.map((item, index) => (
+                      <tr
+                        className="border-b table w-full"
+                        key={index}
+                        onClick={() => {
+                          setHoverBoxVisible(false);
+                          edit({ name: item.name, pk: item[setPK] });
+                        }}
+                      >
+                        {columnsToShow.map((column) => (
+                          <td className="pr-4" key={column}>
+                            {item[column]}
+                          </td>
+                        ))}
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>
