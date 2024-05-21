@@ -12,7 +12,6 @@ export default function ScheduleAdd() {
     starttime: "",
     endtime: "",
     room: "",
-    is_ended: "",
   });
 
   const [subjects, setSubjects] = useState([]);
@@ -101,6 +100,7 @@ export default function ScheduleAdd() {
           <InputBox
             data={DataSubjects.starttime}
             name={"시작 시간"}
+            type={"time"}
             edit={(value) => handleChange("starttime", value)}
           />
           <InputBox data={DataSubjects.room} name={"room"} edit={(value) => handleChange("room", value)} />

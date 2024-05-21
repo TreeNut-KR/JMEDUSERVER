@@ -50,6 +50,14 @@ export default function InputBox(props) {
             <label>{option}</label>
           </div>
         ))
+      ) : type === "time" ? (
+        <input
+          className={`${name ? "w-3/4" : "w-full"} px-4 border border-[#5272F2] rounded-md`}
+          type="text"
+          disabled={disable}
+          value={data}
+          onChange={(e) => edit(e.target.value)}
+        />
       ) : type === "phone" ? (
         <input
           className={`${name ? "w-3/4" : "w-full"} px-4 border border-[#5272F2] rounded-md`}
