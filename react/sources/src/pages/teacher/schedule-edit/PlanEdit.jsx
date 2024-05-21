@@ -6,7 +6,7 @@ import { Toast, notify } from "../../../template/Toastify";
 import Button from "../../../Components/ButtonTop";
 import axios from "axios";
 
-export default function ScheduleEdit() {
+export default function PlanEdit() {
   const [data, setData] = useState(null);
   const [subjects, setSubjects] = useState([]);
   const { scheduleID } = useParams();
@@ -15,13 +15,14 @@ export default function ScheduleEdit() {
   const [starttime, setStartTime] = useState("");
   const [endtime, setEndTime] = useState("");
   const [room, setRoom] = useState("");
-  const [is_ended, setEnded] = useState("");
 
   const [teacher, setTeacher] = useState("");
   const [PK, setPK] = useState("");
+  console.log(data);
   //선생 정보 핸들러
   const handleTeacherChange = (newSubject) => {
     setSubject(newSubject.name);
+    setPK(newSubject.pk);
   };
 
   //date 형식 맞춰주는 함수
@@ -35,6 +36,8 @@ export default function ScheduleEdit() {
   useEffect(() => {
     const loging = async () => {
       try {
+        const response = await axios.post("http://localhost/server/subjects_view_detail", { plan_pk: scheduleID });
+        setData(response.data.plans);
         const subjectsResponse = await axios.post("http://localhost/server/subjects_view", {});
         const subjectsData = subjectsResponse.data.subjects;
         setSubjects(subjectsData);
@@ -48,12 +51,12 @@ export default function ScheduleEdit() {
 
   useEffect(() => {
     function setDefaultData() {
-      setSubject(data[0].name);
-      setStartTime(data[0].school);
-      setWeek(data[0].grade);
-      setEndTime(data[0].teacher_name);
-      setEnded(data[0].is_personal);
-      setRoom(data[0].teacher);
+      setSubject(data[0].subject_name);
+      setPK(data[0].subject);
+      setStartTime(data[0].starttime);
+      setWeek(data[0].week);
+      setEndTime(data[0].endtime);
+      setRoom(data[0].room);
     }
     if (data && data[0]) {
       setDefaultData();
@@ -81,16 +84,15 @@ export default function ScheduleEdit() {
   // 폼 제출 핸들러
   const handleSubmit = async (e) => {
     try {
-      const response = await axios.put(
-        "http://localhost/server/subject/update",
+      const response = await axios.post(
+        "http://localhost/server/plan_update",
         JSON.stringify({
           plan_pk: scheduleID,
-          subject,
+          subject: PK,
           week,
           starttime,
           endtime,
           room,
-          is_ended,
         }),
         {
           headers: {
@@ -134,7 +136,6 @@ export default function ScheduleEdit() {
           <InputBox data={starttime} name={"시작 시간"} edit={setStartTime} type={"time"} />
           <InputBox data={endtime} name={"종료 시간"} edit={setEndTime} type={"time"} />
           <InputBox data={room} name={"room"} edit={setRoom} />
-          <InputBox data={is_ended} type={"radio"} options={["예", "아니요"]} name={"종료 여부"} edit={setEnded} />
         </div>
         <div className="m-5 flex justify-end pr-10">
           <Button label={"수정하기"} onClick={handleSubmit} width={90} />

@@ -10,6 +10,7 @@ router.post("/server/schedules_search", checkAuthenticated("schedules_search"), 
   SELECT 
   p.plan_pk,
   p.week,
+  p.subject,
   p.starttime,
   p.endtime,
   p.room,
@@ -33,6 +34,43 @@ router.post("/server/schedules_search", checkAuthenticated("schedules_search"), 
       res.status(500).json({ success: false, message: "데이터베이스 오류" });
     } else {
       res.json({ success: true, schedules: results });
+      adminLog(req.session.user, "시간표를 조회했습니다.");
+    }
+  });
+});
+
+//플랜 검색
+router.post("/server/subjects_view_detail", checkAuthenticated("subjects_view_detail"), async (req, res) => {
+  const { plan_pk } = req.body;
+
+  // 데이터 삽입 쿼리
+  const query = `SELECT 
+  p.plan_pk,
+  p.week,
+  p.subject,
+  p.starttime,
+  p.endtime,
+  p.room,
+  sub.name AS subject_name,
+  t.name AS teacher_name,
+  sc.name AS school_name
+  FROM 
+    plan p
+  INNER JOIN 
+    subject sub ON p.subject = sub.subject_pk
+  INNER JOIN 
+    teacher t ON sub.teacher = t.teacher_pk
+  INNER JOIN 
+    school sc ON sub.school = sc.school_pk
+  WHERE 
+    p.plan_pk = ?;`;
+
+  // 데이터베이스에 쿼리 실행
+  db.query(query, [plan_pk], (err, results) => {
+    if (err) {
+      res.status(500).json({ success: false, message: "데이터베이스 오류" });
+    } else {
+      res.json({ success: true, plans: results });
       adminLog(req.session.user, "시간표를 조회했습니다.");
     }
   });
@@ -68,14 +106,14 @@ router.post("/server/plan/add/Page", checkAuthenticated("plan_add"), async (req,
 });
 
 //플랜 추가
-router.post("/server/plan/add", checkAuthenticated("plan_add"), async (req, res) => {
-  const { subject, week, starttine, endtime, room } = req.body;
+router.post("/server/schedule_add", checkAuthenticated("schedule_add"), async (req, res) => {
+  const { subject, week, starttime, endtime, room } = req.body;
 
   // 데이터 삽입 쿼리
   const query = "INSERT INTO plan (subject, week, starttime, endtime, room, created_at) VALUES (?, ?, ?, ?, ?, NOW())";
 
   // 데이터베이스에 쿼리 실행
-  db.query(query, [subject, week, starttine, endtime, room], (err, result) => {
+  db.query(query, [subject, week, starttime, endtime, room], (err, result) => {
     if (err) {
       console.error("데이터 삽입 중 오류 발생:", err);
       res.status(500).send("서버 오류가 발생했습니다.");
@@ -86,11 +124,10 @@ router.post("/server/plan/add", checkAuthenticated("plan_add"), async (req, res)
 });
 
 // 플랜 수정
-router.post("/server/plan/update", checkAuthenticated("plan_update"), async (req, res) => {
+router.post("/server/plan_update", checkAuthenticated("plan_update"), async (req, res) => {
   const { plan_pk, subject, week, starttime, endtime, room } = req.body;
 
-  const query =
-    "UPDATE plan SET subject = ?, week = ?, starttime = ?, endtime = ?, room = ?, updated_at = NOW() WHERE plan_pk = ?";
+  const query = "UPDATE plan SET subject = ?, week = ?, starttime = ?, endtime = ?, room = ? WHERE plan_pk = ?";
 
   db.query(query, [subject, week, starttime, endtime, room, plan_pk], (err, result) => {
     if (err) {
