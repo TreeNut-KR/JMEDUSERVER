@@ -7,33 +7,21 @@ from pydantic import BaseModel
 import mysql.connector
 import uvicorn
 import os
-from fastapi.middleware.cors import CORSMiddleware
-
 
 app = FastAPI()
-dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
-load_dotenv(dotenv_path)
-
-
-# CORS 미들웨어 추가
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # 모든 도메인 허용
-    allow_credentials=True,
-    allow_methods=["*"],  # 모든 메소드 (GET, POST, DELETE 등) 허용
-    allow_headers=["*"],  # 모든 헤더 허용
-)
 
 class QRData(BaseModel):
     qr_data: str
 
 class jmedu_db:
     def __init__(self) -> None:
+        load_dotenv("./ClassLinker_PyQT/db_env/.env")
         self.db_config = {
             'host': os.getenv('DB_HOST'),
             'user': os.getenv('DB_USER'),
             'password': os.getenv('DB_PASSWORD'),
             'database': os.getenv('DB_NAME'),
+            'port': os.getenv('DB_PORT')  # 포트는 문자열로 저장되어 있어야 합니다
         }
         self.cnx = mysql.connector.connect(**self.db_config)
 
@@ -54,15 +42,13 @@ class jmedu_db:
                 return "해당 QR의 학생이 데이터베이스에 존재하지 않습니다.", None  # 에러 메시지와 None 반환
         except mysql.connector.Error as err:
             return f"데이터베이스 에러: {err}", None  # 에러 메시지와 None 반환
-    
-    def sendToSQL():
-        return 0
 
 class Aligo: 
     def __init__(self) -> None:
+        load_dotenv('./ClassLinker_PyQT/data_env/.env')  # .env 파일 로드
         self.send_url = 'https://apis.aligo.in/send/'
-        self.receiver_name = "서정훈"
-        self.receiver_num = "01080091358"
+        self.receiver_name = ""
+        self.receiver_num = ""
         self.sms_data = {
             'key': os.getenv('SMS_KEY'),
             'userid': os.getenv('SMS_USERID'),
@@ -109,15 +95,6 @@ def receive_qr(qr_data: QRData):
             aligo: {send_result}
             '''
         )
-        try:
-            with db_instance.cnx.cursor() as cursor:  # db_instance를 통해 접근
-                query = "INSERT INTO attend_log (student, time, is_attend) VALUES  (%s, NOW(), true)"
-                cursor.execute(query, (qr_data.qr_data, ))
-            db_instance.cnx.commit()  # 데이터베이스 변경 사항을 커밋
-        except mysql.connector.Error as err:
-            return {"message": f"데이터베이스 에러: {err}"}
-        finally:
-            db_instance.cnx.close()  # 데이터베이스 연결 종료
         return {
             "message": "QR data and parent's contact received successfully",
             "data": qr_data.qr_data,
@@ -126,4 +103,4 @@ def receive_qr(qr_data: QRData):
         }
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=5100)
+    uvicorn.run(app, host="0.0.0.0", port=8000)
