@@ -38,11 +38,15 @@ services:
     build:
       context: ./aligo
     ports:
-      - 5100:5100
+      - 8100:8000
     expose:
-      - 5100
-    depends_on:
-      - node
+      - 8100
+    volumes:
+      - ./logs:/app/logs
+    # depends_on: #원본
+    #   - node
+    depends_on: #Python 테스트
+      - mysql
 
   node:
     restart: always

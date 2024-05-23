@@ -39,3 +39,8 @@ python/.DS_Store
 .DS_Store
 .env
 !react/sources/.env
+
+#Python venv file
+venv/
+.venv/
+.venv
