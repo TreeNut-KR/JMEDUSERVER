@@ -13,8 +13,9 @@ import os
 from pathlib import Path
 from sys import platform
 
+MAX_PATH = 260
+
 def get_documents_folder():
-    # CSIDL_PERSONAL은 문서 폴더를 가리키는 코드입니다.
     CSIDL_PERSONAL = 5
     SHGFP_TYPE_CURRENT = 0
     path_buf = ctypes.create_unicode_buffer(MAX_PATH)
@@ -22,16 +23,21 @@ def get_documents_folder():
     return path_buf.value
 
 if platform == "linux" or platform == "linux2":
-    documents_path = Path('/app/logs') 
-elif platform == "win32": 
+    documents_path = Path(os.path.expanduser('~/Documents'))
+elif platform == "win32":
     documents_path = Path(get_documents_folder())
+
 log_file_path = documents_path / 'Aligo(JMEDU)_logs.log'
 
+if not log_file_path.parent.exists():
+    log_file_path.parent.mkdir(parents=True, exist_ok=True)
+
 app = FastAPI()
-logging.basicConfig(level=logging.INFO,
-                    format='%(asctime)s - %(levelname)s - %(message)s',
-                    filename=log_file_path,
-                    filemode='a')
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    filename=log_file_path,
+    filemode='a')
 
 class QRData(BaseModel):
     qr_data: str = Field(..., title="QR Code",
@@ -75,13 +81,13 @@ class Aligo:
         send_response = requests.post(self.send_url, data=sms_data_updated)
         return send_response.json().get('message'), send_response.json().get('msg_type'), send_response.json().get('title')
 
-load_dotenv("./ClassLinker_PyQT/db_env/.env")
+load_dotenv()
 db_config = {
-    'host': os.getenv('DB_HOST'),
-    'user': os.getenv('DB_USER'),
-    'password': os.getenv('DB_PASSWORD'),
-    'database': os.getenv('DB_NAME'),
-    'port': os.getenv('DB_PORT')  # 포트는 문자열로 저장되어 있어야 합니다
+    'host': os.getenv('MYSQL_ROOT_HOST'),
+    'user': os.getenv('MYSQL_ROOT_USERDB_USER'),
+    'password': os.getenv('MYSQL_ROOT_PASSWORD'),
+    'database': os.getenv('MYSQL_DATABASE'),
+    'port': 3306
 }
 cnx = mysql.connector.connect(**db_config)
 
@@ -114,7 +120,7 @@ def receive_qr(request_data: QRData) -> Dict[str, str]:
 
     예제 요청:
     {
-        "qr_data": "43ca215b-f8a9-11ee-acc2-0242ac120002"
+        "qr_data": "3335caf1-198c-11ef-b8a7-0242c0a87002"
     }
     '''
     aligo_instance = Aligo()  # 클래스 이름과 다른 인스턴스 이름 사용

@@ -43,10 +43,8 @@ services:
       - 8100
     volumes:
       - ./logs:/app/logs
-    # depends_on: #원본
-    #   - node
-    depends_on: #Python 테스트
-      - mysql
+    depends_on:
+      - node
 
   node:
     restart: always
