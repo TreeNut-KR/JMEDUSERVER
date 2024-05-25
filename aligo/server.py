@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel, Field, validator as field_validator
+from pydantic import BaseModel, Field, field_validator
 from typing import Optional, Tuple, List, Any
 from dotenv import load_dotenv
 from datetime import datetime
@@ -50,11 +50,6 @@ class QRresult(BaseModel):
     student_name: Optional[str] = Field(None, title="학생 이름")
     send_result: Optional[Any] = Field(None, title="전송 결과")
 
-class ValidationErrorItem(BaseModel):
-    loc: List[str] = Field(..., title="Location")
-    msg: str = Field(..., title="Message")
-    type: str = Field(..., title="Error Type")
-
 class Aligo: 
     def __init__(self) -> None:
         load_dotenv()  # .env 파일 로드
@@ -97,7 +92,6 @@ db_config = {
     'database': os.getenv('MYSQL_DATABASE'),
     'port': 3306
 }
-cnx = mysql.connector.connect(**db_config)
 
 def get_parent_contact(QR: str) -> tuple:
     '''
@@ -105,6 +99,7 @@ def get_parent_contact(QR: str) -> tuple:
     비정상  : 에러 메시지와 None 반환.
     '''
     try:
+        cnx = mysql.connector.connect(**db_config)
         with cnx.cursor() as cursor:
             query = "SELECT name, contact_parent FROM student WHERE student_pk = %s"
             cursor.execute(query, (QR,))
@@ -117,49 +112,38 @@ def get_parent_contact(QR: str) -> tuple:
     except mysql.connector.Error as err:
         return f"데이터베이스 에러: {err}", None  # 에러 메시지와 None 반환
 
-@app.post("/qr", response_model=QRresult,
-            responses={422: {"model": ValidationErrorItem}},
-            summary="QR Code 수신")
+@app.post("/qr", response_model=QRresult, summary="QR Code 수신")
 def receive_qr(request_data: QRdata) -> QRresult:
-    '''
-    출석 키호스크에서 QR코드를 전달 받아 Aligo Web 발신 후 
-    성공 여부를 반환합니다.
+    """
+    출석 키호스크에서 QR코드를 전달 받아 Aligo Web 발신 후 성공 여부를 반환합니다.
 
-    Args:
-        qr_data (str): UUID
+    Args: qr_data (str): UUID
 
-    예제 요청:
-    {
-        "qr_data": "3335cf9b-198c-11ef-b8a7-0242c0a87002"
-    }
-    '''
-    aligo_instance = Aligo()
+    예제 요청: {"qr_data": "3335cf9b-198c-11ef-b8a7-0242c0a87002"}
+    """
     try:
         student_name, parent_contact = get_parent_contact(request_data.qr_data)
         if parent_contact is None:
-            logging.error(student_name)
-            raise HTTPException(
-                status_code=422,
-                detail=[{
-                    "loc": ["body", "qr_data"],
-                    "msg": student_name,
-                    "type": "value_error"
-                }]
-            )
-        else:
-            send_result = aligo_instance.send_sms(student_name, parent_contact)
-            logging.info(f'Received QR Data: {request_data.qr_data} '
-                         f'Student\'s name: {student_name} '
-                         f'Parent\'s Contact: {parent_contact} '
-                         f'aligo: {send_result}')
-            return QRresult(
-                message="QR data and parent's contact received successfully",
-                student_name=student_name,
-                send_result=send_result
-            )
+            error_message = f"부모 연락처를 찾을 수 없음: {student_name}"
+            logging.error(error_message)
+            raise ValueError(error_message)
+
+        send_result = Aligo().send_sms(student_name, parent_contact)
+        logging.info(f'Received QR Data: {request_data.qr_data} '
+                     f'Student\'s name: {student_name} '
+                     f'Parent\'s Contact: {parent_contact} '
+                     f'aligo: {send_result}')
+
+        return QRresult(message="QR data and parent's contact received successfully",
+                        student_name=student_name,
+                        send_result=send_result)
+
+    except ValueError as ve:
+        logging.error(f'An error occurred: {str(ve)}')
+        raise HTTPException(status_code=422, detail=str(ve))
     except Exception as e:
         logging.error(f'An error occurred: {str(e)}')
         raise HTTPException(status_code=500, detail="서버에서 처리할 수 없는 요청입니다. 관리자에게 문의해주세요.")
-    
+
 # if __name__ == "__main__":
-#     uvicorn.run(app, host="0.0.0.0", port=8000)
+#     uvicorn.run(app, host="0.0.0.0", port=8001)
