@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel, Field, field_validator
-from typing import Tuple, Dict, Any
+from pydantic import BaseModel, Field, validator as field_validator
+from typing import Optional, Tuple, Dict, Any
 from dotenv import load_dotenv
 from datetime import datetime
 import ctypes
@@ -14,7 +14,6 @@ from pathlib import Path
 from sys import platform
 
 MAX_PATH = 260
-
 def get_documents_folder():
     CSIDL_PERSONAL = 5
     SHGFP_TYPE_CURRENT = 0
@@ -23,12 +22,11 @@ def get_documents_folder():
     return path_buf.value
 
 if platform == "linux" or platform == "linux2":
-    documents_path = Path(os.path.expanduser('~/Documents'))
+    documents_path = Path(__file__).parent.parent
 elif platform == "win32":
     documents_path = Path(get_documents_folder())
 
 log_file_path = documents_path / 'Aligo(JMEDU)_logs.log'
-
 if not log_file_path.parent.exists():
     log_file_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -39,25 +37,33 @@ logging.basicConfig(
     filename=log_file_path,
     filemode='a')
 
-class QRData(BaseModel):
-    qr_data: str = Field(..., title="QR Code",
-                        description="학생 QR Code를 나타내는 문자열입니다. 36자리 값으로 설정해야됩니다.",)
+class QRdata(BaseModel):
+    qr_data: str = Field(..., title="QR 코드",
+                         description="학생 QR Code를 나타내는 문자열입니다. 36자리 값으로 설정해야됩니다.",)
     @field_validator('qr_data')
     def check_length(cls, v) -> str:
         if len(v) != 36:
             raise ValueError(f"QR Code는 정확히 36자리여야 합니다. 입력된 값의 길이: {len(v)}")
         return v
+
+class QRresult(BaseModel):
+    message: str = Field(..., title="메시지")
+    qr_data: str = Field(..., title="QR 코드")
+    parent_contact: str = Field(..., title="부모 전화번호")
+    send_result: Any = Field(..., title="전송 결과")
+
+
 class Aligo: 
     def __init__(self) -> None:
-        load_dotenv('./ClassLinker_PyQT/data_env/.env')  # .env 파일 로드
+        load_dotenv()  # .env 파일 로드
         self.send_url = 'https://apis.aligo.in/send/'
         self.receiver_name = "김준건"
-        self.receiver_num = "01072821097"
+        self.receiver_num = "0327667789"
         self.sms_data = {
             'key': os.getenv('SMS_KEY'),
             'userid': os.getenv('SMS_USERID'),
             'sender': os.getenv('SMS_SENDER'),
-            'receiver': self.receiver_num,  # 수신자 번호는 초기화 시 설정
+            'receiver': self.receiver_num,
             'msg_type': os.getenv('SMS_MSG_TYPE'),
             'title': os.getenv('SMS_TITLE'),
             'testmode_yn': os.getenv('SMS_TESTMODE_YN')
@@ -91,7 +97,7 @@ db_config = {
 }
 cnx = mysql.connector.connect(**db_config)
 
-def get_parent_contact(self, student_name: str) -> tuple:
+def get_parent_contact(QR: str) -> tuple:
     '''
     정상    : 학생 이름과 부모님 연락처를 반환 
     비정상  : 에러 메시지와 None 반환.
@@ -99,7 +105,7 @@ def get_parent_contact(self, student_name: str) -> tuple:
     try:
         with cnx.cursor() as cursor:
             query = "SELECT name, contact_parent FROM student WHERE student_pk = %s"
-            cursor.execute(query, (student_name,))
+            cursor.execute(query, (QR,))
             result = cursor.fetchone()
             
         if result:
@@ -109,8 +115,8 @@ def get_parent_contact(self, student_name: str) -> tuple:
     except mysql.connector.Error as err:
         return f"데이터베이스 에러: {err}", None  # 에러 메시지와 None 반환
 
-@app.post("/qr", response_model=QRData, summary="QR Code 수신")
-def receive_qr(request_data: QRData) -> Dict[str, str]:
+@app.post("/qr", response_model=QRresult, summary="QR Code 수신")
+def receive_qr(request_data: QRdata) -> QRresult:
     '''
     출석 키호스크에서 QR코드를 전달 받아 Aligo Web 발신 후 
     성공 여부를 반환합니다.
@@ -123,7 +129,7 @@ def receive_qr(request_data: QRData) -> Dict[str, str]:
         "qr_data": "3335caf1-198c-11ef-b8a7-0242c0a87002"
     }
     '''
-    aligo_instance = Aligo()  # 클래스 이름과 다른 인스턴스 이름 사용
+    aligo_instance = Aligo()
     try:
         student_name, parent_contact = get_parent_contact(request_data.qr_data)
     
@@ -135,13 +141,15 @@ def receive_qr(request_data: QRData) -> Dict[str, str]:
                          f'Student\'s name: {student_name} '
                          f'Parent\'s Contact: {parent_contact} '
                          f'aligo: {send_result}')
-            return {"message": "QR data and parent's contact received successfully",
-                    "data": request_data.qr_data,
-                    "parent_contact": parent_contact,
-                    "send_result": send_result}
+            return QRresult(
+                message="QR data and parent's contact received successfully",
+                qr_data=request_data.qr_data,
+                parent_contact=parent_contact,
+                send_result=send_result
+            )
     except Exception as e:
         logging.error(f'An error occurred: {str(e)}')
-        raise HTTPException(status_code=404, detail="데이터가 없습니다.")
+        raise HTTPException(status_code=500, detail="서버에서 처리할 수 없는 요청입니다. 관리자에게 문의해주세요.")
 
 # if __name__ == "__main__":
 #     uvicorn.run(app, host="0.0.0.0", port=8000)
