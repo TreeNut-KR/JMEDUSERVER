@@ -48,8 +48,7 @@ class QRdata(BaseModel):
 
 class QRresult(BaseModel):
     message: str = Field(..., title="메시지")
-    qr_data: str = Field(..., title="QR 코드")
-    parent_contact: str = Field(..., title="부모 전화번호")
+    student_name: str = Field(..., title="학생 이름")
     send_result: Any = Field(..., title="전송 결과")
 
 
@@ -143,8 +142,7 @@ def receive_qr(request_data: QRdata) -> QRresult:
                          f'aligo: {send_result}')
             return QRresult(
                 message="QR data and parent's contact received successfully",
-                qr_data=request_data.qr_data,
-                parent_contact=parent_contact,
+                student_name=student_name,
                 send_result=send_result
             )
     except Exception as e:
