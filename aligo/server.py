@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field, validator as field_validator
-from typing import Optional, Tuple, Dict, Any
+from typing import Optional, Tuple, List, Any
 from dotenv import load_dotenv
 from datetime import datetime
 import ctypes
@@ -45,12 +45,15 @@ class QRdata(BaseModel):
         if len(v) != 36:
             raise ValueError(f"QR Code는 정확히 36자리여야 합니다. 입력된 값의 길이: {len(v)}")
         return v
-
 class QRresult(BaseModel):
     message: str = Field(..., title="메시지")
-    student_name: str = Field(..., title="학생 이름")
-    send_result: Any = Field(..., title="전송 결과")
+    student_name: Optional[str] = Field(None, title="학생 이름")
+    send_result: Optional[Any] = Field(None, title="전송 결과")
 
+class ValidationErrorItem(BaseModel):
+    loc: List[str] = Field(..., title="Location")
+    msg: str = Field(..., title="Message")
+    type: str = Field(..., title="Error Type")
 
 class Aligo: 
     def __init__(self) -> None:
@@ -114,26 +117,35 @@ def get_parent_contact(QR: str) -> tuple:
     except mysql.connector.Error as err:
         return f"데이터베이스 에러: {err}", None  # 에러 메시지와 None 반환
 
-@app.post("/qr", response_model=QRresult, summary="QR Code 수신")
+@app.post("/qr", response_model=QRresult,
+            responses={422: {"model": ValidationErrorItem}},
+            summary="QR Code 수신")
 def receive_qr(request_data: QRdata) -> QRresult:
     '''
     출석 키호스크에서 QR코드를 전달 받아 Aligo Web 발신 후 
     성공 여부를 반환합니다.
 
-    Args:\n\n
+    Args:
         qr_data (str): UUID
 
     예제 요청:
     {
-        "qr_data": "3335caf1-198c-11ef-b8a7-0242c0a87002"
+        "qr_data": "3335cf9b-198c-11ef-b8a7-0242c0a87002"
     }
     '''
     aligo_instance = Aligo()
     try:
         student_name, parent_contact = get_parent_contact(request_data.qr_data)
-    
         if parent_contact is None:
-            raise HTTPException(status_code=422, detail=f"{student_name}의 문자 수신 번호가 누락되었습니다.")
+            logging.error(student_name)
+            raise HTTPException(
+                status_code=422,
+                detail=[{
+                    "loc": ["body", "qr_data"],
+                    "msg": student_name,
+                    "type": "value_error"
+                }]
+            )
         else:
             send_result = aligo_instance.send_sms(student_name, parent_contact)
             logging.info(f'Received QR Data: {request_data.qr_data} '
@@ -148,6 +160,6 @@ def receive_qr(request_data: QRdata) -> QRresult:
     except Exception as e:
         logging.error(f'An error occurred: {str(e)}')
         raise HTTPException(status_code=500, detail="서버에서 처리할 수 없는 요청입니다. 관리자에게 문의해주세요.")
-
+    
 # if __name__ == "__main__":
 #     uvicorn.run(app, host="0.0.0.0", port=8000)
