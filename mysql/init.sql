@@ -1,6 +1,6 @@
 GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '1234' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
-SET NAMES 'utf8mb4';
+SET NAMES 'utf8mb4_general_ci';
 
 
 
@@ -22,7 +22,7 @@ CREATE TABLE school (
     updated_at DATETIME DEFAULT NOW(),
     deleted_at DATETIME DEFAULT NULL,
     PRIMARY KEY(school_pk)
-) ENGINE=InnoDB CHARSET=utf8mb4;
+) ENGINE=InnoDB CHARSET=utf8mb4_general_ci;
 
 -- 학생 테이블
 CREATE TABLE student (
@@ -42,7 +42,7 @@ CREATE TABLE student (
     deleted_at DATETIME DEFAULT NULL,
     PRIMARY KEY(student_pk),
     FOREIGN KEY (school) REFERENCES school(school_pk)/*외부키 설정*/
-) ENGINE=InnoDB CHARSET=utf8mb4;
+) ENGINE=InnoDB CHARSET=utf8mb4_general_ci;
 
 
 -- 교사 테이블
@@ -59,7 +59,7 @@ CREATE TABLE teacher (
     updated_at DATETIME DEFAULT NOW(),
     deleted_at DATETIME DEFAULT NULL,
     PRIMARY KEY(teacher_pk)
-) ENGINE=InnoDB CHARSET=utf8mb4;
+) ENGINE=InnoDB CHARSET=utf8mb4_general_ci;
 
 
 
@@ -72,7 +72,7 @@ CREATE TABLE attend_log (
     is_late BOOL DEFAULT NULL,
     PRIMARY KEY(attend_log_pk),
     FOREIGN KEY (student) REFERENCES student(student_pk) /*외부키 설정*/
-) ENGINE=InnoDB CHARSET=utf8mb4;
+) ENGINE=InnoDB CHARSET=utf8mb4_general_ci;
 
 -- 등하원 로그 테이블(신형)
 CREATE TABLE attendance_log (
@@ -83,7 +83,7 @@ CREATE TABLE attendance_log (
     leave_time DATETIME DEFAULT NULL, /*하원 시간, 하원하지 않았다면 NULL*/
     PRIMARY KEY(attendance_log_pk),
     FOREIGN KEY (student) REFERENCES student(student_pk) /*외부키 설정*/
-) ENGINE=InnoDB CHARSET=utf8mb4;
+) ENGINE=InnoDB CHARSET=utf8mb4_general_ci;
 
 -- 교사 출퇴근 로그 테이블
 CREATE TABLE teacher_attend_log (
@@ -93,7 +93,7 @@ CREATE TABLE teacher_attend_log (
     is_attend BOOL,
     PRIMARY KEY(teacher_attend_log_pk),
     FOREIGN KEY (teacher) REFERENCES teacher(teacher_pk) /*외부키 설정*/
-) ENGINE=InnoDB CHARSET=utf8mb4;
+) ENGINE=InnoDB CHARSET=utf8mb4_general_ci;
 
 -- 과목 테이블
 CREATE TABLE subject (
@@ -109,7 +109,7 @@ CREATE TABLE subject (
     PRIMARY KEY(subject_pk),/*주키설정*/
     FOREIGN KEY (teacher) REFERENCES teacher(teacher_pk),/*외부키 설정*/
     FOREIGN KEY (school) REFERENCES school(school_pk)/*외부키 설정*/
-) ENGINE=InnoDB CHARSET=utf8mb4;
+) ENGINE=InnoDB CHARSET=utf8mb4_general_ci;
 
 -- 시간표 테이블
 CREATE TABLE plan (
@@ -125,7 +125,7 @@ CREATE TABLE plan (
     deleted_at DATETIME DEFAULT NULL,
     PRIMARY KEY(plan_pk),
     FOREIGN KEY (subject) REFERENCES subject(subject_pk)
-) ENGINE=InnoDB CHARSET=utf8mb4;
+) ENGINE=InnoDB CHARSET=utf8mb4_general_ci;
 
 
 -- 과목 수강날 기록 테이블
@@ -141,7 +141,7 @@ CREATE TABLE subject_executed (
     PRIMARY KEY(subject_executed_pk),
     FOREIGN KEY (plan) REFERENCES plan(plan_pk),
     FOREIGN KEY (teacher) REFERENCES teacher(teacher_pk)
-) ENGINE=InnoDB CHARSET=utf8mb4;
+) ENGINE=InnoDB CHARSET=utf8mb4_general_ci;
 
 -- 과목별 수강 출석자 기록 테이블
 CREATE TABLE subject_executed_attenders (
@@ -155,7 +155,7 @@ CREATE TABLE subject_executed_attenders (
     PRIMARY KEY(subject_executed_attenders_pk),
     FOREIGN KEY (subject_executed) REFERENCES subject_executed(subject_executed_pk),
     FOREIGN KEY (student) REFERENCES student(student_pk)
-) ENGINE=InnoDB CHARSET=utf8mb4;
+) ENGINE=InnoDB CHARSET=utf8mb4_general_ci;
 
 -- 시간 수강 테이블
 
@@ -172,7 +172,7 @@ CREATE TABLE student_subject (
     PRIMARY KEY(student_subject_pk),
     FOREIGN KEY (student_id) REFERENCES student(student_pk),
     FOREIGN KEY (subject_id) REFERENCES subject(subject_pk)
-) ENGINE=InnoDB CHARSET=utf8mb4;
+) ENGINE=InnoDB CHARSET=utf8mb4_general_ci;
 
 -- 관리자 로그 테이블
 CREATE TABLE admin_log (
@@ -182,7 +182,7 @@ CREATE TABLE admin_log (
     log VARCHAR(255),
     PRIMARY KEY(admin_log_pk),
     FOREIGN KEY (teacher) REFERENCES teacher(teacher_pk)
-) ENGINE=InnoDB CHARSET=utf8mb4;
+) ENGINE=InnoDB CHARSET=utf8mb4_general_ci;
 
 
 -- 권한 테이블
@@ -193,7 +193,7 @@ CREATE TABLE permissions (
     updated_at DATETIME DEFAULT NOW(),
     deleted_at DATETIME DEFAULT NULL,
     PRIMARY KEY(task_name)
-) ENGINE=InnoDB CHARSET=utf8mb4;
+) ENGINE=InnoDB CHARSET=utf8mb4_general_ci;
 
 
 -- 권한 기본 세팅값
@@ -233,7 +233,7 @@ CREATE TABLE serverconf (
     payday_prenote INT,
     payday_notemsg VARCHAR(255),
     PRIMARY KEY(config_pk)
-) ENGINE=InnoDB CHARSET=utf8mb4;
+) ENGINE=InnoDB CHARSET=utf8mb4_general_ci;
 
 
 
