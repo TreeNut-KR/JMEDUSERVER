@@ -63,7 +63,7 @@ CREATE TABLE teacher (
 
 
 
--- 등하원 로그 테이블
+-- 등하원 로그 테이블(구형)
 CREATE TABLE attend_log (
     attend_log_pk INT AUTO_INCREMENT,
     student CHAR(36),
@@ -71,6 +71,17 @@ CREATE TABLE attend_log (
     is_attend BOOL, /*true는 등원, false는 하원*/
     is_late BOOL DEFAULT NULL,
     PRIMARY KEY(attend_log_pk),
+    FOREIGN KEY (student) REFERENCES student(student_pk) /*외부키 설정*/
+) ENGINE=InnoDB CHARSET=utf8mb4;
+
+-- 등하원 로그 테이블(신형)
+CREATE TABLE attendance_log (
+    attendance_log_pk INT AUTO_INCREMENT,
+    student CHAR(36),/*student 테이블의 student_pk*/
+    is_attend BOOL, /*true는 등원, false는 하원이 아닌 출석 여부를 나타냄*/
+    attend_time DATETIME, /*출석 시간*/
+    leave_time DATETIME DEFAULT NULL, /*하원 시간, 하원하지 않았다면 NULL*/
+    PRIMARY KEY(attendance_log_pk),
     FOREIGN KEY (student) REFERENCES student(student_pk) /*외부키 설정*/
 ) ENGINE=InnoDB CHARSET=utf8mb4;
 
@@ -291,6 +302,57 @@ FOR EACH ROW
 BEGIN
     SET NEW.updated_at = NOW();
 END$$
+
+
+CREATE PROCEDURE RecordAttendance (
+    IN studentPK CHAR(36)
+)
+BEGIN
+    DECLARE vContactParent VARCHAR(20);
+    DECLARE vName VARCHAR(20);
+    DECLARE vStatus VARCHAR(10);
+    DECLARE vCurrentTime DATETIME;
+    DECLARE vAttendID INT;
+    DECLARE vAttendTime DATETIME;
+    DECLARE vLeaveTime DATETIME;
+
+    -- 현재 시간 설정
+    SET vCurrentTime = NOW();
+
+    -- 학생의 contact_parent와 name 조회
+    SELECT contact_parent, name INTO vContactParent, vName
+    FROM student
+    WHERE student_pk = studentPK;
+
+    -- 금일 해당 학생의 출석 기록 조회
+    SELECT attendance_log_pk, attend_time, leave_time INTO vAttendID, vAttendTime, vLeaveTime
+    FROM attendance_log
+    WHERE student = studentPK AND DATE(attend_time) = CURDATE();
+
+    -- 출석 기록이 없는 경우
+    IF vAttendID IS NULL THEN
+        INSERT INTO attendance_log(student, is_attend, attend_time)
+        VALUES (studentPK, TRUE, vCurrentTime);
+        SET vStatus = 'attend';
+    -- 출석 기록이 있지만, 하원 기록이 이미 있는 경우
+    ELSEIF vLeaveTime IS NOT NULL THEN
+        SET vStatus = 'already';
+    -- 출석 기록이 있고, 하원 기록이 없으나 출석 시간과 현재 시간의 차이가 5분 미만인 경우
+    ELSEIF TIMESTAMPDIFF(MINUTE, vAttendTime, vCurrentTime) < 5 THEN
+        SET vStatus = 'already';
+    -- 출석 기록이 있고, 하원 기록이 없으며 출석 시간과 현재 시간 차이가 5분 이상인 경우
+    ELSE
+        UPDATE attendance_log
+        SET leave_time = vCurrentTime
+        WHERE attendance_log_pk = vAttendID;
+        SET vStatus = 'leave';
+    END IF;
+
+    -- 결과 반환
+    SELECT vContactParent AS contact_parent, vName AS name, vStatus AS status;
+END$$
+
+
 
 DELIMITER ;
 
