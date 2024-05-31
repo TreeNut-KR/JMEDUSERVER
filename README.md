@@ -32,7 +32,7 @@
 
 # 시스템 구성 다이어그램
 
-![제목 없는 다이어그램 drawio-3](https://github.com/jgkim14/JMEDUSERVER/assets/48284333/784e73cd-2992-4958-9d17-136b4f60e1d8)
+![xx drawio](https://github.com/jgkim14/JMEDUSERVER/assets/48284333/d4065187-bc99-471a-9b7a-685607be2144)
 
 
 # Docker 컨테이너 구성
