@@ -52,20 +52,47 @@ Docker를 사용하여 각 서비스를 컨테이너화 하고, 배포 및 관�
 
 NginX
 - 서버의 모든 접속을 처리하고 각 서비스로의 요청을 적절하게 분배한다.
+
 Aligo
 - 사용 언어 : Python
 - 기능 : 키오스크의 파이썬 모듈에서 받은 QR코드 값으로 데이터베이스에서 학생을 검색하여 학부모에게 알림을 보내고, 처리 결과를 키오스크에게 WebSocket으로 보낸다.
+
 React
 - 사용 언어 : JAVA Script
 - 기능 : 키오스크 페이지 및 관리자 페이지를 제공한다. 서버와의 통신을 위한 웹페이지 배포만을 담당하며, 클라이언트에게서 데이터를 받지 않는다.
+
 Node
 - 사용 언어 : JAVA Script
 - 기능 요약 : 원장 및 직원이 사용하기 위한 서버를 담당한다.
 - 기능 : 로그인, 회원가입, 직원권한설정, 수업관리, 시간표관리, 학교관리 학생관리, 조건부공지, 출석인원더블체크, 직원기능접근기록
+
 MySQL
 - 모든 정보를 저장하기 위한 데이터베이스
 
 # 데이터베이스 구성
 
 <img width="1324" alt="스크린샷 2024-05-31 오후 3 41 02" src="https://github.com/jgkim14/JMEDUSERVER/assets/48284333/8ff22309-cb20-40d1-be28-e6697ac048b1">
+
+
+school : 학교 정보
+student : 학생 정보
+teacher : 강사 정보
+attendence_log : 키오스크에서 기록한 학생 등/하원 정보
+admin_log : 강사가 학생 개인정보에 접근한 기록
+teacher_attend_log : 강사 출/퇴근 기록
+subject : 과목 정보
+plan : 과목의 수업 시간표
+student_subject : 수업에 대한 수강 대상 학생을 기록
+subject_executed_attenders : 강사의 더블체크 후 수업에 참여한 학생을 기록
+subject_executed : 수업이 진행되었음을 기록
+permissions : 각 서버의 관리자 기능에 대한 권한 레벨 정보
+serverconf : 서버 관리 설정 기록
+
+
+
+
+
+
+
+
 
