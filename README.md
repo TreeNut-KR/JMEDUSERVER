@@ -1,5 +1,7 @@
 <img width="1354" alt="스크린샷 2024-05-31 오후 4 22 00" src="https://github.com/jgkim14/JMEDUSERVER/assets/48284333/361e71c7-511d-4a72-8c9a-07700149685a">
 
+
+
 # 학원의 문제점 및 요구사항 분석
 
 자녀가 학원에 잘 도착했는지 알 수 없다.
