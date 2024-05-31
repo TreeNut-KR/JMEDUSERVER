@@ -48,6 +48,8 @@
 10. QR코드값을 전송하고, 학생 이름을 반환받는다.
 11. 사용자의 요청대로 조회/삽입/갱신/삭제를 수행한다.
 
+Python Module Github Link : https://github.com/CutTheWire/ClassLinker
+
 
 # Docker 컨테이너 구성
 Docker를 사용하여 각 서비스를 컨테이너화 하고, 배포 및 관리를 용이하게 한다.
