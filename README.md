@@ -51,3 +51,7 @@ Node
 MySQL
 - 모든 정보를 저장하기 위한 데이터베이스
 
+# 데이터베이스 구성
+
+<img width="1324" alt="스크린샷 2024-05-31 오후 3 41 02" src="https://github.com/jgkim14/JMEDUSERVER/assets/48284333/8ff22309-cb20-40d1-be28-e6697ac048b1">
+
