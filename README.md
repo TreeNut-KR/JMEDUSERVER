@@ -75,18 +75,31 @@ MySQL
 
 
 school : 학교 정보
+
 student : 학생 정보
+
 teacher : 강사 정보
+
 attendence_log : 키오스크에서 기록한 학생 등/하원 정보
+
 admin_log : 강사가 학생 개인정보에 접근한 기록
+
 teacher_attend_log : 강사 출/퇴근 기록
+
 subject : 과목 정보
+
 plan : 과목의 수업 시간표
+
 student_subject : 수업에 대한 수강 대상 학생을 기록
+
 subject_executed_attenders : 강사의 더블체크 후 수업에 참여한 학생을 기록
+
 subject_executed : 수업이 진행되었음을 기록
+
 permissions : 각 서버의 관리자 기능에 대한 권한 레벨 정보
+
 serverconf : 서버 관리 설정 기록
+
 
 
 
