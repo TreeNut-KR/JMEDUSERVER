@@ -24,20 +24,6 @@ async function logAttend(qrcode, is_attend, is_late, now) {
   });
 }
 
-/////////////////////기록조회
-router.post("/server/log/view", checkAuthenticated("logs_view"), async (req, res) => {
-  const { is_elementary, is_middle, is_high } = req.body;
-
-  db.query("SELECT * FROM admin_log", (error, results) => {
-    if (error) {
-      res.status(500).json({ success: false, message: "데이터베이스 오류" });
-    } else {
-      res.json({ success: true, log: results });
-      adminLog(req.session.user, "로그 조회했습니다.");
-    }
-  });
-});
-
 //출퇴근기록
 async function logAttend_teacher(qrcode, is_attend, now) {
   // 결과 날짜를 YYYY-MM-DD 형식으로 변환합니다.
