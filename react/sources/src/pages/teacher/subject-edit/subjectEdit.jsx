@@ -35,9 +35,9 @@ export default function SubjectEdit() {
   useEffect(() => {
     const loging = async () => {
       try {
-        const response = await axios.post("http://localhost/server/subjects_view_detail", { subject_pk: subjectID });
+        const response = await axios.post(`${process.env.REACT_APP_SERVER_URL}/server/subjects_view_detail`, { subject_pk: subjectID });
         setData(response.data.subjects);
-        const teachersResponse = await axios.post("http://localhost/server/teacher_view", {});
+        const teachersResponse = await axios.post(`${process.env.REACT_APP_SERVER_URL}/server/teacher_view`, {});
         const teachersData = teachersResponse.data.teachers;
 
         const formattedTeachers = teachersData.map((teacher) => ({
@@ -90,7 +90,7 @@ export default function SubjectEdit() {
   const handleSubmit = async (e) => {
     try {
       const response = await axios.put(
-        "http://localhost/server/subject/update",
+        `${process.env.REACT_APP_SERVER_URL}/server/subject/update`,
         JSON.stringify({
           subject_pk: subjectID,
           name,

@@ -35,7 +35,7 @@ export default function AttendanceStudent() {
   async function loging() {
     try {
       const response = await axios.post(
-        "http://localhost/server/students_view",
+        `${process.env.REACT_APP_SERVER_URL}/server/students_view`,
         {}
       );
       setData(response.data.students);
@@ -48,7 +48,7 @@ export default function AttendanceStudent() {
   async function dataSubmit_all() {
     try {
       const response = await axios.put(
-        "http://localhost/server/students_view_update_all",
+        `${process.env.REACT_APP_SERVER_URL}/server/students_view_update_all`,
         { editObject: editText, editTarget: arrayToSqlInString(studnetArray) }
       );
       if (response.data.success) {

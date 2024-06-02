@@ -38,7 +38,7 @@ export default function SubjectAdd() {
   useEffect(() => {
     const loging = async () => {
       try {
-        const teachersResponse = await axios.post("http://localhost/server/teacher_view", {});
+        const teachersResponse = await axios.post(`${process.env.REACT_APP_SERVER_URL}/server/teacher_view`, {});
         const teachersData = teachersResponse.data.teachers;
         const formattedTeachers = teachersData.map((teacher) => ({
           ...teacher,
@@ -57,7 +57,7 @@ export default function SubjectAdd() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost/server/subject/add", DataStudents, {
+      const response = await axios.post(`${process.env.REACT_APP_SERVER_URL}/server/subject/add`, DataStudents, {
         headers: {
           "Content-Type": "application/json",
         },

@@ -37,7 +37,7 @@ export default function PlanAdd() {
   useEffect(() => {
     const loging = async () => {
       try {
-        const subjectsResponse = await axios.post("http://localhost/server/subjects_view", {});
+        const subjectsResponse = await axios.post(`${process.env.REACT_APP_SERVER_URL}/server/subjects_view`, {});
         const subjectsData = subjectsResponse.data.subjects;
         setSubjects(subjectsData);
       } catch (error) {
@@ -53,7 +53,7 @@ export default function PlanAdd() {
     e.preventDefault();
     console.log(DataSubjects);
     try {
-      const response = await axios.post("http://localhost/server/schedule_add", DataSubjects, {
+      const response = await axios.post(`${process.env.REACT_APP_SERVER_URL}/server/schedule_add`, DataSubjects, {
         headers: {
           "Content-Type": "application/json",
         },
