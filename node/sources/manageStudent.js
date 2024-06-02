@@ -117,6 +117,13 @@ router.post("/server/students_add", checkAuthenticated("students_add"), async (r
 router.post("/server/students_add_multiple", checkAuthenticated("students_add_multiple"), async (req, res) => {
   const studentsData = req.body.DataStudents;
   console.log(studentsData);
+
+  const formatPhoneNumber = (phoneNumber) => {
+    return phoneNumber.replace(/-/g, "");
+  };
+
+  const formattingPhone = formatPhoneNumber(studentsData.contact);
+  const formattingParrentPhone = formatPhoneNumber(studentsData.contact_parent);
   // 데이터 삽입 쿼리
   const query =
     "INSERT INTO student (student_pk, name, sex_ism, birthday, contact, contact_parent, school, payday, firstreg, created_at) VALUES (UUID(), ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
@@ -127,8 +134,8 @@ router.post("/server/students_add_multiple", checkAuthenticated("students_add_mu
       student.name,
       student.sex_ism,
       student.birthday,
-      student.contact,
-      student.contact_parent,
+      formattingPhone,
+      formattingParrentPhone,
       student.school,
       student.payday,
       student.firstreg,
@@ -152,11 +159,18 @@ router.post("/server/students_add_multiple", checkAuthenticated("students_add_mu
 router.put("/server/students_view_update", checkAuthenticated("students_view_update"), async (req, res) => {
   const { student_pk, name, sex_ism, birthday, contact, contact_parent, school, payday, firstreg } = req.body;
 
+  const formatPhoneNumber = (phoneNumber) => {
+    return phoneNumber.replace(/-/g, "");
+  };
+
+  const formattingPhone = formatPhoneNumber(contact);
+  const formattingParrentPhone = formatPhoneNumber(contact_parent);
+
   const query = `UPDATE student SET name = ?, sex_ism = ?, birthday = ?, contact = ? ,contact_parent = ?, school = ?,payday = ?, firstreg = ?, updated_at = NOW() WHERE student_pk = ?`;
 
   db.query(
     query,
-    [name, sex_ism, birthday, contact, contact_parent, school, payday, firstreg, student_pk],
+    [name, sex_ism, birthday, formattingPhone, formattingParrentPhone, school, payday, firstreg, student_pk],
     (error, results) => {
       if (error) {
         res.status(500).json({ success: false, message: "데이터베이스 오류" });
@@ -173,6 +187,15 @@ router.post("/server/students_view_update_all", checkAuthenticated("students_vie
   const { editObject, editTarget } = req.body;
 
   let query;
+
+  //핸드폰 번호 형식 변경
+  const formatPhoneNumber = (phoneNumber) => {
+    return phoneNumber.replace(/-/g, "");
+  };
+
+  if (editObject.option === "contact" || editObject.option === "parent_contact") {
+    editObject.text = formatPhoneNumber(editObject.text);
+  }
 
   if (editObject.option === "remove") {
     query = `DELETE FROM student WHERE student_pk IN (${editTarget})`;
