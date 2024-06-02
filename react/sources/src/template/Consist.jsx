@@ -18,6 +18,7 @@ import SubjectAdd from "../pages/teacher/subject-edit/subjectAdd";
 import ManageSchedule from "../pages/teacher/manage_schedule";
 import PlanAdd from "../pages/teacher/schedule-edit/planAdd";
 import PlanEdit from "../pages/teacher/schedule-edit/PlanEdit";
+import ViewLog from "../pages/admin/view_log";
 
 export default function Consist() {
   return (
@@ -53,6 +54,9 @@ export default function Consist() {
               <Route path="/subject-edit/:subjectID" element={<SubjectEdit />} />
               <Route path="/subject-add" element={<SubjectAdd />} />
               <Route path="/plan-add" element={<PlanAdd />} />
+
+              {/* --- 관리자 ---  */}
+              <Route path="/log_view" element={<ViewLog />} />
             </Routes>
           </div>
         </div>
