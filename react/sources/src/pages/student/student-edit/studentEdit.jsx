@@ -75,8 +75,14 @@ export default function StudentEdit() {
         return dateString;
       };
 
+      const formatPhoneNumber = (phoneNumber) => {
+        return phoneNumber.replace(/-/g, "");
+      };
+
       const formattedBirthday = formatDatePart(birthday);
       const formattedFirstreg = formatDatePart(firstreg);
+      const formattedPhoneNum = formatPhoneNumber(contact);
+      const formattedParrentPhoneNum = formatPhoneNumber(contact_parent);
 
       const response = await axios.put(
         "http://localhost/server/students_view_update",
@@ -85,8 +91,8 @@ export default function StudentEdit() {
           name,
           sex_ism,
           birthday: formattedBirthday,
-          contact,
-          contact_parent,
+          contact: formattedPhoneNum,
+          contact_parent: formattedParrentPhoneNum,
           school,
           payday,
           firstreg: formattedFirstreg,
