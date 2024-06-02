@@ -70,7 +70,7 @@ export const sideMenus = [
     menus: [
       {
         name: "수정 로그 보기",
-        href: "/log",
+        href: "/log_view",
       },
       {
         name: "교직원 관리",
