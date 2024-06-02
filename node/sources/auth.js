@@ -106,18 +106,17 @@ function checkAuthenticated(taskName) {
           console.log("------------------------------------------");
           return res.status(503).json({ success: false, message: "데이터베이스 오류" });
         } else {
-          // if (results.length === 0) {
-          //   console.log("권한 설정에 오류가 있음");
-          //   return res.status(404).json({ success: false, message: "권한 설정을 찾을 수 없습니다." });
-          // }
+          if (results.length === 0) {
+            console.log("권한 설정에 오류가 있음");
+            return res.status(404).json({ success: false, message: "권한 설정을 찾을 수 없습니다." });
+          }
 
-          // if (user.admin_level >= results[0].level) {
-          //   next();
-          // } else {
-          //   console.log("접근 권한이 없음");
-          //   return res.status(403).json({ success: false, message: "접근 권한이 없습니다." });
-          // }
-          next();
+          if (user.admin_level >= results[0].level) {
+            next();
+          } else {
+            console.log("접근 권한이 없음");
+            return res.status(403).json({ success: false, message: "접근 권한이 없습니다." });
+          }
         }
       });
     } else {
