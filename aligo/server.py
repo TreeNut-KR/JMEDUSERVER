@@ -13,6 +13,8 @@ import os
 from pathlib import Path
 from sys import platform
 
+app = FastAPI()
+
 MAX_PATH = 260
 def get_documents_folder():
     CSIDL_PERSONAL = 5
@@ -20,17 +22,14 @@ def get_documents_folder():
     path_buf = ctypes.create_unicode_buffer(MAX_PATH)
     ctypes.windll.shell32.SHGetFolderPathW(None, CSIDL_PERSONAL, None, SHGFP_TYPE_CURRENT, path_buf)
     return path_buf.value
-
 if platform == "linux" or platform == "linux2":
     documents_path = Path(__file__).parent.parent
 elif platform == "win32":
     documents_path = Path(get_documents_folder())
-
+    
 log_file_path = documents_path / 'Aligo(JMEDU)_logs.log'
 if not log_file_path.parent.exists():
     log_file_path.parent.mkdir(parents=True, exist_ok=True)
-
-app = FastAPI()
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
@@ -45,6 +44,16 @@ class QRdata(BaseModel):
         if len(v) != 36:
             raise ValueError(f"QR Code는 정확히 36자리여야 합니다. 입력된 값의 길이: {len(v)}")
         return v
+    
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                "qr_data": "3335cf9b-198c-11ef-b8a7-0242c0a87002"
+                }
+            ]
+        }
+    }
 class QRresult(BaseModel):
     message: str = Field(..., title="메시지")
     student_name: Optional[str] = Field(None, title="학생 이름")
@@ -106,7 +115,7 @@ def get_parent_contact(QR: str) -> tuple:
             result = cursor.fetchone()
             
         if result:
-            return result[0], result[1]  # 정상적으로 학생 이름과 부모님 연락처를 반환
+            return result[0], result[1].replace("-", "") # 정상적으로 학생 이름과 부모님 연락처를 반환
         else:
             return "해당 QR의 학생이 데이터베이스에 존재하지 않습니다.", None  # 에러 메시지와 None 반환
     except mysql.connector.Error as err:
@@ -116,10 +125,6 @@ def get_parent_contact(QR: str) -> tuple:
 def receive_qr(request_data: QRdata) -> QRresult:
     """
     출석 키호스크에서 QR코드를 전달 받아 Aligo Web 발신 후 성공 여부를 반환합니다.
-
-    Args: qr_data (str): UUID
-
-    예제 요청: {"qr_data": "3335cf9b-198c-11ef-b8a7-0242c0a87002"}
     """
     try:
         student_name, parent_contact = get_parent_contact(request_data.qr_data)
@@ -144,6 +149,8 @@ def receive_qr(request_data: QRdata) -> QRresult:
     except Exception as e:
         logging.error(f'An error occurred: {str(e)}')
         raise HTTPException(status_code=500, detail="서버에서 처리할 수 없는 요청입니다. 관리자에게 문의해주세요.")
+    
 
-# if __name__ == "__main__":
-#     uvicorn.run(app, host="0.0.0.0", port=8001)
+
+if __name__ == "__main__":
+    uvicorn.run("server:app", host="0.0.0.0", port=8000, reload=True)
