@@ -29,7 +29,7 @@ export default function ViewLog() {
   // 데이터 가져오기
   async function loging() {
     try {
-      const response = await axios.post("http://localhost/server/log/view", {});
+      const response = await axios.post(`${process.env.REACT_APP_SERVER_URL}/server/log/view`, {});
       const logs = response.data.log.map((log) => ({
         ...log,
         time: formatTime(log.time),

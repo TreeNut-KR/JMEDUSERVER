@@ -23,7 +23,7 @@ export default function MainPage() {
   async function loging() {
     try {
       const response = await axios.post(
-        "http://localhost/server/students_view",
+        `${process.env.REACT_APP_SERVER_URL}/server/students_view`,
         {}
       );
       setData(response.data.students);
@@ -36,7 +36,7 @@ export default function MainPage() {
   async function dataSubmit_all(editText, studentArray) {
     try {
       const response = await axios.post(
-        "http://localhost/server/students_view_update_all",
+        `${process.env.REACT_APP_SERVER_URL}/server/students_view_update_all`,
         { editObject: editText, editTarget: arrayToSqlInString(studentArray) }
       );
       if (response.data.success) {
