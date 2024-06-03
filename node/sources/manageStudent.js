@@ -117,6 +117,8 @@ router.post("/server/students_add", checkAuthenticated("students_add"), async (r
 router.post("/server/students_add_multiple", checkAuthenticated("students_add_multiple"), async (req, res) => {
   const studentsData = req.body.DataStudents;
   console.log(studentsData);
+
+
   // 데이터 삽입 쿼리
   const query =
     "INSERT INTO student (student_pk, name, sex_ism, birthday, contact, contact_parent, school, payday, firstreg, created_at) VALUES (UUID(), ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
@@ -152,6 +154,7 @@ router.post("/server/students_add_multiple", checkAuthenticated("students_add_mu
 router.put("/server/students_view_update", checkAuthenticated("students_view_update"), async (req, res) => {
   const { student_pk, name, sex_ism, birthday, contact, contact_parent, school, payday, firstreg } = req.body;
 
+
   const query = `UPDATE student SET name = ?, sex_ism = ?, birthday = ?, contact = ? ,contact_parent = ?, school = ?,payday = ?, firstreg = ?, updated_at = NOW() WHERE student_pk = ?`;
 
   db.query(
@@ -173,6 +176,7 @@ router.post("/server/students_view_update_all", checkAuthenticated("students_vie
   const { editObject, editTarget } = req.body;
 
   let query;
+
 
   if (editObject.option === "remove") {
     query = `DELETE FROM student WHERE student_pk IN (${editTarget})`;

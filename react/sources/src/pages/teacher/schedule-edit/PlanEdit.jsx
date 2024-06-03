@@ -36,9 +36,9 @@ export default function PlanEdit() {
   useEffect(() => {
     const loging = async () => {
       try {
-        const response = await axios.post("http://localhost/server/subjects_view_detail", { plan_pk: scheduleID });
+        const response = await axios.post(`${process.env.REACT_APP_SERVER_URL}/server/subjects_view_detail`, { plan_pk: scheduleID });
         setData(response.data.plans);
-        const subjectsResponse = await axios.post("http://localhost/server/subjects_view", {});
+        const subjectsResponse = await axios.post(`${process.env.REACT_APP_SERVER_URL}/server/subjects_view`, {});
         const subjectsData = subjectsResponse.data.subjects;
         setSubjects(subjectsData);
       } catch (error) {
@@ -85,7 +85,7 @@ export default function PlanEdit() {
   const handleSubmit = async (e) => {
     try {
       const response = await axios.post(
-        "http://localhost/server/plan_update",
+        `${process.env.REACT_APP_SERVER_URL}/server/plan_update`,
         JSON.stringify({
           plan_pk: scheduleID,
           subject: PK,

@@ -21,7 +21,7 @@ export default function StudentEdit() {
   useEffect(() => {
     const loging = async () => {
       try {
-        const response = await axios.post("http://localhost/server/students_view_detail", { student_pk: studentID });
+        const response = await axios.post(`${process.env.REACT_APP_SERVER_URL}/server/students_view_detail`, { student_pk: studentID });
         setData(response.data.students);
       } catch (error) {
         // window.location.reload();
@@ -75,18 +75,24 @@ export default function StudentEdit() {
         return dateString;
       };
 
+      const formatPhoneNumber = (phoneNumber) => {
+        return phoneNumber.replace(/-/g, "");
+      };
+
       const formattedBirthday = formatDatePart(birthday);
       const formattedFirstreg = formatDatePart(firstreg);
+      const formattedPhoneNum = formatPhoneNumber(contact);
+      const formattedParrentPhoneNum = formatPhoneNumber(contact_parent);
 
       const response = await axios.put(
-        "http://localhost/server/students_view_update",
+        `${process.env.REACT_APP_SERVER_URL}/server/students_view_update`,
         JSON.stringify({
           student_pk: studentID,
           name,
           sex_ism,
           birthday: formattedBirthday,
-          contact,
-          contact_parent,
+          contact: formattedPhoneNum,
+          contact_parent: formattedParrentPhoneNum,
           school,
           payday,
           firstreg: formattedFirstreg,

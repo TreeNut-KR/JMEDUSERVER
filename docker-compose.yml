@@ -8,7 +8,7 @@ services:
     ports:
       - 80:80
     depends_on:
-      - react
+      - kiosk
 
   kiosk:
     restart: always

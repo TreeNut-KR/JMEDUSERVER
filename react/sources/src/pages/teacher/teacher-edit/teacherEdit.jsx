@@ -17,7 +17,7 @@ export default function TeacherEdit() {
   useEffect(() => {
     const loging = async () => {
       try {
-        const response = await axios.post("http://localhost/server/teachers_view_detail", { teacher_pk: teacherID });
+        const response = await axios.post(`${process.env.REACT_APP_SERVER_URL}/server/teachers_view_detail`, { teacher_pk: teacherID });
         setData(response.data.teachers);
         console.log(response);
       } catch (error) {
@@ -71,7 +71,7 @@ export default function TeacherEdit() {
       const formattedBirthday = formatDatePart(birthday);
 
       const response = await axios.put(
-        "http://localhost/server/teachers_view_update",
+        `${process.env.REACT_APP_SERVER_URL}/server/teachers_view_update`,
         JSON.stringify({
           teacher_pk: teacherID,
           name,
