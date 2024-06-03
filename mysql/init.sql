@@ -195,6 +195,12 @@ CREATE TABLE permissions (
 ) ENGINE=InnoDB CHARSET=utf8mb4;
 
 
+-- 콜레이션 설정
+ALTER TABLE student CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+ALTER TABLE attendance_log CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+
+
 -- 권한 기본 세팅값
 INSERT INTO permissions (task_name, level, created_at) VALUES 
 ('students_view', 0, NOW()),
@@ -302,7 +308,7 @@ BEGIN
     SET NEW.updated_at = NOW();
 END$$
 
-
+-- 등/하원 기록 및 결과 반환 프로시저
 CREATE PROCEDURE RecordAttendance (
     IN studentPK CHAR(36)
 )
@@ -321,12 +327,12 @@ BEGIN
     -- 학생의 contact_parent와 name 조회
     SELECT contact_parent, name INTO vContactParent, vName
     FROM student
-    WHERE student_pk = studentPK;
+    WHERE student_pk = CONVERT(studentPK USING utf8mb4);
 
     -- 금일 해당 학생의 출석 기록 조회
     SELECT attendance_log_pk, attend_time, leave_time INTO vAttendID, vAttendTime, vLeaveTime
     FROM attendance_log
-    WHERE student = studentPK AND DATE(attend_time) = CURDATE();
+    WHERE student = CONVERT(studentPK USING utf8mb4) AND DATE(attend_time) = CURDATE();
 
     -- 출석 기록이 없는 경우
     IF vAttendID IS NULL THEN
@@ -350,6 +356,7 @@ BEGIN
     -- 결과 반환
     SELECT vContactParent AS contact_parent, vName AS name, vStatus AS status;
 END$$
+
 
 
 
