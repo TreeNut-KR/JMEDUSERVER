@@ -32,7 +32,7 @@ export default function StudentAdd() {
   const handleSubmit = async (e) => {
     try {
       const response = await axios.post(
-        "http://localhost/server/students_add_multiple",
+        `${process.env.REACT_APP_SERVER_URL}/server/students_add_multiple`,
         {
           DataStudents,
         },
@@ -193,12 +193,12 @@ export default function StudentAdd() {
 
               <InputBox
                 data={student.payday}
-                name={"상납일"}
+                name={"결제일"}
                 edit={(value) => handleInputChange(index, "payday", value)}
               />
               <InputBox
                 data={student.firstreg}
-                name={"firstreg"}
+                name={"등록일"}
                 edit={(value) => handleInputChange(index, "firstreg", value)}
                 type={"date"}
               />

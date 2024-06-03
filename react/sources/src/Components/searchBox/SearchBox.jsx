@@ -53,7 +53,7 @@ export default function SearchBox(props) {
 
   async function searchData() {
     try {
-      const response = await axios.post(`http://localhost/server/${endPoint(option)}`, {
+      const response = await axios.post(`${process.env.REACT_APP_SERVER_URL}/server/${endPoint(option)}`, {
         search: search,
       });
       setData(response.data.datas);

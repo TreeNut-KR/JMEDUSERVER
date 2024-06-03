@@ -22,13 +22,17 @@ export default function LoginPage() {
       console.log(response);
   
       if (response.data.success) {
-          alert("로그인 성공");
-          const userData = { name: inputID, author: "admin" };
-          Cookies.set('user', JSON.stringify(userData), { expires: 7 });
-          window.location.href = "/student";
-      } else {
-          alert("로그인 실패: " + response.data.message);
-      }
+        alert("로그인 성공");
+        const userData = { name: inputID, author: "admin" };
+    
+        // 현재 시간으로부터 1시간 후를 계산
+        const inOneHour = new Date(new Date().getTime() + 60 * 60 * 1000);
+    
+        Cookies.set('user', JSON.stringify(userData), { expires: inOneHour });
+        window.location.href = "/student";
+    } else {
+        alert("로그인 실패: " + response.data.message);
+    }
   } catch (error) {
       if (error.response) {
           console.log(error.response.data);

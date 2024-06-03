@@ -22,7 +22,7 @@ export default function MainPageTeacher() {
   //데이터 가져오기
   async function loging() {
     try {
-      const response = await axios.post("http://localhost/server/teacher_view", {});
+      const response = await axios.post(`${process.env.REACT_APP_SERVER_URL}/server/teacher_view`, {});
       setData(response.data.teachers);
     } catch (error) {
       console.error(error);
@@ -32,7 +32,7 @@ export default function MainPageTeacher() {
   //데이터 수정 (한번에)
   async function dataSubmit_all(editText, studentArray) {
     try {
-      const response = await axios.post("http://localhost/server/teachers_view_update_all", {
+      const response = await axios.post(`${process.env.REACT_APP_SERVER_URL}/server/teachers_view_update_all`, {
         editObject: editText,
         editTarget: arrayToSqlInString(studentArray),
       });
