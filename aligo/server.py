@@ -1,17 +1,18 @@
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel, Field, field_validator
-from typing import Optional, Tuple, Union, List, Any
-from dotenv import load_dotenv
-from datetime import datetime
 import ctypes
-from ctypes.wintypes import MAX_PATH
-import requests
-import mysql.connector
 import logging
-import uvicorn
 import os
+from ctypes.wintypes import MAX_PATH
+from datetime import datetime
 from pathlib import Path
 from sys import platform
+from typing import Any, List, Optional, Tuple, Union
+
+import mysql.connector
+import requests
+import uvicorn
+from dotenv import load_dotenv
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel, Field, field_validator
 
 app = FastAPI()
 
@@ -143,9 +144,9 @@ def procedure_attendance_contact(QR: str) -> Union[Tuple[str, str, str], str]:
         else:
             return "해당 QR의 학생이 데이터베이스에 존재하지 않습니다."  # 에러 메시지
         
-    except UnboundLocalError as ue:
-        logging.error(f'Unbound Local Error occurred: {str(ue)}')
-        raise HTTPException(status_code=500, detail="서버 내부 오류가 발생했습니다. 관리자에게 문의해주세요.")
+    except Exception as e:
+        logging.error(f'An error occurred: {str(e)}')
+        raise HTTPException(status_code=500, detail="해당 QR의 학생이 데이터베이스에 존재하지 않습니다.")
     finally:
         if cnx.is_connected():
             cnx.close()
@@ -159,27 +160,25 @@ def receive_qr(request_data: QRdata) -> QRresult:
         contact_result = procedure_attendance_contact(request_data.qr_data)
         if isinstance(contact_result, str):
             logging.error(contact_result)
-            return QRresult(message=contact_result)
+            return QRresult(message=contact_result, student_name=contact_result[1])
         
         if contact_result[2] == "leave":
             logging.error(f"하원이 완료된 상태")
-            return QRresult(message=f"하원이 완료된 상태")
+            return QRresult(message=f"금일 하원이 이미 완료되었습니다.", student_name=contact_result[1])
+        elif contact_result[2] == "wait":
+            return QRresult(message=f"대기 중입니다. 수업이 끝난 뒤 다시 시도해주세요.", student_name=contact_result[1])
         elif contact_result[2] == "attend":
             attendance_status = "등원"
-        else:
+        elif contact_result[2] == "already":
             attendance_status = "하원"
-        print(contact_result[2])
-        print(attendance_status)
-        # send_result = Aligo().send_sms(receiver_name=contact_result[1], receiver_num=contact_result[0], status=attendance_status)
         
-        # if send_result[0] != "success":
-        #     return QRresult(message=send_result[0], student_name=contact_result[1], send_result=send_result[1:])
+        send_result = Aligo().send_sms(receiver_name=contact_result[1], receiver_num=contact_result[0], status=attendance_status)
         
-        # logging.info(f'Received QR Data: {request_data.qr_data} '
-        #              f'Student\'s name: {contact_result[1]} '
-        #              f'Parent\'s Contact: {contact_result[0]} '
-        #              f'aligo: {send_result}')
-        # return QRresult(message=send_result[0], student_name=contact_result[1], send_result=send_result[1:])
+        logging.info(f'Received QR Data: {request_data.qr_data} '
+                     f'Student\'s name: {contact_result[1]} '
+                     f'Parent\'s Contact: {contact_result[0]} '
+                     f'aligo: {send_result}')
+        return QRresult(message=send_result[0], student_name=contact_result[1], send_result=send_result[1:])
     except ValueError as ve:
         logging.error(f'An error occurred: {str(ve)}')
         raise HTTPException(status_code=422, detail=str(ve))
