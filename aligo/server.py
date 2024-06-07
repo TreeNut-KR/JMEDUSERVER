@@ -157,30 +157,29 @@ def receive_qr(request_data: QRdata) -> QRresult:
     """
     try:
         contact_result = procedure_attendance_contact(request_data.qr_data)
-        if contact_result is str:
+        if isinstance(contact_result, str):
             logging.error(contact_result)
             return QRresult(message=contact_result)
         
         if contact_result[2] == "leave":
             logging.error(f"하원이 완료된 상태")
-            return QRresult(message=contact_result)
+            return QRresult(message=f"하원이 완료된 상태")
         elif contact_result[2] == "attend":
             attendance_status = "등원"
         else:
             attendance_status = "하원"
+        print(contact_result[2])
+        print(attendance_status)
+        # send_result = Aligo().send_sms(receiver_name=contact_result[1], receiver_num=contact_result[0], status=attendance_status)
         
-        send_result = Aligo().send_sms(receiver_name=contact_result[1], receiver_num=contact_result[0], status=attendance_status)
+        # if send_result[0] != "success":
+        #     return QRresult(message=send_result[0], student_name=contact_result[1], send_result=send_result[1:])
         
-        if send_result[0] != "success":
-            return QRresult(message=send_result[0], student_name=contact_result[1], request_data=send_result[1:])
-
-        logging.info(f'Received QR Data: {request_data.qr_data} '
-                     f'Student\'s name: {contact_result[1]} '
-                     f'Parent\'s Contact: {contact_result[0]} '
-                     f'aligo: {send_result}')
-
-        return QRresult(message=send_result[0], student_name=contact_result[1], request_data=send_result[1:])
-
+        # logging.info(f'Received QR Data: {request_data.qr_data} '
+        #              f'Student\'s name: {contact_result[1]} '
+        #              f'Parent\'s Contact: {contact_result[0]} '
+        #              f'aligo: {send_result}')
+        # return QRresult(message=send_result[0], student_name=contact_result[1], send_result=send_result[1:])
     except ValueError as ve:
         logging.error(f'An error occurred: {str(ve)}')
         raise HTTPException(status_code=422, detail=str(ve))
@@ -194,7 +193,5 @@ def receive_qr(request_data: QRdata) -> QRresult:
         logging.error(f'An error occurred: {str(e)}')
         raise HTTPException(status_code=500, detail="서버에서 처리할 수 없는 요청입니다. 관리자에게 문의해주세요.")
     
-
-
 if __name__ == "__main__":
     uvicorn.run("server:app", host="0.0.0.0", port=8000, reload=True)
