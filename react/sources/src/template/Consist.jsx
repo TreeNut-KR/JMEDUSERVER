@@ -19,6 +19,7 @@ import ManageSchedule from "../pages/teacher/manage_schedule";
 import PlanAdd from "../pages/teacher/schedule-edit/planAdd";
 import PlanEdit from "../pages/teacher/schedule-edit/PlanEdit";
 import ViewLog from "../pages/admin/view_log";
+import SubjectShow from "../pages/teacher/subject-edit/subjectShow";
 
 export default function Consist() {
   return (
@@ -53,6 +54,7 @@ export default function Consist() {
               {/* 수업 정보 수정/추가 페이지 */}
               <Route path="/subject-edit/:subjectID" element={<SubjectEdit />} />
               <Route path="/subject-add" element={<SubjectAdd />} />
+              <Route path="/subject-show/:subjectID" element={<SubjectShow />} />
               <Route path="/plan-add" element={<PlanAdd />} />
 
               {/* --- 관리자 ---  */}
