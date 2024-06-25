@@ -4,9 +4,11 @@ const router = express.Router();
 const { checkAuthenticated } = require("./auth");
 const { logAttend, adminLog } = require("./logger");
 
-//플랜 조회
+// 플랜 조회
 router.post("/server/schedules_search", checkAuthenticated("schedules_search"), async (req, res) => {
-  const query = `
+  const { subject_pk } = req.body; // subject_pk 값 입력하면 검색기능 추가 하도록 했음
+
+  let query = `
   SELECT 
   p.plan_pk,
   p.week,
@@ -26,10 +28,16 @@ router.post("/server/schedules_search", checkAuthenticated("schedules_search"), 
   INNER JOIN 
     school sc ON sub.school = sc.school_pk
   WHERE 
-    p.deleted_at IS NULL;
+    p.deleted_at IS NULL
   `;
 
-  db.query(query, (error, results) => {
+  if (subject_pk) {
+    query += ` AND p.subject = ?`;
+  }
+
+  query += ` ORDER BY p.starttime ASC`;
+
+  db.query(query, [subject_pk], (error, results) => {
     if (error) {
       res.status(500).json({ success: false, message: "데이터베이스 오류" });
     } else {

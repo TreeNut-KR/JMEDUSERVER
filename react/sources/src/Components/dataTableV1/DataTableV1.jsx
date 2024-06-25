@@ -123,6 +123,11 @@ export default function DataTableV1(props) {
     const editUrl = `/${type}-edit/${ID}`;
     window.location.href = editUrl;
   }
+
+  function buttonEffect_Subject(ID) {
+    const editUrl = `/${type}-show/${ID}`;
+    window.location.href = editUrl;
+  }
   // -------------------------------------------------------------------------
   return (
     <div ref={tableRef} className="w-full p-10 pt-0 relative">
@@ -225,12 +230,22 @@ export default function DataTableV1(props) {
                       >
                         <img src={moreIcon} alt="" />
                         {expandedRowIndex === index && (
-                          <span
-                            className="absolute top-[-4px] left-[7rem] transform translate-x-[-50%] bg-[#5272F2] px-3 py-1 border rounded w-[10rem] text-white"
-                            onClick={() => buttonEffect(item.data_pk)}
-                          >
-                            자세히 보기 / 수정
-                          </span>
+                          <>
+                            <span
+                              className="absolute top-[-4px] left-[7rem] transform translate-x-[-50%] bg-[#5272F2] px-3 py-1 border rounded w-[10rem] text-white"
+                              onClick={() => buttonEffect(item.data_pk)}
+                            >
+                              자세히 보기 / 수정
+                            </span>
+                            {type === "subject" ? (
+                              <span
+                                className="absolute top-[-39px] left-[7rem] transform translate-x-[-50%] bg-[#5272F2] px-3 py-1 border rounded w-[10rem] text-white"
+                                onClick={() => buttonEffect_Subject(item.data_pk)}
+                              >
+                                일정 보기
+                              </span>
+                            ) : null}
+                          </>
                         )}
                       </button>
                     </td>
@@ -255,12 +270,14 @@ export default function DataTableV1(props) {
               <option value={10000000}>전체 보기</option>
             </select>
           </div>
-          <div className="flex items-center border-2 rounded-md border-[#5272F2] px-2">
-            <input className="h-4 w-4" type="checkbox" checked={editAll} onChange={() => setEditAll(!editAll)} />
-            <label className="pl-3" for="scales">
-              한번에 수정하기
-            </label>
-          </div>
+          {runSQL ? (
+            <div className="flex items-center border-2 rounded-md border-[#5272F2] px-2">
+              <input className="h-4 w-4" type="checkbox" checked={editAll} onChange={() => setEditAll(!editAll)} />
+              <label className="pl-3" for="scales">
+                한번에 수정하기
+              </label>
+            </div>
+          ) : null}
         </div>
         {currentPage > 1 && (
           <>

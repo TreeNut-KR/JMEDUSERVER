@@ -63,6 +63,16 @@ export const sideMenus = [
         href: "/plan-edit",
         display: "none",
       },
+      {
+        name: "수업 일정 확인",
+        href: "/subject-show",
+        display: "none",
+      },
+      {
+        name: "수업 수정",
+        href: "/subject-edit",
+        display: "none",
+      },
     ],
   },
   {
@@ -71,10 +81,6 @@ export const sideMenus = [
       {
         name: "수정 로그 보기",
         href: "/log_view",
-      },
-      {
-        name: "교직원 관리",
-        href: "/staff",
       },
     ],
   },
