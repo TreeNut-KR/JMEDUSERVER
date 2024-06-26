@@ -3,7 +3,7 @@
 const db = require("./db");
 const express = require("express");
 const router = express.Router();
-const { checkAuthenticated } = require("./auth");
+const { checkAuthenticated } = require("./permission");
 
 //등하원기록
 async function logAttend(qrcode, is_attend, is_late, now) {
