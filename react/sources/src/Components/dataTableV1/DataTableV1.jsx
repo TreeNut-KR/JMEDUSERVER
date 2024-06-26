@@ -23,16 +23,16 @@ export default function DataTableV1(props) {
 
   //다수 개체 한번에 수정 위한 버튼
   function editAllButton() {
+    if (selectedType.value === "remove") setEditText({ text: "remove" });
+    if ((editText.text && dataArray.length >= 1 && editText.submit) || selectedType.value === "remove") {
+      runSQL(editText, dataArray);
+      setEditText({ text: "", option: "", submit: false });
+    }
     setEditText({
       text: editTextDB,
       option: selectedType.value,
       submit: true,
     });
-    if (selectedType.value === "remove") setEditText({ text: "remove" });
-    if (editText.text && dataArray.length >= 1 && editText.submit) {
-      runSQL(editText, dataArray);
-      setEditText({ text: "", option: "", submit: false });
-    }
   }
 
   //data 안의 pk 값 이름 재설정
@@ -148,11 +148,13 @@ export default function DataTableV1(props) {
               setSelectedType(selectedTypeObject);
             }}
           >
-            <option selected value="none">
-              선택하기
-            </option>
             {Object.keys(editType).map((key) => (
-              <option key={key} value={key}>
+              <option
+                key={key}
+                value={key}
+                className="fontA"
+                style={{ color: editType[key].name === "삭제하기" ? "red" : "black" }}
+              >
                 {editType[key].name}
               </option>
             ))}
@@ -274,7 +276,7 @@ export default function DataTableV1(props) {
             <div className="flex items-center border-2 rounded-md border-[#5272F2] px-2">
               <input className="h-4 w-4" type="checkbox" checked={editAll} onChange={() => setEditAll(!editAll)} />
               <label className="pl-3" for="scales">
-                한번에 수정하기
+                한번에 수정/삭제
               </label>
             </div>
           ) : null}
