@@ -5,7 +5,7 @@ const { checkAuthenticated } = require("./auth");
 const { logAttend, adminLog } = require("./logger");
 
 // 플랜 조회
-router.post("/server/schedules_search", checkAuthenticated("schedules_search"), async (req, res) => {
+router.post("/server/schedules_view", checkAuthenticated("schedules_view"), async (req, res) => {
   const { subject_pk } = req.body; // subject_pk 값 입력하면 검색기능 추가 하도록 했음
 
   let query = `
@@ -47,8 +47,78 @@ router.post("/server/schedules_search", checkAuthenticated("schedules_search"), 
   });
 });
 
+// 플랜 검색 기능
+router.post("/server/schedules_search", checkAuthenticated("schedules_search"), async (req, res) => {
+  const { search } = req.body;
+  console.log(search);
+  let query = "";
+  let queryParams = [];
+
+  if (search.text === "") {
+    query = `
+  SELECT 
+  p.plan_pk,
+  p.week,
+  p.subject,
+  p.starttime,
+  p.endtime,
+  p.room,
+  sub.name AS subject_name,
+  t.name AS teacher_name,
+  sc.name AS school_name
+  FROM 
+    plan p
+  INNER JOIN 
+    subject sub ON p.subject = sub.subject_pk
+  INNER JOIN 
+    teacher t ON sub.teacher = t.teacher_pk
+  INNER JOIN 
+    school sc ON sub.school = sc.school_pk
+  WHERE 
+    p.deleted_at IS NULL
+  `;
+  } else {
+    query = `
+  SELECT 
+  p.plan_pk,
+  p.week,
+  p.subject,
+  p.starttime,
+  p.endtime,
+  p.room,
+  sub.name AS subject_name,
+  t.name AS teacher_name,
+  sc.name AS school_name
+  FROM 
+    plan p
+  INNER JOIN 
+    subject sub ON p.subject = sub.subject_pk
+  INNER JOIN 
+    teacher t ON sub.teacher = t.teacher_pk
+  INNER JOIN 
+    school sc ON sub.school = sc.school_pk
+  WHERE 
+    p.deleted_at IS NULL
+    And ${search.option} = ?
+  `;
+    queryParams = [search.text];
+  }
+  query += ` ORDER BY p.plan_pk ASC`;
+
+  db.query(query, queryParams, (error, results) => {
+    if (error) {
+      console.error("Database query error:", error);
+      res.status(500).json({ success: false, message: "데이터베이스 오류" });
+    } else {
+      res.json({ success: true, datas: results });
+      const logMsg = "시간표를 검색했습니다.";
+      adminLog(req.session.user, logMsg);
+    }
+  });
+});
+
 //플랜 검색
-router.post("/server/subjects_view_detail", checkAuthenticated("subjects_view_detail"), async (req, res) => {
+router.post("/server/plan_view_detail", checkAuthenticated("plan_view_detail"), async (req, res) => {
   const { plan_pk } = req.body;
 
   // 데이터 삽입 쿼리
@@ -127,6 +197,7 @@ router.post("/server/schedule_add", checkAuthenticated("schedule_add"), async (r
       res.status(500).send("서버 오류가 발생했습니다.");
       return;
     }
+    res.json({ success: true });
     res.status(200).send("시간표가 성공적으로 등록되었습니다.");
   });
 });
@@ -146,7 +217,30 @@ router.post("/server/plan_update", checkAuthenticated("plan_update"), async (req
     if (result.affectedRows === 0) {
       res.status(404).send("해당하는 시간표가 없습니다.");
     } else {
+      res.json({ success: true });
       res.status(200).send("시간표가 성공적으로 수정되었습니다.");
+    }
+  });
+});
+
+//////////////////////플랜 정보 수정 (여러개 한번에)
+router.post("/server/plans_view_update_all", checkAuthenticated("plans_view_update_all"), async (req, res) => {
+  const { editObject, editTarget } = req.body;
+
+  let query;
+
+  if (editObject.option === "remove") {
+    query = `DELETE FROM plan WHERE plan_pk IN (${editTarget})`;
+  } else {
+    query = `UPDATE plan SET ${editObject.option} = '${editObject.text}' WHERE plan_pk IN (${editTarget})`;
+  }
+  console.log("editobject:", editObject, "쿼리 : ", query);
+  db.query(query, (error, results) => {
+    if (error) {
+      res.status(500).json({ success: false, message: "데이터베이스 오류" });
+    } else {
+      res.json({ success: true });
+      adminLog(req.session.user, "여러 명의 강의 정보를 수정했습니다.");
     }
   });
 });

@@ -23,23 +23,32 @@ router.post("/server/subjects_view", checkAuthenticated("subjects_view"), async 
   );
 });
 
-//////////////////////과목 검색
+// 과목 검색
 router.post("/server/subjects_search", checkAuthenticated("subjects_search"), async (req, res) => {
   const { search } = req.body;
   console.log(search);
-  db.query(
-    `SELECT * FROM subject WHERE ${search.option} = ? AND deleted_at IS NULL;`,
-    [search.text],
-    (error, results) => {
-      if (error) {
-        res.status(500).json({ success: false, message: "데이터베이스 오류" });
-      } else {
-        res.json({ success: true, datas: results, search: search });
-        const logMsg = "과목 목록을 검색했습니다.";
-        adminLog(req.session.user, logMsg);
-      }
+
+  let query = "";
+  let queryParams = [];
+
+  if (search.text.trim() === "") {
+    query =
+      "SELECT subject.*, (SELECT name FROM teacher WHERE teacher_pk = subject.teacher) AS teacher_name FROM subject";
+  } else {
+    // 특정 조건에 맞는 데이터를 가져오게 함
+    query = `SELECT subject.*, teacher.name AS teacher_name FROM subject JOIN teacher ON teacher.teacher_pk = subject.teacher WHERE ${search.option} = ? AND subject.deleted_at IS NULL`;
+    queryParams = [search.text];
+  }
+
+  db.query(query, queryParams, (error, results) => {
+    if (error) {
+      res.status(500).json({ success: false, message: "데이터베이스 오류" });
+    } else {
+      res.json({ success: true, datas: results, search: search });
+      const logMsg = "과목 목록을 검색했습니다.";
+      adminLog(req.session.user, logMsg);
     }
-  );
+  });
 });
 
 //////////////////////과목 자세히 보기
@@ -78,7 +87,7 @@ router.post("/server/subjects_view_update_all", checkAuthenticated("subjects_vie
       res.status(500).json({ success: false, message: "데이터베이스 오류" });
     } else {
       res.json({ success: true });
-      adminLog(req.session.user, "여러 명의 과목 정보를 수정했습니다.");
+      adminLog(req.session.user, "여러 명의 과목 정보를 제거 및 수정했습니다.");
     }
   });
 });

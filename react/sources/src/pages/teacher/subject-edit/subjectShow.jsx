@@ -5,7 +5,6 @@ import { useParams } from "react-router-dom";
 import { Toast, notify } from "../../../template/Toastify";
 
 import axios from "axios";
-import SearchBox from "../../../Components/searchBox/SearchBox";
 import DataTableV1 from "../../../Components/dataTableV1/DataTableV1";
 import { EDIT_SCHEDULE } from "../../../constants/searchFilter";
 
@@ -20,10 +19,11 @@ export default function SubjectShow() {
   //데이터 가져오기
   async function loging() {
     try {
-      const response = await axios.post(`${process.env.REACT_APP_SERVER_URL}/server/schedules_search`, {
+      const response = await axios.post(`${process.env.REACT_APP_SERVER_URL}/server/schedules_view`, {
         subject_pk: subjectID,
       });
       setData(response.data.schedules);
+      console.log(data);
     } catch (error) {
       console.error(error);
     }
@@ -40,13 +40,8 @@ export default function SubjectShow() {
   return (
     <>
       <BasicBox>
-        <DataTableV1
-          title={"강의 목록 테이블"}
-          columns={columns}
-          datas={data}
-          type="subject"
-          editType={EDIT_SCHEDULE}
-        />
+        <div className="h-[40px]" />
+        <DataTableV1 title={"강의 목록 테이블"} columns={columns} datas={data} type="plan" editType={EDIT_SCHEDULE} />
       </BasicBox>
       <Toast />
     </>
