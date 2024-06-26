@@ -14,6 +14,7 @@ function getDayOfWeek() {
 
 //강의를 시작할 때의 페이지 로드, 이 때 해당 강사가 개설한 오늘의 플랜 목록을 보여줌
 router.post("/server/checkAttend/Page1", checkAuthenticated("checkAttend"),async (req, res) => {
+    console.log("체크어탠트");
     const teacher_pk = req.session.user.teacher_pk;
     const week = getDayOfWeek();
     const query = `

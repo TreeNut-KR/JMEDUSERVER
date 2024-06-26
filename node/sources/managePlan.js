@@ -1,7 +1,7 @@
 const db = require("./db");
 const express = require("express");
 const router = express.Router();
-const { checkAuthenticated } = require("./auth");
+const { checkAuthenticated } = require("./permission");
 const { logAttend, adminLog } = require("./logger");
 
 // 플랜 조회

@@ -4,7 +4,7 @@ const db = require("./db");
 const express = require("express");
 const router = express.Router();
 const { logAttend, adminLog } = require("./logger");
-const { checkAuthenticated } = require("./auth");
+const { checkAuthenticated } = require("./permission");
 
 function makeStudentSearchQuery(text, option) {
   //console.log(body);
