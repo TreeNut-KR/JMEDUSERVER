@@ -1,5 +1,9 @@
 //학생 검색 필터
 export const SEARCH_STUDENT = {
+  none: {
+    name: "선택하기",
+    value: "",
+  },
   name: {
     name: "이름",
     value: "name",
@@ -11,6 +15,10 @@ export const SEARCH_STUDENT = {
 };
 //강사 검색 필터
 export const SEARCH_TEACHER = {
+  none: {
+    name: "선택하기",
+    value: "",
+  },
   name: {
     name: "이름",
     value: "name",
@@ -19,46 +27,53 @@ export const SEARCH_TEACHER = {
     name: "핸드폰 번호",
     value: "contact",
   },
-  test: {
-    name: "test",
-    value: "contact",
-  },
 };
 
 //스케쥴 검색 필터
 export const SEARCH_SCHEDULE = {
+  none: {
+    name: "선택하기",
+    value: "",
+  },
   name: {
-    name: "강의 명",
-    value: "subject_name",
+    name: "담당강사",
+    value: "t.name",
+  },
+  schedule: {
+    name: "과목이름",
+    value: "sub.name",
   },
 };
 
-//강사 검색 필터
+//과목 검색 필터
 export const SEARCH_SUBJECT = {
+  none: {
+    name: "선택하기",
+    value: "",
+  },
   teacher_name: {
-    name: "담당교수",
-    value: "teacher_name",
+    name: "과목이름",
+    value: "subject.name",
   },
   grade: {
     name: "학년",
     value: "grade",
   },
   name: {
-    name: "수업 명",
-    value: "name",
+    name: "담당강사",
+    value: "teacher.name",
   },
 };
 //학생 컬럼
 export const EDIT_STUDENT = {
+  none: {
+    name: "선택하기",
+    value: "",
+  },
   name: {
     name: "이름",
     type: "text",
     value: "name",
-  },
-  sex_ism: {
-    name: "성별",
-    type: "radio",
-    value: "sex_ism",
   },
   birthday: {
     name: "생일",
@@ -99,21 +114,16 @@ export const EDIT_STUDENT = {
 
 //강사 컬럼
 export const EDIT_TEACHER = {
+  none: {
+    name: "선택하기",
+    value: "",
+  },
   name: {
     name: "이름",
     type: "text",
     value: "name",
   },
-  sex_ism: {
-    name: "성별",
-    type: "radio",
-    value: "sex_ism",
-  },
-  birthday: {
-    name: "생일",
-    type: "date",
-    value: "birthday",
-  },
+
   contact: {
     name: "연락처 (개인)",
     type: "phone",
@@ -128,6 +138,10 @@ export const EDIT_TEACHER = {
 
 //강사 컬럼
 export const EDIT_SUBJECT = {
+  none: {
+    name: "선택하기",
+    value: "",
+  },
   remove: {
     name: "삭제하기",
     type: "text",
@@ -137,6 +151,10 @@ export const EDIT_SUBJECT = {
 
 //스케쥴 컬럼
 export const EDIT_SCHEDULE = {
+  none: {
+    name: "선택하기",
+    value: "",
+  },
   remove: {
     name: "삭제하기",
     type: "text",

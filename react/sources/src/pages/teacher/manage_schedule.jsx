@@ -22,7 +22,7 @@ export default function ManageSchedule() {
   //데이터 가져오기
   async function loging() {
     try {
-      const response = await axios.post(`${process.env.REACT_APP_SERVER_URL}/server/schedules_search`, {});
+      const response = await axios.post(`${process.env.REACT_APP_SERVER_URL}/server/schedules_view`, {});
       setData(response.data.schedules);
     } catch (error) {
       console.error(error);
@@ -32,7 +32,7 @@ export default function ManageSchedule() {
   //데이터 수정 (한번에)
   async function dataSubmit_all(editText, studentArray) {
     try {
-      const response = await axios.post(`${process.env.REACT_APP_SERVER_URL}/server/subjects_view_update_all`, {
+      const response = await axios.post(`${process.env.REACT_APP_SERVER_URL}/server/plans_view_update_all`, {
         editObject: editText,
         editTarget: arrayToSqlInString(studentArray),
       });
@@ -63,7 +63,7 @@ export default function ManageSchedule() {
   return (
     <>
       <BasicBox>
-        <SearchBox setData={setData} option={"schedule"} useDatePicker={true}></SearchBox>
+        <SearchBox setData={setData} option={"schedule"}></SearchBox>
         <DataTableV1
           title={"강의 목록 테이블"}
           columns={columns}

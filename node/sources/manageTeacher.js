@@ -21,19 +21,26 @@ router.post("/server/teacher_view", checkAuthenticated("teacher_view"), async (r
 router.post("/server/teachers_search", checkAuthenticated("teachers_search"), async (req, res) => {
   const { search } = req.body;
   console.log(search);
-  db.query(
-    `SELECT * FROM teacher WHERE ${search.option} = ? AND deleted_at IS NULL;`,
-    [search.text],
-    (error, results) => {
-      if (error) {
-        res.status(500).json({ success: false, message: "데이터베이스 오류" });
-      } else {
-        res.json({ success: true, datas: results, search: search });
-        const logMsg = "교사 목록을 검색했습니다.";
-        adminLog(req.session.user, logMsg);
-      }
+
+  let query = "";
+  let queryParams = [];
+
+  if (search.text === "") {
+    query = "SELECT * FROM teacher WHERE deleted_at IS NULL;";
+  } else {
+    query = `SELECT * FROM teacher WHERE ${search.option} = ? AND deleted_at IS NULL;`;
+    queryParams = [search.text];
+  }
+
+  db.query(query, queryParams, (error, results) => {
+    if (error) {
+      res.status(500).json({ success: false, message: "데이터베이스 오류" });
+    } else {
+      res.json({ success: true, datas: results, search: search });
+      const logMsg = "교사 목록을 검색했습니다.";
+      adminLog(req.session.user, logMsg);
     }
-  );
+  });
 });
 
 //////////////////////강사 정보 수정
