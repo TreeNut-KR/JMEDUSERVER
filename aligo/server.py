@@ -72,9 +72,9 @@ class Aligo:
         # 메시지 포맷
         current_time = datetime.now().strftime('%Y.%m.%d %H:%M:%S')
         msg_template = (
-            f"메시지 타입 {os.getenv('SMS_MSG_TYPE')}.\n"
-            f"{self.receiver_name} JMEDU 테스트 메시지.\n"
-            f"등원 시간 {current_time}"
+            f"안녕하세요, 제이엠에듀국영수논술전문학원입니다."
+            f"{self.receiver_name} 학생이 등원하였습니다.\n"
+            f"감사합니다."
         )
         
         # 기존 self.sms_data 복사 후 'msg'만 업데이트
