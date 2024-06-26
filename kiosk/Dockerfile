@@ -1,5 +1,7 @@
 FROM node:18-alpine
 
+ENV TZ=Asia/Seoul
+
 WORKDIR /app
 
 COPY ./sources/package.json ./sources/package-lock.json /app/

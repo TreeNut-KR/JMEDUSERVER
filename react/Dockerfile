@@ -1,5 +1,6 @@
 FROM node:18-alpine
 
+ENV TZ=Asia/Seoul
 ENV LANG en_US.UTF-8
 ENV LC_ALL en_US.UTF-8
 
