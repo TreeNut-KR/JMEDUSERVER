@@ -1,8 +1,7 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import PropTypes from "prop-types";
 import { SEARCH_STUDENT, SEARCH_TEACHER, SEARCH_SUBJECT, SEARCH_SCHEDULE } from "../../constants/searchFilter";
-import { useState } from "react";
 import Button from "../ButtonTop";
 import DatePickerV1 from "../datePicker/DatePicker";
 import axios from "axios";
@@ -10,45 +9,39 @@ import axios from "axios";
 export default function SearchBox(props) {
   const today = new Date();
   const { setData, option, useDatePicker } = props;
-  const [searchOption, setSearchOption] = useState("name");
+
   const [startDate, setStartDate] = useState(useDatePicker ? today : null);
   const [endDate, setEndDate] = useState(useDatePicker ? today : null);
 
-  const [search, setSearch] = useState({
-    text: "",
-    option: "student",
-  });
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setSearch({
-      text: e.target.elements["nameText"].value,
-      option: searchOption,
-    });
-    searchData();
-  };
-
-  const resetField = (e) => {
-    e.preventDefault();
-    document.querySelector("#text-field").value = "";
-    setStartDate(today);
-    setEndDate(today);
-  };
-
+  // 검색 옵션으로 들어올 것 지정
   const filterOption = (option) => {
     if (option === "student") return SEARCH_STUDENT;
     else if (option === "teacher") return SEARCH_TEACHER;
     else if (option === "subject") return SEARCH_SUBJECT;
     else if (option === "schedule") return SEARCH_SCHEDULE;
-    else return false;
+    else return [];
   };
 
+  // 초기 옵션 배열을 가져옴
+  const options = filterOption(option);
+
+  // 초기 상태 설정
+  const [search, setSearch] = useState({
+    text: "",
+    option: options.length > 0 ? options[0].value : "",
+  });
+  // api 지정
   const endPoint = (option) => {
     if (option === "student") return "students_search";
     else if (option === "teacher") return "teachers_search";
     else if (option === "subject") return "subjects_search";
     else if (option === "schedule") return "schedules_search";
     else return false;
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    searchData();
   };
 
   async function searchData() {
@@ -69,10 +62,11 @@ export default function SearchBox(props) {
           <div className="w-full flex">
             <select
               className="w-24 mr-5 rounded-md border border-[#B3A492]"
-              onChange={(e) => setSearchOption(e.target.value)}
+              onChange={(e) => setSearch({ text: search.text, option: e.target.value })}
+              value={search.option}
               id=""
             >
-              {Object.values(filterOption(option)).map((filter) => (
+              {Object.values(options).map((filter) => (
                 <option key={filter.value} value={filter.value} className="fontA">
                   {filter.name}
                 </option>
@@ -83,6 +77,8 @@ export default function SearchBox(props) {
               name="nameText"
               id="text-field"
               placeholder={`검색기능을 이용하실 수 있습니다.`}
+              onChange={(e) => setSearch({ text: e.target.value, option: search.option })}
+              value={search.text}
             />
           </div>
           <div className="mt-3 flex justify-end items-center gap-3 w-full">
@@ -97,7 +93,7 @@ export default function SearchBox(props) {
               ) : null}
             </div>
             <button className="text-xs w-16 h-10 px-2 rounded-md border bg-[#5272F2] text-white">검색</button>
-            <Button onClick={resetField} label={"초기화"}>
+            <Button onClick={() => setSearch({ option: search.option, text: "" })} label={"초기화"}>
               초기화
             </Button>
           </div>

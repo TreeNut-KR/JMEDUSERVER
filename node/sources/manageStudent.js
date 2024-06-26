@@ -49,19 +49,27 @@ router.post("/server/students_view", checkAuthenticated("students_view"), async 
 router.post("/server/students_search", checkAuthenticated("students_search"), async (req, res) => {
   const { search } = req.body;
   console.log(search);
-  db.query(
-    `SELECT * FROM student WHERE ${search.option} = ? AND deleted_at IS NULL;`,
-    [search.text],
-    (error, results) => {
-      if (error) {
-        res.status(500).json({ success: false, message: "데이터베이스 오류" });
-      } else {
-        res.json({ success: true, datas: results, search: search });
-        const logMsg = "학생 목록을 검색했습니다.";
-        adminLog(req.session.user, logMsg);
-      }
+
+  let query = "";
+  let queryParams = [];
+
+  if (search.text === "") {
+    query = "SELECT * FROM student WHERE deleted_at IS NULL;";
+  } else {
+    // 특정 조건에 맞는 데이터를 가져옴
+    query = `SELECT * FROM student WHERE ${search.option} = ? AND deleted_at IS NULL;`;
+    queryParams = [search.text];
+  }
+
+  db.query(query, queryParams, (error, results) => {
+    if (error) {
+      res.status(500).json({ success: false, message: "데이터베이스 오류" });
+    } else {
+      res.json({ success: true, datas: results, search: search });
+      const logMsg = "학생 목록을 검색했습니다.";
+      adminLog(req.session.user, logMsg);
     }
-  );
+  });
 });
 
 //////////////////////학생 자세히 보기
@@ -118,7 +126,6 @@ router.post("/server/students_add_multiple", checkAuthenticated("students_add_mu
   const studentsData = req.body.DataStudents;
   console.log(studentsData);
 
-
   // 데이터 삽입 쿼리
   const query =
     "INSERT INTO student (student_pk, name, sex_ism, birthday, contact, contact_parent, school, payday, firstreg, created_at) VALUES (UUID(), ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
@@ -154,7 +161,6 @@ router.post("/server/students_add_multiple", checkAuthenticated("students_add_mu
 router.put("/server/students_view_update", checkAuthenticated("students_view_update"), async (req, res) => {
   const { student_pk, name, sex_ism, birthday, contact, contact_parent, school, payday, firstreg } = req.body;
 
-
   const query = `UPDATE student SET name = ?, sex_ism = ?, birthday = ?, contact = ? ,contact_parent = ?, school = ?,payday = ?, firstreg = ?, updated_at = NOW() WHERE student_pk = ?`;
 
   db.query(
@@ -176,7 +182,6 @@ router.post("/server/students_view_update_all", checkAuthenticated("students_vie
   const { editObject, editTarget } = req.body;
 
   let query;
-
 
   if (editObject.option === "remove") {
     query = `DELETE FROM student WHERE student_pk IN (${editTarget})`;
