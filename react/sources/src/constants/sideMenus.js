@@ -26,6 +26,20 @@ export const sideMenus = [
         href: "/student-add",
         display: "none",
       },
+      {
+        name: "학교 조회",
+        href: "/school",
+      },
+      {
+        name: "학교 추가",
+        href: "/school-add",
+        display: "none",
+      },
+      {
+        name: "학교 정보 수정",
+        href: "/school-edit",
+        display: "none",
+      },
     ],
   },
   {

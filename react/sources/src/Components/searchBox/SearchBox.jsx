@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import PropTypes from "prop-types";
-import { SEARCH_STUDENT, SEARCH_TEACHER, SEARCH_SUBJECT, SEARCH_SCHEDULE } from "../../constants/searchFilter";
+import { SEARCH_STUDENT, SEARCH_TEACHER, SEARCH_SUBJECT, SEARCH_SCHEDULE, SEARCH_SCHOOL } from "../../constants/searchFilter";
 import Button from "../ButtonTop";
 import DatePickerV1 from "../datePicker/DatePicker";
 import axios from "axios";
@@ -19,6 +19,7 @@ export default function SearchBox(props) {
     else if (option === "teacher") return SEARCH_TEACHER;
     else if (option === "subject") return SEARCH_SUBJECT;
     else if (option === "schedule") return SEARCH_SCHEDULE;
+    else if (option === "school") return SEARCH_SCHOOL;
     else return [];
   };
 
@@ -36,6 +37,7 @@ export default function SearchBox(props) {
     else if (option === "teacher") return "teachers_search";
     else if (option === "subject") return "subjects_search";
     else if (option === "schedule") return "schedules_search";
+    else if (option === "school") return "schools_search";
     else return false;
   };
 
