@@ -3,7 +3,7 @@ import DatePickerV1 from "./datePicker/DatePicker";
 import { useState } from "react";
 
 export default function InputBox(props) {
-  const { name, data, table, edit, disable, type, options, subData_picker } = props;
+  const { name, data, table, edit, disable, type, options, subData_picker, setToggle } = props;
 
   //picker 호버기능 on/off
   const [hoverBoxVisible, setHoverBoxVisible] = useState(false);
@@ -101,6 +101,15 @@ export default function InputBox(props) {
             onChange={handleChange}
             placeholder="HH:MM"
           />
+        </>
+      ) : type === "multipicker" ? (
+        <>
+          <button
+            className="text-sm px-2 rounded-md border-2 w-[100px] h-[2rem] bg-[#FAFBFE] border-[#5272F2] fontA"
+            onClick={() => setToggle(1)}
+          >
+            수정하기
+          </button>
         </>
       ) : type === "picker" ? (
         <>
