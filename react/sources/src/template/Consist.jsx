@@ -20,6 +20,9 @@ import PlanAdd from "../pages/teacher/schedule-edit/planAdd";
 import PlanEdit from "../pages/teacher/schedule-edit/PlanEdit";
 import ViewLog from "../pages/admin/view_log";
 import SubjectShow from "../pages/teacher/subject-edit/subjectShow";
+import School from "../pages/student/school";
+import SchoolEdit from "../pages/student/school-edit/school_edit";
+import SchoolAdd from "../pages/student/school-add/school_add";
 
 export default function Consist() {
   return (
@@ -42,6 +45,12 @@ export default function Consist() {
               <Route path="/student-edit/:studentID" element={<StudentEdit />} />
               {/* 학생 추가 페이지 */}
               <Route path="/student-add" element={<StudentAdd />} />
+              {/* 학교 관리 페이지 */}
+              <Route path="/school" element={<School />} />
+              {/* 학교정보 수정 페이지 */}
+              <Route path="/school-edit/:schoolID" element={<SchoolEdit />} />
+              {/* 학교 추가 페이지 */}
+              <Route path="/school-add" element={<SchoolAdd />} />
 
               {/* --- 교직원 ---  */}
               {/* 교직원 관리 페이지 */}

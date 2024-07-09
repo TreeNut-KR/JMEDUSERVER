@@ -1,3 +1,6 @@
+
+// ------------------------ 필터 -------------------------------
+
 //학생 검색 필터
 export const SEARCH_STUDENT = {
   none: {
@@ -64,6 +67,26 @@ export const SEARCH_SUBJECT = {
     value: "teacher.name",
   },
 };
+
+//학교 검색 필터
+export const SEARCH_SCHOOL = {
+  none: {
+    name: "선택하기",
+    value: "",
+  },
+  teacher_name: {
+    name: "학교이름",
+    value: "name",
+  },
+};
+
+
+// -------------------------------------------------------
+
+
+
+// ------------------------ 컬럼 -------------------------------
+
 //학생 컬럼
 export const EDIT_STUDENT = {
   none: {
@@ -161,3 +184,17 @@ export const EDIT_SCHEDULE = {
     value: "remove",
   },
 };
+
+//스케쥴 컬럼
+export const EDIT_SCHOOL = {
+  none: {
+    name: "선택하기",
+    value: "",
+  },
+  remove: {
+    name: "삭제하기",
+    type: "text",
+    value: "remove",
+  },
+};
+
