@@ -31,7 +31,22 @@ function makeStudentSearchQuery(text, option) {
 router.post("/server/students_view", checkAuthenticated("students_view"), async (req, res) => {
   console.log("학생 조회가 실행되었음");
 
-  db.query("SELECT * FROM student WHERE deleted_at IS NULL", (error, results) => {
+  // student 테이블과 school 테이블을 조인하여 필요한 데이터를 가져옴
+  const query = `
+    SELECT 
+      s.*, 
+      sc.name AS school_name 
+    FROM 
+      student s 
+    JOIN 
+      school sc 
+    ON 
+      s.school = sc.school_pk 
+    WHERE 
+      s.deleted_at IS NULL
+  `;
+
+  db.query(query, (error, results) => {
     if (error) {
       console.log("학생 조회에서 오류 발생");
       console.log("-------------------에러 코드 -------------------");
@@ -214,6 +229,69 @@ router.post("/server/student_remove", checkAuthenticated("student_remove"), asyn
       return;
     }
     res.status(200).send("사용자가 성공적으로 등록되었습니다.");
+  });
+});
+
+/////////////////////학생-과목 조회
+router.post("/server/student_subjects_view", checkAuthenticated("student_subjects_view"), async (req, res) => {
+  console.log("학생-과목 조회가 실행되었음");
+
+  const { subjectId } = req.body;
+
+  if (!subjectId) {
+    return res.status(400).json({ success: false, message: "subject_id가 필요합니다." });
+  }
+
+  const query = `
+    SELECT 
+      student_id AS student_pk
+    FROM 
+      student_subject
+    WHERE 
+      subject_id = ?
+  `;
+
+  db.query(query, [subjectId], (error, results) => {
+    if (error) {
+      console.log("학생-과목 조회에서 오류 발생");
+      console.log("-------------------에러 코드 -------------------");
+      console.log(error);
+      console.log("----------------------------------------------");
+      res.status(500).json({ success: false, message: "데이터베이스 오류" });
+    } else {
+      const studentIds = results.map((row) => row.student_pk);
+      res.json({ success: true, student_ids: studentIds });
+      adminLog(req.session.user, `${subjectId} 과목의 학생 목록을 조회했습니다.`);
+    }
+  });
+});
+
+//----------------------------------출석-----------------------------------------------------
+
+//////////////////////학생 출석 상태 검색
+router.post("/server/students_attend", checkAuthenticated("students_attend"), async (req, res) => {
+  const { search } = req.body;
+  console.log(search);
+
+  let query = "";
+  let queryParams = [];
+
+  if (search.text === "") {
+    query = "SELECT * FROM student_executed_attenders;";
+  } else {
+    // 특정 조건에 맞는 데이터를 가져옴
+    query = `SELECT * FROM student_executed_attenders WHERE ${search.option} = ?`;
+    queryParams = [search.text];
+  }
+
+  db.query(query, queryParams, (error, results) => {
+    if (error) {
+      res.status(500).json({ success: false, message: "데이터베이스 오류" });
+    } else {
+      res.json({ success: true, datas: results, search: search });
+      const logMsg = "학생 출석 상태를 검색했습니다.";
+      adminLog(req.session.user, logMsg);
+    }
   });
 });
 

@@ -55,6 +55,7 @@ export default function ManageSchedule() {
   //데이터 테이블에 보일 컬럼
   const columns = [
     { columnName: "수업 이름", data: "subject_name" },
+    { columnName: "수업 일", data: "week" },
     { columnName: "담당 강사", data: "teacher_name" },
     { columnName: "시작", data: "starttime" },
     { columnName: "종료", data: "endtime" },

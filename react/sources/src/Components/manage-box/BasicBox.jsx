@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 import { sideMenus } from "../../constants/sideMenus";
 import PropTypes from "prop-types";
 import { useLocation } from "react-router-dom";
@@ -10,7 +10,7 @@ export default function BasicBox({ children, ...props }) {
   const [user, setUser] = useState(null);
   const [showDelayedContent, setShowDelayedContent] = useState(false);
   useEffect(() => {
-    const storedUser = Cookies.get('user'); // 쿠키에서 'user' 쿠키 가져오기
+    const storedUser = Cookies.get("user"); // 쿠키에서 'user' 쿠키 가져오기
     if (storedUser) {
       setUser(JSON.parse(storedUser)); // 쿠키에서 가져온 문자열을 객체로 변환하여 상태 설정
     }
@@ -63,7 +63,7 @@ export default function BasicBox({ children, ...props }) {
           <div
             className={`min-w-[50vw] ${
               overflow ? "overflow-hidden" : ""
-            } relative border-4 rounded-md shadow-2xl border-[#5272F2] px-10  ${
+            } relative border-4 rounded-md shadow-2xl border-[#5272F2] px-10 bg-[#FAFBFE]  ${
               !user ? "opacity-30 pointer-events-none" : ""
             }`}
           >
