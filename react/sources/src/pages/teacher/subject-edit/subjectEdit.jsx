@@ -5,6 +5,8 @@ import { useParams } from "react-router-dom";
 import { Toast, notify } from "../../../template/Toastify";
 import Button from "../../../Components/ButtonTop";
 import axios from "axios";
+import DataTableHover from "../../../Components/dataTableHover/DataTableHover";
+import { EDIT_STUDENT } from "../../../constants/searchFilter";
 
 export default function SubjectEdit() {
   const [data, setData] = useState(null);
@@ -15,14 +17,24 @@ export default function SubjectEdit() {
   const [grade, setGrade] = useState("");
   const [tinyInt, setTinyInt] = useState("");
 
+  //선생 정보 관련
   const [teacher, setTeacher] = useState("");
   const [PK, setPK] = useState("");
   //선생 정보 핸들러
   const handleTeacherChange = (newTeacher) => {
-    console.log(newTeacher);
     setTeacher(newTeacher.name);
     setPK(newTeacher.pk);
   };
+
+  //학생 정보 관련  --------------------------------------------
+  const [studentDatas, setStudentDatas] = useState(null);
+  const [toggle, setToggle] = useState(false);
+  const [student_subjects, setStudent_subjects] = useState();
+  //학생 데이터 테이블에 보일 컬럼
+  const columns = [
+    { columnName: "학생 이름", data: "name" },
+    { columnName: "학교", data: "school_name" },
+  ];
 
   //date 형식 맞춰주는 함수
   const formatDatePart = (dateString) => {
@@ -35,7 +47,9 @@ export default function SubjectEdit() {
   useEffect(() => {
     const loging = async () => {
       try {
-        const response = await axios.post(`${process.env.REACT_APP_SERVER_URL}/server/subjects_view_detail`, { subject_pk: subjectID });
+        const response = await axios.post(`${process.env.REACT_APP_SERVER_URL}/server/subjects_view_detail`, {
+          subject_pk: subjectID,
+        });
         setData(response.data.subjects);
         const teachersResponse = await axios.post(`${process.env.REACT_APP_SERVER_URL}/server/teacher_view`, {});
         const teachersData = teachersResponse.data.teachers;
@@ -45,7 +59,15 @@ export default function SubjectEdit() {
           birthday: formatDatePart(teacher.birthday),
         }));
         setTeachers(formattedTeachers);
-        console.log(teachers, formattedTeachers);
+        const studentResponse = await axios.post(`${process.env.REACT_APP_SERVER_URL}/server/students_view`, {});
+        setStudentDatas(studentResponse.data.students);
+        const student_subjectResponse = await axios.post(
+          `${process.env.REACT_APP_SERVER_URL}/server/student_subjects_view`,
+          {
+            subjectId: subjectID,
+          }
+        );
+        setStudent_subjects(student_subjectResponse.data.student_ids);
       } catch (error) {
         // window.location.reload();
       }
@@ -134,18 +156,31 @@ export default function SubjectEdit() {
           <InputBox data={grade} name={"강의 학년"} edit={setGrade} />
           <InputBox
             data={teacher}
-            name={"테스트"}
+            name={"담당 강사"}
             edit={handleTeacherChange}
             type={"picker"}
             table={"teacher"}
             subData_picker={teachers}
           />
           <InputBox data={tinyInt} name={"int(1)값"} edit={setTinyInt} />
+          <InputBox name={"수강 학생"} type={"multipicker"} table={"student"} setToggle={setToggle} />
         </div>
         <div className="m-5 flex justify-end pr-10">
           <Button label={"수정하기"} onClick={handleSubmit} width={90} />
         </div>
       </BasicBox>
+      {toggle ? (
+        <DataTableHover
+          title={"해당 수업을 듣는 학생을 골라주세요."}
+          columns={columns}
+          type="student"
+          setDatas={setStudent_subjects}
+          editType={EDIT_STUDENT}
+          setToggle={setToggle}
+          datas={studentDatas}
+          subData_picker={student_subjects}
+        />
+      ) : null}
       <Toast />
     </>
   );
