@@ -21,6 +21,15 @@ export default function DataTableV1(props) {
     submit: false,
   });
 
+  //----------------------여기에 테스트 기능 넣으셈-------------------------
+
+  //pk가 학생 pk값으로 들어오는 파라미터값
+  function testFunc(pk) {
+    console.log(pk);
+  }
+
+  //----------------------------------------------------------------------
+
   //다수 개체 한번에 수정 위한 버튼
   function editAllButton() {
     if (selectedType.value === "remove") setEditText({ text: "remove" });
@@ -239,6 +248,14 @@ export default function DataTableV1(props) {
                             >
                               자세히 보기 / 수정
                             </span>
+                            {type === "student" ? (
+                              <span
+                                className="absolute top-[-39px] left-[7rem] transform translate-x-[-50%] bg-[#5272F2] px-3 py-1 border rounded w-[10rem] text-white"
+                                onClick={() => testFunc(item.data_pk)}
+                              >
+                                QR 코드 -임시-
+                              </span>
+                            ) : null}
                             {type === "subject" ? (
                               <span
                                 className="absolute top-[-39px] left-[7rem] transform translate-x-[-50%] bg-[#5272F2] px-3 py-1 border rounded w-[10rem] text-white"
