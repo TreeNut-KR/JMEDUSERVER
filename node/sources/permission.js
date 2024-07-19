@@ -8,10 +8,11 @@ const db = require("./db");
 function checkAuthenticated(taskName) {
   return function (req, res, next) {
     console.log("check함수 실행됨");
-    if (req.session.user) {
+
+    if (req.session && req.session.user) {
       const user = req.session.user;
 
-      db.query("SELECT * from permissions WHERE task_name = ?;", [taskName], (error, results) => {
+      db.query("SELECT * FROM permissions WHERE task_name = ?;", [taskName], (error, results) => {
         if (error) {
           console.log("---------- 권한 확인 쿼리에서 오류 발생 ---------");
           console.log(error);
@@ -37,6 +38,7 @@ function checkAuthenticated(taskName) {
     }
   };
 }
+
 
 module.exports = {
   checkAuthenticated: checkAuthenticated,
