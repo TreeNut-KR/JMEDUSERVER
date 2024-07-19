@@ -20,4 +20,11 @@ RUN npm install node-schedule
 
 RUN npm install cookie-parser
 
+RUN npm i request
+RUN npm i multiparty
+RUN npm i form-data
+RUN npm i aligoapi
+RUN npm i fs
+RUN npm i qrcode
+
 ENTRYPOINT [ "node", "main.js"]

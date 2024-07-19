@@ -3,7 +3,8 @@ import PropTypes from "prop-types";
 import moreIcon from "../../img/pending-icon.png";
 import InputBox from "../InputBox";
 import Button from "../ButtonTop";
-
+import QRCode from "qrcode";
+import axios from "axios";
 export default function DataTableV1(props) {
   const { styleClass, datas, columns, title, type, editType, runSQL } = props;
   const [currentPage, setCurrentPage] = useState(1);
@@ -23,10 +24,135 @@ export default function DataTableV1(props) {
 
   //----------------------여기에 테스트 기능 넣으셈-------------------------
 
-  //pk가 학생 pk값으로 들어오는 파라미터값
-  function testFunc(pk) {
-    console.log(pk);
-  }
+  
+
+  const testFunc = async (pk) => {
+    try {
+      const qrCodeImage = await QRCode.toDataURL(pk);
+
+      const link = document.createElement('a');
+      link.href = qrCodeImage;
+      link.download = 'qrcode.png';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error('Error downloading QR code:', error);
+    }
+  };
+
+  const ExcelAdd = ({ type, onClose }) => {
+    const [file, setFile] = useState(null);
+
+    const handleFileChange = (event) => {
+        setFile(event.target.files[0]);
+    };
+
+    const handleExcelAdd = () => {
+        if (!file) {
+            alert("파일을 선택해 주세요.");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('type', type);
+        formData.append('file', file);
+
+        axios.post(`${process.env.REACT_APP_SERVER_URL}/server/student_excel`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        })
+        .then(response => {
+            console.log('서버 응답:', response.data);
+            alert('파일이 성공적으로 업로드되었습니다.');
+            onClose(); // 업로드 후 모달 닫기
+        })
+        .catch(error => {
+            console.error('파일 업로드 중 오류 발생:', error);
+            alert('파일 업로드 중 오류가 발생했습니다.');
+        });
+    };
+
+    const modalStyle = {
+        display: 'block',
+        position: 'fixed',
+        zIndex: 1,
+        left: 0,
+        top: 0,
+        width: '100%',
+        height: '100%',
+        overflow: 'auto',
+        backgroundColor: 'rgba(0,0,0,0.6)',
+    };
+
+    const modalContentStyle = {
+        backgroundColor: '#fff',
+        margin: '10% auto',
+        padding: '20px',
+        border: '1px solid #888',
+        width: '50%',
+        boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
+        borderRadius: '10px',
+    };
+
+    const closeStyle = {
+        color: '#aaa',
+        float: 'right',
+        fontSize: '28px',
+        fontWeight: 'bold',
+        cursor: 'pointer',
+    };
+
+    const inputStyle = {
+        margin: '20px 0',
+        padding: '10px',
+        width: '100%',
+        boxSizing: 'border-box',
+        borderRadius: '5px',
+        border: '1px solid #ccc',
+    };
+
+    const buttonStyle = {
+        backgroundColor: '#5272F2',
+        color: 'white',
+        padding: '15px 20px',
+        border: 'none',
+        borderRadius: '5px',
+        cursor: 'pointer',
+        width: '100%',
+    };
+
+    const buttonHoverStyle = {
+        backgroundColor: '#45a049',
+    };
+
+    const [isHover, setIsHover] = useState(false);
+
+    return (
+        <div style={modalStyle}>
+            <div style={modalContentStyle}>
+                <span style={closeStyle} onClick={onClose}>&times;</span>
+                <input
+                    type="file"
+                    id="excelFile"
+                    style={inputStyle}
+                    onChange={handleFileChange}
+                    onClick={(e) => e.target.value = null}
+                />
+                <button
+                    style={isHover ? { ...buttonStyle, ...buttonHoverStyle } : buttonStyle}
+                    onMouseEnter={() => setIsHover(true)}
+                    onMouseLeave={() => setIsHover(false)}
+                    onClick={handleExcelAdd}
+                >
+                    파일 업로드
+                </button>
+            </div>
+        </div>
+    );
+};
+
 
   //----------------------------------------------------------------------
 
@@ -138,6 +264,16 @@ export default function DataTableV1(props) {
     window.location.href = editUrl;
   }
   // -------------------------------------------------------------------------
+  const [showModal, setShowModal] = useState(false);
+
+    const handleOpenModal = () => {
+        setShowModal(true);
+    };
+
+    const handleCloseModal = () => {
+        setShowModal(false);
+    };
+  
   return (
     <div ref={tableRef} className="w-full p-10 pt-0 relative">
       {editAll ? (
@@ -187,9 +323,14 @@ export default function DataTableV1(props) {
                 label={"강사는 회원가입을 통해 추가해주세요"}
               />
             ) : (
+              //
+              <>
               <Button URL={`/${type}-add`} width={130} height={30} label={"정보 추가하기"} />
+              <Button onClick={handleOpenModal} width={130} height={30} label={"엑셀로 추가"} />
+            </>
             )}
           </caption>
+          {showModal && <ExcelAdd type={type} onClose={handleCloseModal} />}
 
           <thead className="text-base font-semibold">
             <tr className="border-b border-[#B3A492]">

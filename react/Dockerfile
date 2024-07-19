@@ -12,6 +12,8 @@ RUN yarn install
 
 RUN yarn add js-cookie
 
+RUN yarn add qrcode
+
 COPY ./sources /app
 
 RUN yarn run build

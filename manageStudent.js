@@ -5,6 +5,9 @@ const express = require("express");
 const router = express.Router();
 const { logAttend, adminLog } = require("./logger");
 const { checkAuthenticated } = require("./permission");
+const { send, QRmaker } = require("./sendApi");
+const QRCode = require('qrcode');
+
 
 function makeStudentSearchQuery(text, option) {
   //console.log(body);
@@ -31,22 +34,7 @@ function makeStudentSearchQuery(text, option) {
 router.post("/server/students_view", checkAuthenticated("students_view"), async (req, res) => {
   console.log("학생 조회가 실행되었음");
 
-  // student 테이블과 school 테이블을 조인하여 필요한 데이터를 가져옴
-  const query = `
-    SELECT 
-      s.*, 
-      sc.name AS school_name 
-    FROM 
-      student s 
-    JOIN 
-      school sc 
-    ON 
-      s.school = sc.school_pk 
-    WHERE 
-      s.deleted_at IS NULL
-  `;
-
-  db.query(query, (error, results) => {
+  db.query("SELECT * FROM student WHERE deleted_at IS NULL", (error, results) => {
     if (error) {
       console.log("학생 조회에서 오류 발생");
       console.log("-------------------에러 코드 -------------------");
@@ -232,69 +220,63 @@ router.post("/server/student_remove", checkAuthenticated("student_remove"), asyn
   });
 });
 
-/////////////////////학생-과목 조회
-router.post("/server/student_subjects_view", checkAuthenticated("student_subjects_view"), async (req, res) => {
-  console.log("학생-과목 조회가 실행되었음");
+//////////////////////큐알 전송하기
+router.post("/server/QR_send", checkAuthenticated("QR_send"), async (req, res) => {
+  try {
+    const { student_pk, name, contact } = req.body;
 
-  const { subjectId } = req.body;
-
-  if (!subjectId) {
-    return res.status(400).json({ success: false, message: "subject_id가 필요합니다." });
-  }
-
-  const query = `
-    SELECT 
-      student_id AS student_pk
-    FROM 
-      student_subject
-    WHERE 
-      subject_id = ?
-  `;
-
-  db.query(query, [subjectId], (error, results) => {
-    if (error) {
-      console.log("학생-과목 조회에서 오류 발생");
-      console.log("-------------------에러 코드 -------------------");
-      console.log(error);
-      console.log("----------------------------------------------");
-      res.status(500).json({ success: false, message: "데이터베이스 오류" });
-    } else {
-      const studentIds = results.map((row) => row.student_pk);
-      res.json({ success: true, student_ids: studentIds });
-      adminLog(req.session.user, `${subjectId} 과목의 학생 목록을 조회했습니다.`);
+    // 필수 값이 누락되었는지 확인
+    if (!student_pk || !name || !contact) {
+      return res.status(400).json({ error: "필수 값이 누락되었습니다." });
     }
-  });
+
+    // QR 코드 생성 로직 추가 (가정)
+    const qr = await QRmaker(student_pk);
+
+    const data = {
+      sender: process.env.SMS_SENDER,
+      receiver: contact,
+      msg: `${name} 학생 등/하원 인증 QR코드입니다.`,
+      msg_types: "MMS",
+      title: "제이엠에듀 학생 QR코드 발송",
+      image: qr
+    };
+
+    // 메시지 전송 함수 호출
+    await send(data, res);
+
+    res.status(200).json({ message: "QR 코드 전송에 성공했습니다." });
+    
+  } catch (error) {
+    console.error("QR 코드 전송 중 오류 발생:", error);
+    res.status(500).json({ error: "서버 오류가 발생했습니다. 나중에 다시 시도해주세요." });
+  }
+});
+
+//////////////////////큐알 전송하기
+router.post("/server/QR_download", checkAuthenticated("QR_download"), async (req, res) => {
+  try {
+    const { student_pk, name } = req.body;
+
+    // 필수 값이 누락되었는지 확인
+    if (!student_pk || !name) {
+      return res.status(400).json({ error: "필수 값이 누락되었습니다." });
+    }
+
+    QRCode.toFile(`${name}.png`, student_pk, function (err) {
+      if (err) throw err;
+      console.log(`${name}.png 파일로 전송 완료`);
+    });
+
+  } catch (error) {
+    console.error("QR 코드 생성 중 오류 발생:", error);
+    res.status(500).json({ error: "서버 오류가 발생했습니다. 나중에 다시 시도해주세요." });
+  }
 });
 
 
-//----------------------------------출석-----------------------------------------------------
 
-//////////////////////학생 출석 상태 검색
-router.post("/server/students_attend", checkAuthenticated("students_attend"), async (req, res) => {
-  const { search } = req.body;
-  console.log(search);
 
-  let query = "";
-  let queryParams = [];
-
-  if (search.text === "") {
-    query = "SELECT * FROM student_executed_attenders;";
-  } else {
-    // 특정 조건에 맞는 데이터를 가져옴
-    query = `SELECT * FROM student_executed_attenders WHERE ${search.option} = ?`;
-    queryParams = [search.text];
-  }
-
-  db.query(query, queryParams, (error, results) => {
-    if (error) {
-      res.status(500).json({ success: false, message: "데이터베이스 오류" });
-    } else {
-      res.json({ success: true, datas: results, search: search });
-      const logMsg = "학생 출석 상태를 검색했습니다.";
-      adminLog(req.session.user, logMsg);
-    }
-  });
-});
 
 module.exports = {
   router: router,
