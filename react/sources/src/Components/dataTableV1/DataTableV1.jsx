@@ -24,20 +24,18 @@ export default function DataTableV1(props) {
 
   //----------------------여기에 테스트 기능 넣으셈-------------------------
 
-  
-
-  const testFunc = async (pk) => {
+  const testFunc = async (pk, item) => {
     try {
       const qrCodeImage = await QRCode.toDataURL(pk);
 
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = qrCodeImage;
-      link.download = 'qrcode.png';
+      link.download = `${item.name}.png`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
     } catch (error) {
-      console.error('Error downloading QR code:', error);
+      console.error("Error downloading QR code:", error);
     }
   };
 
@@ -45,115 +43,118 @@ export default function DataTableV1(props) {
     const [file, setFile] = useState(null);
 
     const handleFileChange = (event) => {
-        setFile(event.target.files[0]);
+      setFile(event.target.files[0]);
     };
 
     const handleExcelAdd = () => {
-        if (!file) {
-            alert("파일을 선택해 주세요.");
-            return;
-        }
+      if (!file) {
+        alert("파일을 선택해 주세요.");
+        return;
+      }
 
-        const formData = new FormData();
-        formData.append('type', type);
-        formData.append('file', file);
+      const formData = new FormData();
+      formData.append("type", type);
+      formData.append("file", file);
 
-        axios.post(`${process.env.REACT_APP_SERVER_URL}/server/student_excel`, formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            }
+      axios
+        .post(`${process.env.REACT_APP_SERVER_URL}/server/student_excel`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         })
-        .then(response => {
-            console.log('서버 응답:', response.data);
-            alert('파일이 성공적으로 업로드되었습니다.',response);
-            onClose(); // 업로드 후 모달 닫기
+        .then((response) => {
+          console.log("서버 응답:", response.data);
+          alert("파일이 성공적으로 업로드되었습니다.", response);
+          onClose(); // 업로드 후 모달 닫기
         })
-        .catch(error => {
-            console.error('파일 업로드 중 오류 발생:', error);
-            const errorMessage = error.response && error.response.data ? error.response.data : '파일 업로드 중 오류가 발생했습니다.';
-            alert(errorMessage);
+        .catch((error) => {
+          console.error("파일 업로드 중 오류 발생:", error);
+          const errorMessage =
+            error.response && error.response.data ? error.response.data : "파일 업로드 중 오류가 발생했습니다.";
+          alert(errorMessage);
         });
     };
 
     const modalStyle = {
-        display: 'block',
-        position: 'fixed',
-        zIndex: 1,
-        left: 0,
-        top: 0,
-        width: '100%',
-        height: '100%',
-        overflow: 'auto',
-        backgroundColor: 'rgba(0,0,0,0.6)',
+      display: "block",
+      position: "fixed",
+      zIndex: 1,
+      left: 0,
+      top: 0,
+      width: "100%",
+      height: "100%",
+      overflow: "auto",
+      backgroundColor: "rgba(0,0,0,0.6)",
     };
 
     const modalContentStyle = {
-        backgroundColor: '#fff',
-        margin: '10% auto',
-        padding: '20px',
-        border: '1px solid #888',
-        width: '50%',
-        boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
-        borderRadius: '10px',
+      backgroundColor: "#fff",
+      margin: "10% auto",
+      padding: "20px",
+      border: "1px solid #888",
+      width: "50%",
+      boxShadow: "0 4px 8px 0 rgba(0,0,0,0.2)",
+      borderRadius: "10px",
     };
 
     const closeStyle = {
-        color: '#aaa',
-        float: 'right',
-        fontSize: '28px',
-        fontWeight: 'bold',
-        cursor: 'pointer',
+      color: "#aaa",
+      float: "right",
+      fontSize: "28px",
+      fontWeight: "bold",
+      cursor: "pointer",
     };
 
     const inputStyle = {
-        margin: '20px 0',
-        padding: '10px',
-        width: '100%',
-        boxSizing: 'border-box',
-        borderRadius: '5px',
-        border: '1px solid #ccc',
+      margin: "20px 0",
+      padding: "10px",
+      width: "100%",
+      boxSizing: "border-box",
+      borderRadius: "5px",
+      border: "1px solid #ccc",
     };
 
     const buttonStyle = {
-        backgroundColor: '#5272F2',
-        color: 'white',
-        padding: '15px 20px',
-        border: 'none',
-        borderRadius: '5px',
-        cursor: 'pointer',
-        width: '100%',
+      backgroundColor: "#5272F2",
+      color: "white",
+      padding: "15px 20px",
+      border: "none",
+      borderRadius: "5px",
+      cursor: "pointer",
+      width: "100%",
     };
 
     const buttonHoverStyle = {
-        backgroundColor: '#45a049',
+      backgroundColor: "#45a049",
     };
 
     const [isHover, setIsHover] = useState(false);
 
     return (
-        <div style={modalStyle}>
-            <div style={modalContentStyle}>
-                <span style={closeStyle} onClick={onClose}>&times;</span>
-                <input
-                    type="file"
-                    id="excelFile"
-                    style={inputStyle}
-                    onChange={handleFileChange}
-                    onClick={(e) => e.target.value = null}
-                />
-                <button
-                    style={isHover ? { ...buttonStyle, ...buttonHoverStyle } : buttonStyle}
-                    onMouseEnter={() => setIsHover(true)}
-                    onMouseLeave={() => setIsHover(false)}
-                    onClick={handleExcelAdd}
-                >
-                    파일 업로드
-                </button>
-            </div>
+      <div style={modalStyle}>
+        <div style={modalContentStyle}>
+          <span style={closeStyle} onClick={onClose}>
+            &times;
+          </span>
+          <input
+            type="file"
+            id="excelFile"
+            style={inputStyle}
+            onChange={handleFileChange}
+            onClick={(e) => (e.target.value = null)}
+          />
+          <button
+            style={isHover ? { ...buttonStyle, ...buttonHoverStyle } : buttonStyle}
+            onMouseEnter={() => setIsHover(true)}
+            onMouseLeave={() => setIsHover(false)}
+            onClick={handleExcelAdd}
+          >
+            파일 업로드
+          </button>
         </div>
+      </div>
     );
-};
-
+  };
 
   //----------------------------------------------------------------------
 
@@ -267,14 +268,14 @@ export default function DataTableV1(props) {
   // -------------------------------------------------------------------------
   const [showModal, setShowModal] = useState(false);
 
-    const handleOpenModal = () => {
-        setShowModal(true);
-    };
+  const handleOpenModal = () => {
+    setShowModal(true);
+  };
 
-    const handleCloseModal = () => {
-        setShowModal(false);
-    };
-  
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+
   return (
     <div ref={tableRef} className="w-full p-10 pt-0 relative">
       {editAll ? (
@@ -326,9 +327,9 @@ export default function DataTableV1(props) {
             ) : (
               //
               <>
-              <Button URL={`/${type}-add`} width={130} height={30} label={"정보 추가하기"} />
-              <Button onClick={handleOpenModal} width={130} height={30} label={"엑셀로 추가"} />
-            </>
+                <Button URL={`/${type}-add`} width={130} height={30} label={"정보 추가하기"} />
+                <Button onClick={handleOpenModal} width={130} height={30} label={"엑셀로 추가"} />
+              </>
             )}
           </caption>
           {showModal && <ExcelAdd type={type} onClose={handleCloseModal} />}
@@ -393,7 +394,7 @@ export default function DataTableV1(props) {
                             {type === "student" ? (
                               <span
                                 className="absolute top-[-39px] left-[7rem] transform translate-x-[-50%] bg-[#5272F2] px-3 py-1 border rounded w-[10rem] text-white"
-                                onClick={() => testFunc(item.data_pk)}
+                                onClick={() => testFunc(item.data_pk, item)}
                               >
                                 QR 코드 -임시-
                               </span>
