@@ -26,5 +26,8 @@ RUN npm i form-data
 RUN npm i aligoapi
 RUN npm i fs
 RUN npm i qrcode
+RUN npm i xlsx
+RUN npm i util
+RUN npm i express-fileupload
 
 ENTRYPOINT [ "node", "main.js"]

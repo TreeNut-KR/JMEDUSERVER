@@ -153,6 +153,5 @@ const cancel = (req, res) => {
 module.exports = {
   router: router,
   send: send,
-  QRmaker: QRmaker,
   sendMass: sendMass
 };
