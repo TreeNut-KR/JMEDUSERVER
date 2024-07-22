@@ -27,17 +27,17 @@ CREATE TABLE school (
 CREATE TABLE student (
     student_pk CHAR(36) NOT NULL,
     name VARCHAR(20) NULL, /*이름*/
-    sex_ism BOOL NULL, /*성별*/
-    grade INT NULL, /*예비 1학년은 0으로 설정, 1, 2, 3학년*/
-    birthday DATE NULL, /*생일*/
-    contact VARCHAR(20) NULL, /*연락처*/
-    contact_parent VARCHAR(20) NULL, /*부모연락처*/
-    school INT NULL, /*소속학교*/
-    payday INT NULL, /*결제일*/
-    firstreg DATE NULL, /*최초등록일*/
-    is_enable BOOL NULL, /*활성화 여부*/
-    created_at DATETIME DEFAULT NOW() NULL,
-    updated_at DATETIME DEFAULT NOW() NULL,
+    sex_ism BOOL DEFAULT true, /*성별*/
+    grade INT DEFAULT 0, /*예비 1학년은 0으로 설정, 1, 2, 3학년*/
+    birthday DATE DEFAULT '2000-01-01', /*생일*/
+    contact VARCHAR(20) DEFAULT '01000000000', /*연락처*/
+    contact_parent VARCHAR(20) DEFAULT '01000000000', /*부모연락처*/
+    school INT, /*소속학교*/
+    payday INT DEFAULT 0, /*결제일*/
+    firstreg DATE DEFAULT '2000-01-01', /*최초등록일*/
+    is_enable BOOL DEFAULT true, /*활성화 여부*/
+    created_at DATETIME DEFAULT NOW(),
+    updated_at DATETIME DEFAULT NOW(),
     deleted_at DATETIME DEFAULT NULL,
     PRIMARY KEY(student_pk),
     FOREIGN KEY (school) REFERENCES school(school_pk) /*외부키 설정*/
@@ -248,6 +248,16 @@ CREATE TABLE serverconf (
 
 
 DELIMITER $$
+
+-- 학교 지정이 없으면 1 삽입
+CREATE TRIGGER trg_before_insert_student
+BEFORE INSERT ON student
+FOR EACH ROW
+BEGIN
+    IF NEW.school IS NULL THEN
+        SET NEW.school = 1;
+    END IF;
+END $$
 
 -- 학교 테이블 업데이트 트리거
 CREATE TRIGGER before_school_update
