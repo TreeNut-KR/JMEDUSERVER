@@ -99,25 +99,24 @@ router.put("/server/schools_view_update", checkAuthenticated("schools_view_updat
   });
 });
 
-//학교 추가
+//////////////학교추가
 router.post("/server/school/add", checkAuthenticated("school_add"), async (req, res) => {
   const { name, elementary, middle, high } = req.body;
 
-  // 데이터 삽입 쿼리
   const query = "INSERT INTO school (name, is_elementary, is_middle, is_high) VALUES (?, ?, ?, ?)";
 
-  // 데이터베이스에 쿼리 실행
-  db.query(query, [name, elementary, middle, high], (err, result) => {
-    if (err) {
-      console.error("데이터 삽입 중 오류 발생:", err);
-      res.status(500).send("서버 오류가 발생했습니다.");
-      return;
-    }
-    res.json({ success: true });
-    res.status(200).send("사용자가 성공적으로 등록되었습니다.");
+  try {
+    // 데이터베이스에 쿼리 실행
+    db.query(query, [name, elementary, middle, high]);
+    res.status(200).json({ success: true, message: "학교가 성공적으로 등록되었습니다." });
     adminLog(req.session.user, "학교를 추가했습니다. 학교 이름 : " + name);
-  });
+  } catch (err) {
+    console.error("데이터 삽입 중 오류 발생:", err);
+    console.log("오류 발생:",err);
+    res.status(500).send("데이터베이스 오류가 발생했습니다.");
+  }
 });
+
 
 //학교 수정
 router.post("/server/school/update", checkAuthenticated("school_update"), async (req, res) => {

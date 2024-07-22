@@ -25,23 +25,24 @@ CREATE TABLE school (
 
 -- 학생 테이블
 CREATE TABLE student (
-    student_pk CHAR(36),
-    name VARCHAR(20), /*이름*/
-    sex_ism BOOL, /*성별*/
-    grade INT, /*예비 1학년은 0으로 설정, 1, 2, 3학년*/
-    birthday DATE, /*생일*/
-    contact VARCHAR(20), /*연락처*/
-    contact_parent VARCHAR(20), /*부모연락처*/
-    school INT, /*소속학교*/
-    payday INT, /*결제일*/
-    firstreg DATE, /*최초등록일*/
-    is_enable BOOL, /*활성화 여부*/
-    created_at DATETIME DEFAULT NOW(),
-    updated_at DATETIME DEFAULT NOW(),
+    student_pk CHAR(36) NOT NULL,
+    name VARCHAR(20) NULL, /*이름*/
+    sex_ism BOOL NULL, /*성별*/
+    grade INT NULL, /*예비 1학년은 0으로 설정, 1, 2, 3학년*/
+    birthday DATE NULL, /*생일*/
+    contact VARCHAR(20) NULL, /*연락처*/
+    contact_parent VARCHAR(20) NULL, /*부모연락처*/
+    school INT NULL, /*소속학교*/
+    payday INT NULL, /*결제일*/
+    firstreg DATE NULL, /*최초등록일*/
+    is_enable BOOL NULL, /*활성화 여부*/
+    created_at DATETIME DEFAULT NOW() NULL,
+    updated_at DATETIME DEFAULT NOW() NULL,
     deleted_at DATETIME DEFAULT NULL,
     PRIMARY KEY(student_pk),
-    FOREIGN KEY (school) REFERENCES school(school_pk)/*외부키 설정*/
+    FOREIGN KEY (school) REFERENCES school(school_pk) /*외부키 설정*/
 ) ENGINE=InnoDB CHARSET=utf8mb4;
+
 
 
 -- 교사 테이블
@@ -203,30 +204,34 @@ ALTER TABLE attendance_log CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_gene
 
 -- 권한 기본 세팅값
 INSERT INTO permissions (task_name, level, created_at) VALUES 
-('students_view', 1, NOW()),
-('students_add', 1, NOW()),
-('students_edit', 1, NOW()),
-('students_search', 1, NOW()),
-('students_view_detail', 1, NOW()),
-('students_addPage', 1, NOW()),
-('students_add_multiple', 1, NOW()),
-('students_view_update', 1, NOW()),
-('students_view_update_all', 1, NOW()),
-('student_remove', 1, NOW()),
-('plan', 1, NOW()),
-('plan_add', 1, NOW()),
-('plan_update', 1, NOW()),
-('plan_remove', 1, NOW()),
-('schools_view', 1, NOW()),
-('school_add', 1, NOW()),
-('school_remove', 1, NOW()),
-('subject_add', 1, NOW()),
-('subject_remove', 1, NOW()),
-('subject_update', 1, NOW()),
-('subject_student_add', 1, NOW()),
-('teacher_view', 1, NOW()),
-('teacher_update', 1, NOW()),
-('conditional_note', 1, NOW());
+('students_view', 0, NOW()),
+('students_add', 0, NOW()),
+('students_edit', 0, NOW()),
+('students_search', 0, NOW()),
+('students_view_detail', 0, NOW()),
+('students_addPage', 0, NOW()),
+('students_add_multiple', 0, NOW()),
+('students_view_update', 0, NOW()),
+('students_view_update_all', 0, NOW()),
+('student_remove', 0, NOW()),
+('plan', 0, NOW()),
+('plan_add', 0, NOW()),
+('plan_update', 0, NOW()),
+('plan_remove', 0, NOW()),
+('schools_view', 0, NOW()),
+('school_add', 0, NOW()),
+('school_update', 0, NOW()),
+('school_remove', 0, NOW()),
+("schools_view_detail", 0, NOW()),
+("schools_search", 0, NOW()),
+('subject_add', 0, NOW()),
+('subject_remove', 0, NOW()),
+('subject_update', 0, NOW()),
+('subject_student_add', 0, NOW()),
+('teacher_view', 0, NOW()),
+('teacher_update', 0, NOW()),
+('conditional_note', 0, NOW());
+
 
 
 

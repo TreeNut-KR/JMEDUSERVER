@@ -65,12 +65,13 @@ export default function DataTableV1(props) {
         })
         .then(response => {
             console.log('서버 응답:', response.data);
-            alert('파일이 성공적으로 업로드되었습니다.');
+            alert('파일이 성공적으로 업로드되었습니다.',response);
             onClose(); // 업로드 후 모달 닫기
         })
         .catch(error => {
             console.error('파일 업로드 중 오류 발생:', error);
-            alert('파일 업로드 중 오류가 발생했습니다.');
+            const errorMessage = error.response && error.response.data ? error.response.data : '파일 업로드 중 오류가 발생했습니다.';
+            alert(errorMessage);
         });
     };
 

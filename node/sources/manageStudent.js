@@ -5,6 +5,83 @@ const express = require("express");
 const router = express.Router();
 const { logAttend, adminLog } = require("./logger");
 const { checkAuthenticated } = require("./permission");
+const xlsx = require('xlsx');
+const fileUpload = require('express-fileupload');
+const util = require('util');
+const query = util.promisify(db.query).bind(db);
+router.use(fileUpload());
+const expectedHeaders = ['name', 'sex_ism', 'birthday', 'contact', 'contact_parent', 'school', 'payday'];
+
+
+////////엑셀로 학생 추가
+router.post('/server/student_excel', async (req, res) => {
+  try {
+    if (!req.files || !req.files.file) {
+      return res.status(400).send('파일이 업로드되지 않았습니다.');
+    }
+    if (req.body.type !== "student") {
+      console.log("타입이 학생이 아님");
+      return res.status(400).send('엑셀로 추가는 학생 데이터만 가능합니다.');
+    }
+
+    const file = req.files.file;
+    const workbook = xlsx.read(file.data, { type: 'buffer' });
+    const sheetName = workbook.SheetNames[0];
+    const worksheet = workbook.Sheets[sheetName];
+    const jsonData = xlsx.utils.sheet_to_json(worksheet, { header: 1 });
+
+    // 첫 번째 행은 헤더
+    const headers = jsonData[0];
+    // 두 번째 행부터는 데이터
+    let rows = jsonData.slice(1);
+
+    // 빈 행 제거
+    rows = rows.filter(row => row.some(cell => cell !== undefined && cell !== null && cell !== ''));
+
+    // 전화번호 필드 문자열화
+    for (let i = 0; i < headers.length; i++) {
+      if (headers[i] === "contact" || headers[i] === "contact_parent") {
+        for (let j = 0; j < rows.length; j++) {
+          if (rows[j][i] !== undefined && rows[j][i] !== null) {
+            rows[j][i] = "0"+rows[j][i].toString();
+          }
+        }
+      }
+    }
+
+    console.log("엑셀 데이터 : ", rows);
+
+    // 헤더 유효성 검사
+    if (headers.length === 0 || !headers.every(element => expectedHeaders.includes(element))) {
+      return res.status(400).send('유효하지 않은 헤더 형식이 있습니다.');
+    }
+
+    for (let i = 0; i < rows.length; i++) {
+      let row = rows[i];
+      console.log("삽입할 데이터 : ", row);
+
+      const headerQuery = headers.join(', ');
+      const placeholders = headers.map(() => '?').join(', ');
+      const sql = `INSERT INTO student (student_pk, created_at, ${headerQuery}) VALUES (UUID(), NOW(), ${placeholders})`;
+
+      await new Promise((resolve, reject) => {
+        db.query(sql, row, (error, results) => {
+          if (error) {
+            console.log("데이터 삽입 중 에러", error);
+            return reject(error);
+          }
+          resolve(results);
+        });
+      });
+    }
+
+    res.send('적용 완료');
+  } catch (error) {
+    console.error("에러 발생 : ", error);
+    res.status(500).send('에러 발생');
+  }
+});
+
 
 function makeStudentSearchQuery(text, option) {
   //console.log(body);
