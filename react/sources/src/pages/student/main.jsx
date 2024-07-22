@@ -55,7 +55,6 @@ export default function MainPage() {
   //데이터 테이블에 보일 컬럼
   const columns = [
     { columnName: "이름", data: "name" },
-    { columnName: "UUID값", data: "student_pk" },
     { columnName: "전화번호", data: "contact" },
     { columnName: "부모님 전화번호", data: "contact_parent" },
   ];
