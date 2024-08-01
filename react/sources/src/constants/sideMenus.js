@@ -96,6 +96,15 @@ export const sideMenus = [
         name: "수정 로그 보기",
         href: "/log_view",
       },
+      {
+        name: "작업 권한 관리",
+        href: "/admin_permissions",
+      },
+      {
+        name: "사용자 권한 관리",
+        href: "/user_permissions",
+      },
     ],
   },
+  
 ];
