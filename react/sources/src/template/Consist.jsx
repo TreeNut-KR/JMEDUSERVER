@@ -19,6 +19,9 @@ import ManageSchedule from "../pages/teacher/manage_schedule";
 import PlanAdd from "../pages/teacher/schedule-edit/planAdd";
 import PlanEdit from "../pages/teacher/schedule-edit/PlanEdit";
 import ViewLog from "../pages/admin/view_log";
+import AdminPermissions from "../pages/admin/admin_permissions";
+import UserPermissions from "../pages/admin/user_permissions";
+// import EditP from "../pages/admin/edit_P";
 import SubjectShow from "../pages/teacher/subject-edit/subjectShow";
 import School from "../pages/student/school";
 import SchoolEdit from "../pages/student/school-edit/school_edit";
@@ -68,6 +71,9 @@ export default function Consist() {
 
               {/* --- 관리자 ---  */}
               <Route path="/log_view" element={<ViewLog />} />
+              <Route path="/admin_permissions" element={<AdminPermissions />} />
+              <Route path="/user_permissions" element={<UserPermissions />} />
+              {/* <Route path="/edit_P" element={<EditP />} /> */}
             </Routes>
           </div>
         </div>

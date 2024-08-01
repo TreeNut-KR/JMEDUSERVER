@@ -6,6 +6,7 @@ const bcrypt = require("bcrypt");
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
+const { checkAuthenticated } = require("./permission");
 const db = require("./db");
 const { logAttend, adminLog } = require("./logger");
 
@@ -92,39 +93,7 @@ router.post("/server/register", async (req, res) => {
   });
 });
 
-// //권한확인
-// function checkAuthenticated(taskName) {
-//   return function (req, res, next) {
-//     console.log("check함수 실행됨");
-//     if (req.session.user) {
-//       const user = req.session.user;
 
-//       db.query("SELECT * from permissions WHERE task_name = ?;", [taskName], (error, results) => {
-//         if (error) {
-//           console.log("---------- 권한 확인 쿼리에서 오류 발생 ---------");
-//           console.log(error);
-//           console.log("------------------------------------------");
-//           return res.status(503).json({ success: false, message: "데이터베이스 오류" });
-//         } else {
-//           if (results.length === 0) {
-//             console.log("권한 설정에 오류가 있음");
-//             return res.status(404).json({ success: false, message: "권한 설정을 찾을 수 없습니다." });
-//           }
-
-//           if (user.admin_level >= results[0].level) {
-//             next();
-//           } else {
-//             console.log("접근 권한이 없음");
-//             return res.status(403).json({ success: false, message: "접근 권한이 없습니다." });
-//           }
-//         }
-//       });
-//     } else {
-//       console.log("로그아웃 상태임");
-//       return res.status(401).json({ success: false, message: "로그아웃 상태입니다." });
-//     }
-//   };
-// }
 
 function getUsername(req) {
   //사용자 이름을 반환
@@ -162,6 +131,74 @@ router.get("/server/logout", async (req, res) => {
   req.session.destroy();
   res.redirect("/server/login");
 });
+
+
+// 작업별 요구레벨 불러오기
+router.get("/server/admin_permissions", checkAuthenticated("admin_permissions"), async (req, res) => {
+  db.query("SELECT * FROM permissions", (error, results) => {
+    console.log("퍼미션 조회");
+    if (error) {
+      console.log(error);
+      res.status(500).json({ success: false, message: "데이터베이스 오류" });
+    } else {
+      res.json({ success: true, teachers: results });
+    }
+  });
+});
+
+
+// 작업별 요구권한 수정
+router.post("/server/admin_permissions", checkAuthenticated("admin_permissions"), async (req, res) => {
+  const { task_name, level } = req.body;
+
+  const query = `UPDATE permissions SET level = ? WHERE task_name = ?`;
+
+  db.query(
+    query,
+    [level, task_name],
+    (error, results) => {
+      if (error) {
+        res.status(500).json({ success: false, message: "데이터베이스 오류" });
+      } else {
+        res.json({ success: true });
+        adminLog(req.session.user, "권한 정보를 수정했습니다.");
+      }
+    }
+  );
+});
+
+
+//선생 권한 받아오기
+router.get("/server/user_permissions", checkAuthenticated("admin_permissions"), async (req, res) => {
+  db.query("SELECT teacher_pk, name, admin_level FROM teacher", (error, results) => {
+    if (error) {
+      res.status(500).json({ success: false, message: "데이터베이스 오류" });
+    } else {
+      res.json({ success: true, teachers: results });
+    }
+  });
+});
+
+//선생 권한 수정
+router.post("/server/user_permissions", checkAuthenticated("admin_permissions"), async (req, res) => {
+  const { teacher_pk, admin_level } = req.body;  // 클라이언트로부터 admin_level을 받습니다.
+
+  const query = `UPDATE teacher SET admin_level = ? WHERE teacher_pk = ?`;
+
+  db.query(
+    query,
+    [admin_level, teacher_pk],  // 올바르게 admin_level을 사용합니다.
+    (error, results) => {
+      if (error) {
+        res.status(500).json({ success: false, message: "데이터베이스 오류" });
+      } else {
+        res.json({ success: true });
+        adminLog(req.session.user, "권한 정보를 수정했습니다.");
+      }
+    }
+  );
+});
+
 
 // 3분마다 실행
 function updateLogoutTime() {
