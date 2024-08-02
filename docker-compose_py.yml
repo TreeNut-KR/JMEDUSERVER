@@ -19,10 +19,14 @@ services:
 
   aligo:
     restart: unless-stopped
-    build: 
+    build:
       context: ./aligo
     ports:
-      - "8000:8000"
+      - "8100:8000"
+    expose:
+      - 8100
+    volumes:
+      - ./logs:/app/logs
     environment:
       - MYSQL_DATABASE=${MYSQL_DATABASE}
       - MYSQL_ROOT_HOST=${MYSQL_ROOT_HOST}
