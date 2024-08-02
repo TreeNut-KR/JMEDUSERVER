@@ -83,7 +83,9 @@ CREATE TABLE attendance_log (
     attend_time DATETIME, /*출석 시간*/
     leave_time DATETIME DEFAULT NULL, /*하원 시간, 하원하지 않았다면 NULL*/
     PRIMARY KEY(attendance_log_pk),
-    FOREIGN KEY (student) REFERENCES student(student_pk) /*외부키 설정*/
+    FOREIGN KEY (student) REFERENCES student(student_pk), /*외부키 설정*/
+    sms_sent BOOL DEFAULT FALSE,
+     sms_sent_time DATETIME DEFAULT NULL
 ) ENGINE=InnoDB CHARSET=utf8mb4;
 
 -- 교사 출퇴근 로그 테이블
@@ -373,20 +375,19 @@ BEGIN
         INSERT INTO attendance_log(student, is_attend, attend_time)
         VALUES (studentPK, TRUE, vCurrentTime);
         SET vStatus = 'attend';
-    -- 출석 기록이 있지만, 하원 기록이 이미 있는 경우
-    ELSEIF vLeaveTime IS NOT NULL THEN
-        SET vStatus = 'already';
     -- 출석 기록이 있고, 하원 기록이 없으나 출석 시간과 현재 시간의 차이가 5분 미만인 경우
     ELSEIF TIMESTAMPDIFF(MINUTE, vAttendTime, vCurrentTime) < 5 THEN
-        SET vStatus = 'already';
+        SET vStatus = 'wait';
+    -- 출석 기록이 있지만, 하원 기록이 이미 있는 경우
+    ELSEIF vLeaveTime IS NOT NULL THEN
+        SET vStatus = 'leave';
     -- 출석 기록이 있고, 하원 기록이 없으며 출석 시간과 현재 시간 차이가 5분 이상인 경우
     ELSE
         UPDATE attendance_log
-        SET leave_time = vCurrentTime
+        SET leave_time = vCurrentTime, sms_sent = TRUE, sms_sent_time = vCurrentTime
         WHERE attendance_log_pk = vAttendID;
-        SET vStatus = 'leave';
+        SET vStatus = 'already';
     END IF;
-
     -- 결과 반환
     SELECT vContactParent AS contact_parent, vName AS name, vStatus AS status;
 END $$
