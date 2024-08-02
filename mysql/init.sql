@@ -32,7 +32,7 @@ CREATE TABLE student (
     birthday DATE DEFAULT '2000-01-01', /*생일*/
     contact VARCHAR(20) DEFAULT '01000000000', /*연락처*/
     contact_parent VARCHAR(20) DEFAULT '01000000000', /*부모연락처*/
-    school INT, /*소속학교*/
+    school INT DEFAULT 1, /*소속학교*/
     payday INT DEFAULT 0, /*결제일*/
     firstreg DATE DEFAULT '2000-01-01', /*최초등록일*/
     is_enable BOOL DEFAULT true, /*활성화 여부*/
@@ -204,34 +204,34 @@ ALTER TABLE attendance_log CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_gene
 
 -- 권한 기본 세팅값
 INSERT INTO permissions (task_name, level, created_at) VALUES 
-('students_view', 0, NOW()),
-('students_add', 0, NOW()),
-('students_edit', 0, NOW()),
-('students_search', 0, NOW()),
-('students_view_detail', 0, NOW()),
-('students_addPage', 0, NOW()),
-('students_add_multiple', 0, NOW()),
-('students_view_update', 0, NOW()),
-('students_view_update_all', 0, NOW()),
-('student_remove', 0, NOW()),
-('plan', 0, NOW()),
-('plan_add', 0, NOW()),
-('plan_update', 0, NOW()),
-('plan_remove', 0, NOW()),
-('schools_view', 0, NOW()),
-('school_add', 0, NOW()),
-('school_update', 0, NOW()),
-('school_remove', 0, NOW()),
-("schools_view_detail", 0, NOW()),
-("schools_search", 0, NOW()),
-('subject_add', 0, NOW()),
-('subject_remove', 0, NOW()),
-('subject_update', 0, NOW()),
-('subject_student_add', 0, NOW()),
-('teacher_view', 0, NOW()),
-('teacher_update', 0, NOW()),
-('admin_permissions', 0, NOW()),
-('conditional_note', 0, NOW());
+('students_view', 1, NOW()),
+('students_add', 1, NOW()),
+('students_edit', 1, NOW()),
+('students_search', 1, NOW()),
+('students_view_detail', 1, NOW()),
+('students_addPage', 1, NOW()),
+('students_add_multiple', 1, NOW()),
+('students_view_update', 1, NOW()),
+('students_view_update_all', 1, NOW()),
+('student_remove', 1, NOW()),
+('plan', 1, NOW()),
+('plan_add', 1, NOW()),
+('plan_update', 1, NOW()),
+('plan_remove', 1, NOW()),
+('schools_view', 1, NOW()),
+('school_add', 1, NOW()),
+('school_update', 1, NOW()),
+('school_remove', 1, NOW()),
+("schools_view_detail", 1, NOW()),
+("schools_search", 1, NOW()),
+('subject_add', 1, NOW()),
+('subject_remove', 1, NOW()),
+('subject_update', 1, NOW()),
+('subject_student_add', 1, NOW()),
+('teacher_view', 1, NOW()),
+('teacher_update', 1, NOW()),
+('admin_permissions', 3, NOW()),
+('conditional_note', 1, NOW());
 
 
 
@@ -250,6 +250,23 @@ CREATE TABLE serverconf (
 
 DELIMITER $$
 
+CREATE TRIGGER before_insert_student_school
+BEFORE INSERT ON student
+FOR EACH ROW
+BEGIN
+    DECLARE school_id INT;
+
+    -- school 테이블에서 name이 NEW.school인 school_pk를 찾습니다.
+    SELECT school_pk INTO school_id FROM school WHERE name = NEW.school;
+
+    -- school_id가 NULL이 아닐 경우에만 NEW.school에 school_id를 할당합니다.
+    IF school_id IS NOT NULL THEN
+        SET NEW.school = school_id;
+    ELSE
+        SET NEW.school = NULL;
+    END IF;
+END $$
+
 -- 학교 지정이 없으면 1 삽입
 CREATE TRIGGER trg_before_insert_student
 BEFORE INSERT ON student
@@ -266,7 +283,7 @@ BEFORE UPDATE ON school
 FOR EACH ROW
 BEGIN
     SET NEW.updated_at = NOW();
-END$$
+END $$
 
 -- 학생 테이블 업데이트 트리거
 CREATE TRIGGER before_student_update
@@ -274,7 +291,7 @@ BEFORE UPDATE ON student
 FOR EACH ROW
 BEGIN
     SET NEW.updated_at = NOW();
-END$$
+END $$
 
 -- 교사 테이블 업데이트 트리거
 CREATE TRIGGER before_teacher_update
@@ -282,7 +299,7 @@ BEFORE UPDATE ON teacher
 FOR EACH ROW
 BEGIN
     SET NEW.updated_at = NOW();
-END$$
+END $$
 
 -- 과목 테이블 업데이트 트리거
 CREATE TRIGGER before_subject_update
@@ -290,7 +307,7 @@ BEFORE UPDATE ON subject
 FOR EACH ROW
 BEGIN
     SET NEW.updated_at = NOW();
-END$$
+END $$
 
 -- 시간표 테이블 업데이트 트리거
 CREATE TRIGGER before_plan_update
@@ -298,7 +315,7 @@ BEFORE UPDATE ON plan
 FOR EACH ROW
 BEGIN
     SET NEW.updated_at = NOW();
-END$$
+END $$
 
 -- 과목 수강날 기록 테이블 업데이트 트리거
 CREATE TRIGGER before_subject_executed_update
@@ -306,7 +323,7 @@ BEFORE UPDATE ON subject_executed
 FOR EACH ROW
 BEGIN
     SET NEW.updated_at = NOW();
-END$$
+END $$
 
 -- 과목별 수강 출석자 기록 테이블 업데이트 트리거
 CREATE TRIGGER before_subject_executed_attenders_update
@@ -314,7 +331,7 @@ BEFORE UPDATE ON subject_executed_attenders
 FOR EACH ROW
 BEGIN
     SET NEW.updated_at = NOW();
-END$$
+END $$
 
 -- 학생-과목 연결 테이블 업데이트 트리거
 CREATE TRIGGER before_student_subject_update
@@ -322,7 +339,7 @@ BEFORE UPDATE ON student_subject
 FOR EACH ROW
 BEGIN
     SET NEW.updated_at = NOW();
-END$$
+END $$
 
 -- 등/하원 기록 및 결과 반환 프로시저
 CREATE PROCEDURE RecordAttendance (
@@ -343,12 +360,12 @@ BEGIN
     -- 학생의 contact_parent와 name 조회
     SELECT contact_parent, name INTO vContactParent, vName
     FROM student
-    WHERE student_pk = CONVERT(studentPK USING utf8mb4);
+    WHERE student_pk = studentPK;
 
     -- 금일 해당 학생의 출석 기록 조회
     SELECT attendance_log_pk, attend_time, leave_time INTO vAttendID, vAttendTime, vLeaveTime
     FROM attendance_log
-    WHERE student = CONVERT(studentPK USING utf8mb4) AND DATE(attend_time) = CURDATE();
+    WHERE student = studentPK AND DATE(attend_time) = CURDATE();
 
     -- 출석 기록이 없는 경우
     IF vAttendID IS NULL THEN
@@ -371,12 +388,10 @@ BEGIN
 
     -- 결과 반환
     SELECT vContactParent AS contact_parent, vName AS name, vStatus AS status;
-END$$
-
-
-
+END $$
 
 DELIMITER ;
+
 
 
 
@@ -388,26 +403,4 @@ INSERT INTO serverconf (config_pk, logout_time, payday_prenote_toggle, payday_pr
 
 
 
-INSERT INTO school (name, is_elementary, is_middle, is_high) VALUES 
-('학교1', true, false, false),
-('학교2', false, true, false),
-('학교3', false, false, true),
-('학교4', true, true, false),
-('학교5', false, true, true),
-('학교6', true, false, true),
-('학교7', true, true, true),
-('학교8', false, false, false),
-('학교9', true, false, false),
-('학교10', false, true, false);
-
-INSERT INTO student (student_pk, name, sex_ism, grade, birthday, contact, contact_parent, school, payday, firstreg, is_enable) VALUES 
-(UUID(), '김철수', true, 1, '2007-01-01', '01012341234', '01011111111', 1, 1, '2023-03-01', true),
-(UUID(), '박영희', false, 2, '2006-02-02', '01023452345', '01022222222', 1, 2, '2023-03-02', false),
-(UUID(), '이민지', false, 3, '2005-03-03', '01034563456', '01033333333', 2, 3, '2023-03-03', true),
-(UUID(), '최준호', true, 0, '2008-04-04', '01045674567', '01044444444', 2, 4, '2023-03-04', false),
-(UUID(), '홍길동', true, 1, '2007-05-05', '01056785678', '01055555555', 3, 5, '2023-03-05', true),
-(UUID(), '장보람', false, 2, '2006-06-06', '01067896789', '01066666666', 3, 6, '2023-03-06', false),
-(UUID(), '유재석', true, 3, '2005-07-07', '01078907890', '01077777777', 4, 7, '2023-03-07', true),
-(UUID(), '김미나', false, 0, '2008-08-08', '01089018901', '01088888888', 4, 8, '2023-03-08', false),
-(UUID(), '송기헌', true, 1, '2007-09-09', '01090129012', '01099999999', 5, 9, '2023-03-09', true),
-(UUID(), '하은지', false, 2, '2006-10-10', '01001230123', '01000000000', 5, 10, '2023-03-10', false);
+INSERT INTO school (name, is_elementary, is_middle, is_high) VALUES ('학교 미설정', true, false, false);
