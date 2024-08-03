@@ -10,7 +10,7 @@ const fileUpload = require('express-fileupload');
 const util = require('util');
 const query = util.promisify(db.query).bind(db);
 router.use(fileUpload());
-const expectedHeaders = ['name', 'sex_ism', 'birthday', 'contact', 'contact_parent', 'school', 'payday'];
+const expectedHeaders = ['name', 'sex_ism', 'birthday', 'contact', 'contact_parent', 'school', 'payday', 'grade'];
 
 
 ////////엑셀로 학생 추가
@@ -38,12 +38,46 @@ router.post('/server/student_excel', async (req, res) => {
     // 빈 행 제거
     rows = rows.filter(row => row.some(cell => cell !== undefined && cell !== null && cell !== ''));
 
+    //학교 이름 리스트 부르기
+    let schoolList = await query("SELECT school_pk, name FROM school");
+
+    // 학교 이름 코드화
+    for (let i = 0; i < headers.length; i++) {
+      if (headers[i] === "school") {
+        for (let j = 0; j < rows.length; j++) {//school 열의 각행
+          if (rows[j][i] !== undefined && rows[j][i] !== null) {
+            const schoolName = rows[j][i];
+            console.log("코드화 변환 전 학교 이름 : "+rows[j][i])
+            let school = schoolList.find(s => s.name === schoolName);
+            console.log("school 변수 : " + JSON.stringify(school));
+
+            if (!school) {//처음보는 학교의 경우
+              await query(
+                "INSERT INTO school (name, is_elementary, is_middle, is_high) VALUES (?, false, false, false)",
+                [schoolName]
+              );
+
+              const newSchool = await query(
+                "SELECT school_pk FROM school WHERE name = ?",
+                [schoolName]
+              );
+
+              rows[j][i] = newSchool[0].school_pk;
+              schoolList.push({ school_pk: newSchool[0].school_pk, name: schoolName }); // 새로 추가된 학교도 리스트에 추가
+            } else {
+              rows[j][i] = school.school_pk;
+            }
+          }
+        }
+      }
+    }
+
     // 전화번호 필드 문자열화
     for (let i = 0; i < headers.length; i++) {
       if (headers[i] === "contact" || headers[i] === "contact_parent") {
         for (let j = 0; j < rows.length; j++) {
           if (rows[j][i] !== undefined && rows[j][i] !== null) {
-            rows[j][i] = "0"+rows[j][i].toString();
+            rows[j][i] = rows[j][i].toString();
           }
         }
       }
@@ -63,16 +97,10 @@ router.post('/server/student_excel', async (req, res) => {
       const headerQuery = headers.join(', ');
       const placeholders = headers.map(() => '?').join(', ');
       const sql = `INSERT INTO student (student_pk, created_at, ${headerQuery}) VALUES (UUID(), NOW(), ${placeholders})`;
-
-      await new Promise((resolve, reject) => {
-        db.query(sql, row, (error, results) => {
-          if (error) {
-            console.log("데이터 삽입 중 에러", error);
-            return reject(error);
-          }
-          resolve(results);
-        });
-      });
+      console.log("만들어진 쿼리 : "+sql);
+      console.log("헤더 쿼리 : "+headerQuery);
+      console.log("물음표 쿼리 : "+placeholders);
+      await query(sql, row);
     }
 
     res.send('적용 완료');
