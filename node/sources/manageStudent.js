@@ -149,6 +149,8 @@ router.post("/server/students_view", checkAuthenticated("students_view"), async 
       s.school = sc.school_pk 
     WHERE 
       s.deleted_at IS NULL
+    ORDER BY
+      s.name ASC
   `;
 
   db.query(query, (error, results) => {
@@ -195,7 +197,34 @@ router.post("/server/students_search", checkAuthenticated("students_search"), as
 //////////////////////학생 자세히 보기
 router.post("/server/students_view_detail", checkAuthenticated("students_view_detail"), async (req, res) => {
   const { student_pk } = req.body;
-  db.query("SELECT * from student WHERE student_pk = ? AND deleted_at IS NULL;", [student_pk], (error, results) => {
+  const query = `
+  SELECT 
+      s.student_pk,
+      s.name,
+      s.sex_ism,
+      s.grade,
+      s.birthday,
+      s.contact,
+      s.contact_parent,
+      sc.name AS school,
+      s.payday,
+      s.firstreg,
+      s.is_enable,
+      s.created_at,
+      s.updated_at,
+      s.deleted_at
+  FROM 
+      student s
+  JOIN 
+      school sc 
+  ON 
+      s.school = sc.school_pk
+  WHERE 
+      s.deleted_at IS NULL
+  ORDER BY 
+      s.name ASC;
+  `;
+  db.query(query, [student_pk], (error, results) => {
     if (error) {
       res.status(500).json({ success: false, message: "데이터베이스 오류" });
     } else {
@@ -226,7 +255,7 @@ router.post("/server/students_add", checkAuthenticated("students_add"), async (r
 
   // 데이터 삽입 쿼리
   const query =
-    "INSERT INTO student (student_pk, name, sex_ism, birthday, contact, contact_parent, school, payday, firstreg, created_at) VALUES (UUID(), ?, ?, ?, ?, ?, ?, ?, ?, NOW());";
+    "INSERT INTO student (student_pk, name, sex_ism, birthday, contact, contact_parent, school, payday, firstreg, created_at) VALUES (UUID(), ?, ?, ?, ?, ?, (SELECT school_pk FROM school WHERE name = ?), ?, ?, NOW());";
 
   // 데이터베이스에 쿼리 실행
   db.query(query, [name, sex_ism, birthday, contact, contact_parent, school, payday, firstreg], (err, result) => {
@@ -281,7 +310,7 @@ router.post("/server/students_add_multiple", checkAuthenticated("students_add_mu
 router.put("/server/students_view_update", checkAuthenticated("students_view_update"), async (req, res) => {
   const { student_pk, name, sex_ism, birthday, contact, contact_parent, school, payday, firstreg } = req.body;
 
-  const query = `UPDATE student SET name = ?, sex_ism = ?, birthday = ?, contact = ? ,contact_parent = ?, school = ?,payday = ?, firstreg = ?, updated_at = NOW() WHERE student_pk = ?`;
+  const query = `UPDATE student SET name = ?, sex_ism = ?, birthday = ?, contact = ? ,contact_parent = ?, school = (SELECT school_pk FROM school WHERE name = ?), payday = ?, firstreg = ?, updated_at = NOW() WHERE student_pk = ?`;
 
   db.query(
     query,
@@ -324,7 +353,7 @@ router.post("/server/student_remove", checkAuthenticated("student_remove"), asyn
   const { id } = req.body;
 
   // 데이터 삽입 쿼리
-  const query = "UPDATE student SET deleted_at = NOW(),  WHERE student_pk = ?";
+  const query = "UPDATE student SET deleted_at = NOW() WHERE student_pk = ?";
 
   // 데이터베이스에 쿼리 실행
   db.query(query, [id], (err, result) => {

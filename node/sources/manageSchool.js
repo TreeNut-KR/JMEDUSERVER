@@ -31,7 +31,6 @@ router.post("/server/schools_view_detail", checkAuthenticated("schools_view_deta
     }
   });
 });
-
 //////////////////////학교 검색
 router.post("/server/schools_search", checkAuthenticated("schools_search"), async (req, res) => {
   const { search } = req.body;
