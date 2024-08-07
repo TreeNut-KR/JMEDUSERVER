@@ -221,6 +221,8 @@ router.post("/server/students_view_detail", checkAuthenticated("students_view_de
       s.school = sc.school_pk
   WHERE 
       s.deleted_at IS NULL
+  AND
+      s.student_pk = ?
   ORDER BY 
       s.name ASC;
   `;
@@ -249,82 +251,145 @@ router.post("/server/students_addPage", checkAuthenticated("students_addPage"), 
   });
 });
 
-///////학생추가
+//학생 추가
 router.post("/server/students_add", checkAuthenticated("students_add"), async (req, res) => {
   const { name, sex_ism, birthday, contact, contact_parent, school, payday, firstreg } = req.body;
 
   // 데이터 삽입 쿼리
-  const query =
-    "INSERT INTO student (student_pk, name, sex_ism, birthday, contact, contact_parent, school, payday, firstreg, created_at) VALUES (UUID(), ?, ?, ?, ?, ?, (SELECT school_pk FROM school WHERE name = ?), ?, ?, NOW());";
+  const insertQuery = `
+    INSERT INTO student (
+      student_pk, name, sex_ism, birthday, contact, contact_parent, school, payday, firstreg, created_at
+    ) VALUES (
+      UUID(), ?, ?, ?, ?, ?, ?, ?, ?, NOW()
+    );
+  `;
 
-  // 데이터베이스에 쿼리 실행
-  db.query(query, [name, sex_ism, birthday, contact, contact_parent, school, payday, firstreg], (err, result) => {
-    if (err) {
-      console.error("데이터 삽입 중 오류 발생:", err);
-      res.status(500).send("서버 오류가 발생했습니다.");
-      return;
-    }
+  try {
+    // 학교 이름으로 학교 PK를 조회하는 함수
+    const getSchoolPk = (schoolName) => {
+      return new Promise((resolve, reject) => {
+        const query = "SELECT school_pk FROM school WHERE name = ?";
+        db.query(query, [schoolName], (error, results) => {
+          if (error) return reject(error);
+          if (results.length === 0) return reject(new Error("해당 학교를 찾을 수 없습니다."));
+          resolve(results[0].school_pk);
+        });
+      });
+    };
+
+    // 학생 데이터를 삽입하는 함수
+    const insertStudent = (studentData) => {
+      return new Promise((resolve, reject) => {
+        db.query(insertQuery, studentData, (error, results) => {
+          if (error) return reject(error);
+          resolve(results);
+        });
+      });
+    };
+
+    // 학교 PK 조회
+    const schoolPk = await getSchoolPk(school);
+
+    // 학생 데이터 삽입
+    await insertStudent([name, sex_ism, birthday, contact, contact_parent, schoolPk, payday, firstreg]);
+
     res.status(200).send("사용자가 성공적으로 등록되었습니다.");
-    const logMsg = "새로운 학생을 추가했습니다. 이름 : " + name + ", 전화번호 : " + contact;
-    adminLog(req.session.user, logMsg);
-  });
+
+    const logMsg = `새로운 학생을 추가했습니다. 이름: ${name}, 전화번호: ${contact}`;
+    await adminLog(req.session.user, logMsg); // 로그 작성
+
+  } catch (err) {
+    console.error("데이터 삽입 중 오류 발생:", err);
+    if (err.message === "해당 학교를 찾을 수 없습니다.") {
+      res.status(404).send(err.message);
+    } else {
+      res.status(500).send("서버 오류가 발생했습니다.");
+    }
+  }
 });
 
-/////////////학생 추가 (여러명)
+
+
+
+//학생 여러명 등록
 router.post("/server/students_add_multiple", checkAuthenticated("students_add_multiple"), async (req, res) => {
   const studentsData = req.body.DataStudents;
-  console.log(studentsData);
 
   // 데이터 삽입 쿼리
-  const query =
-    "INSERT INTO student (student_pk, name, sex_ism, birthday, contact, contact_parent, school, payday, firstreg, created_at) VALUES (UUID(), ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
-  console.log(studentsData);
-  // 학생 데이터를 각각 데이터베이스에 삽입
-  studentsData.forEach((student) => {
-    const values = [
-      student.name,
-      student.sex_ism,
-      student.birthday,
-      student.contact,
-      student.contact_parent,
-      student.school,
-      student.payday,
-      student.firstreg,
-    ];
+  const insertQuery = "INSERT INTO student (student_pk, name, sex_ism, birthday, contact, contact_parent, school, payday, firstreg, created_at) VALUES (UUID(), ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
 
-    // 데이터베이스에 쿼리 실행
-    db.query(query, values, async (err, result) => {
-      if (err) {
-        console.error("데이터 삽입 중 오류 발생:", err);
-        res.status(500).send("서버 오류가 발생했습니다.");
-        return;
+  // 라우트 함수 내에서만 프로미스 기반 쿼리 사용
+  const query = util.promisify(db.query).bind(db);
+
+  try {
+    for (let student of studentsData) {
+      values = [
+        student.name,
+        student.sex_ism,
+        student.birthday,
+        student.contact,
+        student.contact_parent,
+        student.school, // 임시로 school 이름을 넣고 후에 pk로 대체
+        student.payday,
+        student.firstreg,
+      ];
+
+      const schoolResult = await query("SELECT school_pk FROM school WHERE name = ?", [student.school]);
+      if (schoolResult.length === 0) {
+        throw new Error(`학교 이름 '${student.school}'에 해당하는 학교가 없습니다.`);
       }
-    });
-  });
+      console.log("대입전 밸류 : "+values[5]);
+      values[5] = schoolResult[0].school_pk; // school 값을 school_pk로 변경
+      console.log("대입후 밸류 : "+values[5]);
 
-  res.status(200).send("사용자가 성공적으로 등록되었습니다.");
-  adminLog(req.session.user, "여러 명의 학생 정보를 추가했습니다.");
+      await query(insertQuery, values);
+    }
+
+    res.status(200).send("등록 완료");
+  } catch (err) {
+    console.error("데이터 삽입 중 오류 발생:", err);
+    res.status(500).send("서버 오류가 발생했습니다.");
+  }
 });
 
-//////////////////////학생 정보 수정
+
+
+
+
+//학생 정보 수정
 router.put("/server/students_view_update", checkAuthenticated("students_view_update"), async (req, res) => {
   const { student_pk, name, sex_ism, birthday, contact, contact_parent, school, payday, firstreg } = req.body;
 
-  const query = `UPDATE student SET name = ?, sex_ism = ?, birthday = ?, contact = ? ,contact_parent = ?, school = (SELECT school_pk FROM school WHERE name = ?), payday = ?, firstreg = ?, updated_at = NOW() WHERE student_pk = ?`;
-
-  db.query(
-    query,
-    [name, sex_ism, birthday, contact, contact_parent, school, payday, firstreg, student_pk],
-    (error, results) => {
+  try {
+    db.query("SELECT school_pk FROM school WHERE name = ?", [school], (error, school_data) => {
       if (error) {
-        res.status(500).json({ success: false, message: "데이터베이스 오류" });
-      } else {
+        return res.status(500).json({ success: false, message: "데이터베이스 오류" });
+      }
+
+      if (!school_data.length) {
+        return res.status(404).json({ success: false, message: "해당 학교명이 존재하지 않습니다." });
+      }
+
+      const school_pk = school_data[0].school_pk;
+      if (!school_pk) {
+        return res.status(404).json({ success: false, message: "해당 학교명이 존재하지 않습니다." });
+      }
+
+      const query = `UPDATE student SET name = ?, sex_ism = ?, birthday = ?, contact = ?, contact_parent = ?, school = ?, payday = ?, firstreg = ?, updated_at = NOW() WHERE student_pk = ?`;
+      db.query(query, [name, sex_ism, birthday, contact, contact_parent, school_pk, payday, firstreg, student_pk], (error, results) => {
+        if (error) {
+          return res.status(500).json({ success: false, message: "데이터베이스 오류" });
+        }
+
         res.json({ success: true });
         adminLog(req.session.user, "학생 정보를 수정했습니다. 학생 코드 : " + student_pk);
-      }
-    }
-  );
+      });
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, message: "서버 오류" });
+  }
 });
+
 
 //////////////////////학생 정보 수정 (여러개 한번에)
 router.post("/server/students_view_update_all", checkAuthenticated("students_view_update_all"), async (req, res) => {
@@ -337,7 +402,6 @@ router.post("/server/students_view_update_all", checkAuthenticated("students_vie
   } else {
     query = `UPDATE student SET ${editObject.option} = '${editObject.text}' WHERE student_pk IN (${editTarget})`;
   }
-  console.log("editobject:", editObject, "쿼리 : ", query);
   db.query(query, (error, results) => {
     if (error) {
       res.status(500).json({ success: false, message: "데이터베이스 오류" });
@@ -406,7 +470,6 @@ router.post("/server/student_subjects_view", checkAuthenticated("student_subject
 //////////////////////학생 출석 상태 검색
 router.post("/server/students_attend", checkAuthenticated("students_attend"), async (req, res) => {
   const { search } = req.body;
-  console.log(search);
 
   let query = "";
   let queryParams = [];
