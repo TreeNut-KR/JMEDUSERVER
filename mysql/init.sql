@@ -230,8 +230,7 @@ INSERT INTO permissions (task_name, level, created_at) VALUES
 ('teacher_update', 1, NOW()),
 ('admin_permissions', 3, NOW()),
 ('conditional_note', 1, NOW());
-
-
+('schools_view_update', 1, NOW());
 
 
 -- 설정 테이블
@@ -248,32 +247,7 @@ CREATE TABLE serverconf (
 
 DELIMITER $$
 
-CREATE TRIGGER before_insert_student_school
-BEFORE INSERT ON student
-FOR EACH ROW
-BEGIN
-    DECLARE school_id INT;
 
-    -- school 테이블에서 name이 NEW.school인 school_pk를 찾습니다.
-    SELECT school_pk INTO school_id FROM school WHERE name = NEW.school;
-
-    -- school_id가 NULL이 아닐 경우에만 NEW.school에 school_id를 할당합니다.
-    IF school_id IS NOT NULL THEN
-        SET NEW.school = school_id;
-    ELSE
-        SET NEW.school = NULL;
-    END IF;
-END $$
-
--- 학교 지정이 없으면 1 삽입
-CREATE TRIGGER trg_before_insert_student
-BEFORE INSERT ON student
-FOR EACH ROW
-BEGIN
-    IF NEW.school IS NULL THEN
-        SET NEW.school = 1;
-    END IF;
-END $$
 
 -- 학교 테이블 업데이트 트리거
 CREATE TRIGGER before_school_update
