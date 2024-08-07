@@ -131,9 +131,9 @@ export default function StudentEdit() {
           <InputBox data={sex_ism} name={"성별"} edit={setSexIsm} type={"radio"} options={["남", "여"]} />
           <InputBox data={birthday} name={"생일 (8자)"} edit={setBirthday} type={"date"} />
           <InputBox data={contact} name={"전화번호"} edit={setContact} type={"phone"} />
-          <InputBox data={contact_parent} name={"전화번호 (가족)"} edit={setContact_parent} type={"phone"} />
-          <InputBox data={school} name={"학교"} edit={setSchool} />
-          <InputBox data={payday} name={"상납일"} edit={setPayday} />
+          <InputBox data={contact_parent} name={"보호자 전화번호"} edit={setContact_parent} type={"phone"} />
+          <InputBox data={school} name={"소속 학교"} edit={setSchool} />
+          <InputBox data={payday} name={"결제일"} edit={setPayday} />
           <InputBox data={firstreg} name={"firstreg"} edit={setFirstreg} type={"date"} />
         </div>
         <div className="m-5 flex justify-end pr-10">

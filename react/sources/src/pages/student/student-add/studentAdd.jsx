@@ -179,7 +179,7 @@ export default function StudentAdd() {
               />
               <InputBox
                 data={student.contact_parent}
-                name={"전화번호 (가족)"}
+                name={"보호자 전화번호"}
                 edit={(value) =>
                   handleInputChange(index, "contact_parent", value)
                 }
@@ -187,7 +187,7 @@ export default function StudentAdd() {
               />
               <InputBox
                 data={student.school}
-                name={"학교"}
+                name={"소속 학교"}
                 edit={(value) => handleInputChange(index, "school", value)}
               />
 
