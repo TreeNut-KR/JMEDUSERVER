@@ -1,6 +1,6 @@
+import os
 import ctypes
 import logging
-import os
 from ctypes.wintypes import MAX_PATH
 from datetime import datetime
 from pathlib import Path
@@ -57,11 +57,20 @@ class QRdata(BaseModel):
             ]
         }
     }
-
+    
 class QRresult(BaseModel):
     message: str = Field(..., title="메시지")
     student_name: Optional[str] = Field(None, title="학생 이름")
     send_result: Optional[Any] = Field(None, title="전송 결과")
+
+load_dotenv()
+db_config = {
+    'host': os.getenv('MYSQL_ROOT_HOST'),
+    'user': os.getenv('MYSQL_ROOT_USERDB_USER'),
+    'password': os.getenv('MYSQL_ROOT_PASSWORD'),
+    'database': os.getenv('MYSQL_DATABASE'),
+    'port': 3306
+}
 
 class Aligo:
     def __init__(self) -> None:
@@ -97,15 +106,6 @@ class Aligo:
         
         send_response = requests.post(self.send_url, data=sms_data_updated)
         return send_response.json().get('message'), send_response.json().get('msg_type'), send_response.json().get('title')
-
-load_dotenv()
-db_config = {
-    'host': os.getenv('MYSQL_ROOT_HOST'),
-    'user': os.getenv('MYSQL_ROOT_USERDB_USER'),
-    'password': os.getenv('MYSQL_ROOT_PASSWORD'),
-    'database': os.getenv('MYSQL_DATABASE'),
-    'port': 3306
-}
 
 def procedure_attendance_contact(QR: str, cursor: mysql.connector.cursor) -> Union[Tuple[str, str, str], str]:
     ''' 반환값 => (번호 : str, 이름 : str, 상태 : str) : tuple'''
@@ -148,7 +148,6 @@ def receive_qr(request_data: QRdata) -> QRresult:
             attendance_status = "등원"
         elif status == "already":
             attendance_status = "하원"
-            
         try:
             message, msg_type, title = Aligo().send_sms(receiver_name=name, receiver_num=number, status=attendance_status)
             
@@ -162,7 +161,6 @@ def receive_qr(request_data: QRdata) -> QRresult:
             cnx.rollback() # 전송 실패 시 attendance_log 롤백
             logging.error(f'An error occurred while sending SMS: {str(e)}')
             raise HTTPException(status_code=503, detail="문자 전송 할 수 없는 요청입니다. 관리자에게 문의해주세요.")
-        
     except ValueError as ve:
         logging.error(f'An value error occurred: {str(ve)}')
         raise HTTPException(status_code=422, detail="입력된 데이터가 올바르지 않습니다.")
