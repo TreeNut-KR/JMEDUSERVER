@@ -21,12 +21,10 @@
 
 # if not log_file_path.parent.exists():
 #     log_file_path.parent.mkdir(parents=True, exist_ok=True)
-
 import mysql.connector
-from typing import List
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from starlette.middleware.base import BaseHTTPMiddleware
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+import json
+import asyncio
 
 from utils.Aligo import Aligo
 from utils.Models import QR_Request, QR_Response
@@ -34,46 +32,33 @@ from utils.DB_mysql import get_db_connection, procedure_attendance_contact
 from utils.Error_handler import (
     add_exception_handlers,
     ValueErrorException,
-    ForbiddenException,
     InternalServerErrorException,
     UnboundLocalErrorException,
     DatabaseErrorException
 )
 
-class IPWhitelistMiddleware(BaseHTTPMiddleware):
-    def __init__(self, app: FastAPI, allowed_ips: List[str]):
-        super().__init__(app)
-        self.allowed_ips = allowed_ips
-
-    async def dispatch(self, request, call_next):
-        client_ip = request.client.host
-        if client_ip not in self.allowed_ips:
-            raise ForbiddenException(detail="Access forbidden: Your IP address is not allowed")
-        response = await call_next(request)
-        return response
-
-def create_app() -> FastAPI:
-    app = FastAPI()
-    # 허용된 IP 리스트 미들웨어 추가
-    allowed_ips = ["127.0.0.1", "192.168.1.224"] # 예시로 로컬 IP와 특정 IP만 허용
-    app.add_middleware(IPWhitelistMiddleware, allowed_ips=allowed_ips)
-    
-    # CORS 설정
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=["http://localhost"],  # 허용할 도메인
-        allow_credentials=True,
-        allow_methods=["*"],  # 모든 HTTP 메소드 허용 (GET, POST 등)
-        allow_headers=["*"],  # 모든 헤더 허용
-    )
-    return app
-
+app = FastAPI()
 aligo = Aligo()
-app = create_app()
+connected_websockets = []
 add_exception_handlers(app)
 
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    connected_websockets.append(websocket)
+    try:
+        while True:
+            await asyncio.sleep(1)  # 클라이언트 연결을 유지하기 위해 대기
+    except WebSocketDisconnect:
+        connected_websockets.remove(websocket)
+        print("클라이언트 연결 끊김")
+
+async def WebSocket_Send(data: dict):
+    for websocket in connected_websockets:
+        await websocket.send_text(json.dumps(data))
+
 @app.post("/qr", response_model=QR_Response, summary="QR Code 수신")
-def receive_qr(request_data: QR_Request) -> QR_Response:
+async def receive_qr(request_data: QR_Request) -> QR_Response:
     """
     출석 키호스크에서 QR코드를 전달 받아 Aligo Web 발신 후 성공 여부를 반환합니다.
     """
@@ -82,7 +67,7 @@ def receive_qr(request_data: QR_Request) -> QR_Response:
         with cnx.cursor() as cursor:
             contact_result = procedure_attendance_contact(request_data.qr_data, cursor)
             cnx.commit()
-        
+
         if isinstance(contact_result, str):
             return QR_Response(message=contact_result)
         
@@ -97,6 +82,16 @@ def receive_qr(request_data: QR_Request) -> QR_Response:
             attendance_status = "하원"
 
         message, msg_type, title = aligo.send_sms(receiver_name=name, receiver_num=number, status=attendance_status)
+        
+        # WebSocket을 통해 데이터 전송
+        websocket_data = {
+            "student_name": name,
+            "status": status,
+            "message": message,
+            "send_result": msg_type
+        }
+        await WebSocket_Send(websocket_data)
+        
         return QR_Response(message=f"{status}: {message}", student_name=name, send_result=msg_type)
     
     except ValueError as ve:

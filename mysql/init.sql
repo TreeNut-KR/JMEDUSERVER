@@ -61,6 +61,11 @@ CREATE TABLE teacher (
     PRIMARY KEY(teacher_pk)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
+INSERT INTO teacher (
+    teacher_pk, name, sex_ism, birthday, contact, id, pwd, admin_level, created_at, updated_at, deleted_at
+) VALUES (
+    UUID(), '홍길동', TRUE, '1980-01-01', '010-1234-5678', '123','$2b$10$ScObl4aFaH5URmw2i9NpUu5cIJiZsvdxGwGBL6zGZk3xciVhQoyua', 1, NOW(), NOW(), NULL
+);
 
 
 -- 등하원 로그 테이블(구형)
@@ -229,7 +234,7 @@ INSERT INTO permissions (task_name, level, created_at) VALUES
 ('teacher_view', 1, NOW()),
 ('teacher_update', 1, NOW()),
 ('admin_permissions', 3, NOW()),
-('conditional_note', 1, NOW());
+('conditional_note', 1, NOW()),
 ('schools_view_update', 1, NOW());
 
 
