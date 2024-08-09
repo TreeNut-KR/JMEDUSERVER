@@ -23,7 +23,10 @@
 #     log_file_path.parent.mkdir(parents=True, exist_ok=True)
 
 import mysql.connector
-from fastapi import FastAPI            
+from typing import List
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.base import BaseHTTPMiddleware
 
 from utils.Aligo import Aligo
 from utils.Models import QR_Request, QR_Response
@@ -31,14 +34,43 @@ from utils.DB_mysql import get_db_connection, procedure_attendance_contact
 from utils.Error_handler import (
     add_exception_handlers,
     ValueErrorException,
+    ForbiddenException,
     InternalServerErrorException,
     UnboundLocalErrorException,
     DatabaseErrorException
 )
 
-app = FastAPI()
+class IPWhitelistMiddleware(BaseHTTPMiddleware):
+    def __init__(self, app: FastAPI, allowed_ips: List[str]):
+        super().__init__(app)
+        self.allowed_ips = allowed_ips
+
+    async def dispatch(self, request, call_next):
+        client_ip = request.client.host
+        if client_ip not in self.allowed_ips:
+            raise ForbiddenException(detail="Access forbidden: Your IP address is not allowed")
+        response = await call_next(request)
+        return response
+
+def create_app() -> FastAPI:
+    app = FastAPI()
+    # 허용된 IP 리스트 미들웨어 추가
+    allowed_ips = ["127.0.0.1", "192.168.1.224"] # 예시로 로컬 IP와 특정 IP만 허용
+    app.add_middleware(IPWhitelistMiddleware, allowed_ips=allowed_ips)
+    
+    # CORS 설정
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["http://localhost"],  # 허용할 도메인
+        allow_credentials=True,
+        allow_methods=["*"],  # 모든 HTTP 메소드 허용 (GET, POST 등)
+        allow_headers=["*"],  # 모든 헤더 허용
+    )
+    return app
+
 aligo = Aligo()
-add_exception_handlers(app) 
+app = create_app()
+add_exception_handlers(app)
 
 @app.post("/qr", response_model=QR_Response, summary="QR Code 수신")
 def receive_qr(request_data: QR_Request) -> QR_Response:
