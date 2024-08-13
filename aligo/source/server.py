@@ -1,30 +1,10 @@
-# import ctypes
-# from sys import platform
-# from pathlib import Path
-# from ctypes.wintypes import MAX_PATH
-
-# MAX_PATH = 260
-
-# def get_documents_folder():
-#     CSIDL_PERSONAL = 5
-#     SHGFP_TYPE_CURRENT = 0
-#     path_buf = ctypes.create_unicode_buffer(MAX_PATH)
-#     ctypes.windll.shell32.SHGetFolderPathW(None, CSIDL_PERSONAL, None, SHGFP_TYPE_CURRENT, path_buf)
-#     return path_buf.value
-
-# if platform == "linux" or platform == "linux2":
-#     documents_path = Path(__file__).parent.parent
-# elif platform == "win32":
-#     documents_path = Path(get_documents_folder())
-    
-# log_file_path = documents_path / 'Aligo(JMEDU)_logs.log'
-
-# if not log_file_path.parent.exists():
-#     log_file_path.parent.mkdir(parents=True, exist_ok=True)
 import mysql.connector
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 import json
 import asyncio
+from typing import List
+from fastapi import FastAPI
+from starlette.middleware.base import BaseHTTPMiddleware
 
 from utils.Aligo import Aligo
 from utils.Models import QR_Request, QR_Response
@@ -32,13 +12,35 @@ from utils.DB_mysql import get_db_connection, procedure_attendance_contact
 from utils.Error_handler import (
     add_exception_handlers,
     ValueErrorException,
+    ForbiddenException,
     InternalServerErrorException,
     UnboundLocalErrorException,
     DatabaseErrorException
 )
 
+class IPWhitelistMiddleware(BaseHTTPMiddleware):
+    def __init__(self, app: FastAPI, allowed_ips: List[str]):
+        super().__init__(app)
+        self.allowed_ips = allowed_ips
+
+    async def dispatch(self, request, call_next):
+        client_ip = request.headers.get("X-Forwarded-For", "").split(",")[0].strip()
+        if client_ip not in self.allowed_ips:
+            raise ForbiddenException(detail="Access forbidden: Your IP address is not allowed")
+        response = await call_next(request)
+        return response
+
+def create_app() -> FastAPI:
+    app = FastAPI()
+    # 허용된 IP 리스트 미들웨어 추가
+    allowed_ips = ["127.0.0.1", "192.168.219.103"] # 예시로 로컬 IP와 특정 IP만 허용
+    app.add_middleware(IPWhitelistMiddleware, allowed_ips=allowed_ips)
+
+    return app
+
 app = FastAPI()
 aligo = Aligo()
+app = create_app()
 connected_websockets = []
 add_exception_handlers(app)
 
