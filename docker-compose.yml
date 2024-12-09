@@ -73,3 +73,14 @@ services:
       - ./mysql/log.cnf:/etc/mysql/conf.d/log.cnf:ro
       - ./mysql/logs:/var/log/mysql
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+
+  admin:
+    restart: always
+    build:
+      context: ./admin
+    ports:
+      - 5005:5005
+    expose:
+      - 5005
+    depends_on:
+      - mysql
