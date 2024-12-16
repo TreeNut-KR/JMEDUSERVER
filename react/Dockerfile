@@ -16,6 +16,9 @@ RUN yarn add qrcode
 
 COPY ./sources /app
 
+# react-scripts에 실행 권한 부여
+RUN chmod +x node_modules/.bin/react-scripts
+
 RUN yarn run build
 
 RUN yarn global add serve
