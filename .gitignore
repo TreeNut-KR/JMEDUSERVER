@@ -44,3 +44,6 @@ python/.DS_Store
 venv/
 .venv/
 .venv
+
+# key
+*.key
