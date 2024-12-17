@@ -30,13 +30,9 @@ admin/
   └─ setup.sh
 ```
 
-### 2. 소스 코드 준비
+### 2. SSH 키 준비
 
-도커 이미지를 빌드하는 환경에 따라 아래 방법 중 하나를 선택하세요:
-
-#### 2-1. GitHub에서 자동으로 소스 가져오기 (권장)
-
-GitHub 저장소에 접근하기 위한 SSH 키(`id_ed25519`)를 준비하고, 프로젝트 디렉토리를 아래와 같이 구성합니다:
+GitHub 저장소에 접근하여 소스 코드를 가져올 수 있도록 SSH 키(`id_ed25519`)를 준비하고, 프로젝트 디렉토리를 아래와 같이 구성합니다:
 
 ```
 admin/
@@ -46,34 +42,6 @@ admin/
   ├─ README.md
   └─ setup.sh
 ```
-
-
-#### 2-2. 내부망 환경에서 수동으로 소스 준비
-
-네트워크가 연결되지 않은 내부망 환경에서는 의존성 파일을 직접 전달해야합니다. 아래 단계를 따라 진행하세요:
-
-1. `source` 폴더에 소스 코드를 넣습니다.
-2. `npm-pack-all` 을 사용하여 전체 의존성을 패키징합니다:
-
-```shell
-cd admin/source
-npx npm-pack-all --dev-deps --output dependencies.tgz
-```
-
-3. 전체 의존성을 담고 있는 파일 `dependencies.tgz` 이 생성됩니다:
-
-```
-admin/
-  ├─ source/ 👈 (소스 코드)
-  │   ├─ ...(files)
-  │   ├─ dependencies.tgz 👈 (의존성 파일)
-  │   └─ package.json
-  ├─ .gitignore
-  ├─ Dockerfile
-  ├─ README.md
-  └─ setup.sh
-```
-
 
 ## 빌드
 
