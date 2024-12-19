@@ -38,9 +38,9 @@ services:
     build:
       context: ./aligo
     ports:
-      - 8001:8000
+      - 8100:8000
     expose:
-      - 8001
+      - 8100
     volumes:
       - ./logs:/app/logs
     environment:
