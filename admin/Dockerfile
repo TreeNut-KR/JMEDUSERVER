@@ -1,18 +1,38 @@
 ## Stage 1
-FROM node:18-alpine AS builder
+FROM node:18-alpine AS check
 
 # dependencies
 RUN apk add --no-cache git openssh
 
-# git clone & build script
 COPY . /temp
 WORKDIR /temp
-RUN /bin/sh /temp/setup.sh
+
+# cache invalidation
+ADD https://api.github.com/rate_limit /rate_limit.json
+
+# check last commit hash
+RUN /bin/sh /temp/check.sh
+
 
 ## Stage 2
+FROM node:18-alpine AS build
+
+# dependencies
+RUN apk add --no-cache git openssh
+
+COPY --from=check /temp /temp
+WORKDIR /temp
+
+# clone and build source code
+RUN /bin/sh /temp/build.sh
+
+
+## Stage 3
 FROM node:18-alpine
 
-COPY --from=builder /temp/source /app
+ENV TZ=Asia/Seoul
+
+COPY --from=build /temp/source /app
 
 WORKDIR /app
 

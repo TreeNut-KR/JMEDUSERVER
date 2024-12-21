@@ -2,7 +2,7 @@
 
 if [ -f "/temp/id_ed25519" ]; then
   mkdir -p /root/.ssh && chmod 700 /root/.ssh
-  mv /temp/id_ed25519 /root/.ssh/
+  cp /temp/id_ed25519 /root/.ssh/
   chmod 600 /root/.ssh/id_ed25519
   ssh-keyscan github.com >> /root/.ssh/known_hosts
   git clone git@github.com:TreeNut-KR/jmedu-admin.git /temp/source
