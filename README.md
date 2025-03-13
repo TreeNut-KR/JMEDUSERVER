@@ -7,7 +7,7 @@
 |[김준건 (jgkim14)](https://github.com/jgkim14)|프로젝트 매니저, 백엔드|
 |[서정훈 (CutTheWire)](https://github.com/CutTheWire)|백엔드|
 |[고범준 (udongmandu)](https://github.com/udongmandu)|프론트엔드|
-|[[박종운 (bel1c10ud)](https://github.com/bel1c10ud)|프론트엔드|
+|[박종운 (bel1c10ud)](https://github.com/bel1c10ud)|프론트엔드|
 
 
 
