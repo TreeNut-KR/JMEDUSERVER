@@ -1,6 +1,6 @@
 <img width="1354" alt="스크린샷 2024-05-31 오후 4 22 00" src="https://github.com/jgkim14/JMEDUSERVER/assets/48284333/361e71c7-511d-4a72-8c9a-07700149685a">
 
-![Image](https://github.com/user-attachments/assets/bf86154d-9a6e-4342-851b-f6f8823f420f)
+<img src = "[Your Image Addr](https://github.com/user-attachments/assets/bf86154d-9a6e-4342-851b-f6f8823f420f)">
 
 # 프로젝트 구성원
 
