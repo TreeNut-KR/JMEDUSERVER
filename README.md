@@ -1,5 +1,6 @@
 <img width="1354" alt="스크린샷 2024-05-31 오후 4 22 00" src="https://github.com/jgkim14/JMEDUSERVER/assets/48284333/361e71c7-511d-4a72-8c9a-07700149685a">
-![Image](https://github.com/user-attachments/assets/b00adcdd-f7cf-4116-abca-460327db34bb)
+
+![Image](https://github.com/user-attachments/assets/6058f9c5-91a0-4344-b521-f17da10cfd08)
 
 # 프로젝트 구성원
 
