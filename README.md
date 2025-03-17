@@ -2,6 +2,8 @@
 
 <img src = "[Your Image Addr](https://github.com/user-attachments/assets/bf86154d-9a6e-4342-851b-f6f8823f420f)">
 
+<img width="500" alt="KakaoTalk_Photo_2025-03-17-12-42-11.jpeg" src="https://github.com/user-attachments/assets/bf86154d-9a6e-4342-851b-f6f8823f420f">
+
 # 프로젝트 구성원
 
 | 구성원 | 업무 |
