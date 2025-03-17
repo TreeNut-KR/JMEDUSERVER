@@ -1,8 +1,10 @@
+<p align="center">
+  
 <img width="1354" alt="스크린샷 2024-05-31 오후 4 22 00" src="https://github.com/jgkim14/JMEDUSERVER/assets/48284333/361e71c7-511d-4a72-8c9a-07700149685a">
 
-<img src = "[Your Image Addr](https://github.com/user-attachments/assets/bf86154d-9a6e-4342-851b-f6f8823f420f)">
-
 <img width="500" alt="KakaoTalk_Photo_2025-03-17-12-42-11.jpeg" src="https://github.com/user-attachments/assets/bf86154d-9a6e-4342-851b-f6f8823f420f">
+
+</p>
 
 # 프로젝트 구성원
 
