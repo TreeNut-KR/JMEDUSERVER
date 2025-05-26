@@ -26,21 +26,22 @@ CREATE TABLE school (
 -- 학생 테이블
 CREATE TABLE student (
     student_pk CHAR(36) NOT NULL,
-    name VARCHAR(20) NULL, /*이름*/
-    sex_ism BOOL DEFAULT true, /*성별*/
-    grade INT DEFAULT 0, /*예비 1학년은 0으로 설정, 1, 2, 3학년*/
-    birthday DATE DEFAULT '2000-01-01', /*생일*/
-    contact VARCHAR(20) DEFAULT '01000000000', /*연락처*/
-    contact_parent VARCHAR(20) DEFAULT '01000000000', /*부모연락처*/
-    school INT DEFAULT 1, /*소속학교*/
-    payday INT DEFAULT 0, /*결제일*/
-    firstreg DATE DEFAULT '2000-01-01', /*최초등록일*/
-    is_enable BOOL DEFAULT true, /*활성화 여부*/
+    name VARCHAR(20) NULL, /* 이름 */
+    sex TINYINT NOT NULL DEFAULT 0, /* 0 : 알 수 없음, 1 : 남자, 2 : 여자, 9 : 해당 없음 */
+    sex_ism BOOL DEFAULT true, /* lagacy */ 
+    grade INT DEFAULT 0, /* 0 : 예비 1학년, 1 : 1학년, 2 : 2학년, ... */
+    birthday DATE DEFAULT '2000-01-01', /* 생일 */
+    contact VARCHAR(20) DEFAULT '01000000000', /* 연락처 */
+    contact_parent VARCHAR(20) DEFAULT '01000000000', /* 부모님 연락처 */
+    school INT DEFAULT 1, /* 소속 학교 */
+    payday INT DEFAULT 0, /* 결제일 */
+    firstreg DATE DEFAULT '2000-01-01', /* 최초 등록일 */
+    is_enable BOOL DEFAULT true, /* 활성화 여부 */
     created_at DATETIME DEFAULT NOW(),
     updated_at DATETIME DEFAULT NOW(),
     deleted_at DATETIME DEFAULT NULL,
     PRIMARY KEY(student_pk),
-    FOREIGN KEY (school) REFERENCES school(school_pk) /*외부키 설정*/
+    FOREIGN KEY (school) REFERENCES school(school_pk) /* 외부키 설정 */
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 
@@ -48,10 +49,11 @@ CREATE TABLE student (
 -- 교사 테이블
 CREATE TABLE teacher (
     teacher_pk CHAR(36),
-    name VARCHAR(20),
-    sex_ism BOOL,
-    birthday DATE,
-    contact VARCHAR(20),
+    name VARCHAR(20), /* 이름 */
+    sex TINYINT NOT NULL DEFAULT 0, /* 0 : 알 수 없음, 1 : 남자, 2 : 여자, 9 : 해당 없음 */
+    sex_ism BOOL, /* legacy */
+    birthday DATE, /* 생일 */
+    contact VARCHAR(20), /* 연락처 */
     id VARCHAR(20),
     pwd VARCHAR(255),
     admin_level INT, /* 0 : 가입 대기, 1 : 일반 강사, 2 : 관리 강사, 3 : 원장 */
@@ -73,23 +75,23 @@ CREATE TABLE attend_log (
     attend_log_pk INT AUTO_INCREMENT,
     student CHAR(36),
     time DATETIME,
-    is_attend BOOL, /*true는 등원, false는 하원*/
+    is_attend BOOL, /* true는 등원, false는 하원 */
     is_late BOOL DEFAULT NULL,
     PRIMARY KEY(attend_log_pk),
-    FOREIGN KEY (student) REFERENCES student(student_pk) /*외부키 설정*/
+    FOREIGN KEY (student) REFERENCES student(student_pk) /* 외부키 설정 */
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 -- 등하원 로그 테이블(신형)
 CREATE TABLE attendance_log (
     attendance_log_pk INT AUTO_INCREMENT,
-    student CHAR(36),/*student 테이블의 student_pk*/
-    is_attend BOOL, /*true는 등원, false는 하원이 아닌 출석 여부를 나타냄*/
-    attend_time DATETIME, /*출석 시간*/
-    leave_time DATETIME DEFAULT NULL, /*하원 시간, 하원하지 않았다면 NULL*/
+    student CHAR(36), /* student 테이블의 student_pk */
+    is_attend BOOL, /* true는 등원, false는 하원이 아닌 출석 여부를 나타냄 */
+    attend_time DATETIME, /* 출석 시간 */
+    leave_time DATETIME DEFAULT NULL, /* 하원 시간, 하원하지 않았다면 NULL */
     PRIMARY KEY(attendance_log_pk),
-    FOREIGN KEY (student) REFERENCES student(student_pk), /*외부키 설정*/
+    FOREIGN KEY (student) REFERENCES student(student_pk), /* 외부키 설정 */
     sms_sent BOOL DEFAULT FALSE,
-     sms_sent_time DATETIME DEFAULT NULL
+    sms_sent_time DATETIME DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 -- 교사 출퇴근 로그 테이블
@@ -99,33 +101,33 @@ CREATE TABLE teacher_attend_log (
     time DATETIME,
     is_attend BOOL,
     PRIMARY KEY(teacher_attend_log_pk),
-    FOREIGN KEY (teacher) REFERENCES teacher(teacher_pk) /*외부키 설정*/
+    FOREIGN KEY (teacher) REFERENCES teacher(teacher_pk) /* 외부키 설정 */
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 -- 과목 테이블
 CREATE TABLE subject (
-    subject_pk INT AUTO_INCREMENT,/*과목코드*/
-    name VARCHAR(20),/*과목이름*/
-    teacher CHAR(36),/*담당강사(외부키)*/
-    school INT,/*대상학교(외부키)*/
-    grade INT,/*대상학년*/
-    is_personal BOOL,/*1대1 과외식 수업 여부*/
+    subject_pk INT AUTO_INCREMENT, /* 과목 코드 */
+    name VARCHAR(20), /* 과목 이름 */
+    teacher CHAR(36), /* 담당 강사(외부키) */
+    school INT, /* 대상 학교(외부키) */
+    grade INT, /* 대상 학년 */
+    is_personal BOOL, /* 1대1 과외식 수업 여부 */
     created_at DATETIME DEFAULT NOW(),
     updated_at DATETIME DEFAULT NOW(),
     deleted_at DATETIME DEFAULT NULL,
-    PRIMARY KEY(subject_pk),/*주키설정*/
-    FOREIGN KEY (teacher) REFERENCES teacher(teacher_pk),/*외부키 설정*/
-    FOREIGN KEY (school) REFERENCES school(school_pk)/*외부키 설정*/
+    PRIMARY KEY(subject_pk), /* 주키 설정 */
+    FOREIGN KEY (teacher) REFERENCES teacher(teacher_pk), /* 외부키 설정 */
+    FOREIGN KEY (school) REFERENCES school(school_pk) /* 외부키 설정 */
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 -- 시간표 테이블
 CREATE TABLE plan (
     plan_pk INT AUTO_INCREMENT,
     subject INT,
-    week VARCHAR(3),/*요일(형식 : MON, TUE 등)*/
-    starttime TIME,/*시작시간(형식 : 19시 30분의 경우 1930)*/
-    endtime TIME,/*종료시간(형식 : 시작시간과 동일)*/
-    room VARCHAR(20),/*강의실*/
+    week VARCHAR(3), /* 요일(형식 : MON, TUE 등) */
+    starttime TIME, /* 시작 시간(형식 : 19시 30분의 경우 1930) */
+    endtime TIME, /* 종료 시간(형식 : 시작시간과 동일) */
+    room VARCHAR(20), /* 강의실 */
     is_ended BOOL DEFAULT NULL,
     created_at DATETIME DEFAULT NOW(),
     updated_at DATETIME DEFAULT NOW(),
@@ -181,6 +183,35 @@ CREATE TABLE student_subject (
     FOREIGN KEY (subject_id) REFERENCES subject(subject_pk)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
+-- 과제 테이블
+CREATE TABLE homework (
+    homework_pk INT AUTO_INCREMENT,
+    subject_id INT,
+    title VARCHAR(50), /* 과제 이름, 입력 단계에서 20자로 제한 */
+    description VARCHAR(255), /* 과제 설명 */
+    due_date DATETIME, /* 과제 제출 마감일 */
+    created_at DATETIME DEFAULT NOW(),
+    updated_at DATETIME DEFAULT NOW(),
+    deleted_at DATETIME DEFAULT NULL,
+    PRIMARY KEY(homework_pk),
+    FOREIGN KEY (subject_id) REFERENCES subject(subject_pk)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
+
+-- 학생-과제 연결 테이블
+CREATE TABLE student_homework (
+    student_homework_pk INT AUTO_INCREMENT,
+    homework_id INT,
+    student_id CHAR(36),
+    remarks VARCHAR(255), /* 비고 */
+    submitted_at DATETIME DEFAULT NULL, /* 과제 제출일 */
+    created_at DATETIME DEFAULT NOW(),
+    updated_at DATETIME DEFAULT NOW(),
+    deleted_at DATETIME DEFAULT NULL,
+    PRIMARY KEY(student_homework_pk),
+    FOREIGN KEY (homework_id) REFERENCES homework(homework_pk),
+    FOREIGN KEY (student_id) REFERENCES student(student_pk)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
+
 -- 관리자 로그 테이블
 CREATE TABLE admin_log (
     admin_log_pk INT AUTO_INCREMENT,
@@ -207,35 +238,74 @@ CREATE TABLE permissions (
 
 -- 권한 기본 세팅값
 INSERT INTO permissions (task_name, level, created_at) VALUES 
-('students_view', 1, NOW()),
-('students_add', 1, NOW()),
-('students_edit', 1, NOW()),
-('students_search', 1, NOW()),
-('students_view_detail', 1, NOW()),
-('students_addPage', 1, NOW()),
-('students_add_multiple', 1, NOW()),
-('students_view_update', 1, NOW()),
-('students_view_update_all', 1, NOW()),
-('student_remove', 1, NOW()),
-('plan', 1, NOW()),
-('plan_add', 1, NOW()),
-('plan_update', 1, NOW()),
-('plan_remove', 1, NOW()),
+/* 권한 관련 */
+('permissions_view', 0, NOW()),
+('permission_edit', 3, NOW()),
+('admin_permissions', 3, NOW()), /* legacy */
+/* 학교 관련 */
 ('schools_view', 1, NOW()),
-('school_add', 1, NOW()),
-('school_update', 1, NOW()),
-('school_remove', 1, NOW()),
-("schools_view_detail", 1, NOW()),
-("schools_search", 1, NOW()),
-('subject_add', 1, NOW()),
-('subject_remove', 1, NOW()),
-('subject_update', 1, NOW()),
-('subject_student_add', 1, NOW()),
+('school_view', 1, NOW()),
+('school_add', 3, NOW()),
+('school_edit', 3, NOW()),
+('school_delete', 3, NOW()),
+('school_update', 1, NOW()), /* legacy */
+('school_remove', 1, NOW()), /* legacy */
+('schools_view_detail', 1, NOW()), /* legacy */
+('schools_search', 1, NOW()), /* legacy */
+('schools_view_update', 1, NOW()), /* legacy */
+/* 학생 관련 */
+('students_view', 1, NOW()),
+('students_admin_view', 3, NOW()),
+('student_view', 1, NOW()),
+('student_admin_view', 3, NOW()),
+('student_add', 3, NOW()),
+('student_edit', 3, NOW()),
+('student_delete', 3, NOW()),
+('students_add', 1, NOW()), /* legacy */
+('students_edit', 1, NOW()), /* legacy */
+('students_search', 1, NOW()), /* legacy */
+('students_view_detail', 1, NOW()), /* legacy */
+('students_addPage', 1, NOW()), /* legacy */
+('students_add_multiple', 1, NOW()), /* legacy */
+('students_view_update', 1, NOW()), /* legacy */
+('students_view_update_all', 1, NOW()), /* legacy */
+('student_remove', 1, NOW()), /* legacy */
+/* 교직원 관련 */
+('teachers_view', 1, NOW()),
 ('teacher_view', 1, NOW()),
-('teacher_update', 1, NOW()),
-('admin_permissions', 3, NOW()),
-('conditional_note', 1, NOW()),
-('schools_view_update', 1, NOW());
+('teacher_edit', 3, NOW()),
+('teacher_delete', 3, NOW()),
+('teacher_level_edit', 3, NOW()),
+('teacher_update', 1, NOW()), /* legacy */
+/* 과목 관련 */
+('subjects_view', 1, NOW()),
+('subject_view', 1, NOW()),
+('subject_add', 3, NOW()),
+('subject_edit', 3, NOW()),
+('subject_delete', 3, NOW()),
+('student_subject_edit', 3, NOW()),
+('subject_remove', 1, NOW()), /* legacy */
+('subject_update', 1, NOW()), /* legacy */
+('subject_student_add', 1, NOW()), /* legacy */
+/* 과제 관련 */
+('homeworks_view', 1, NOW()),
+('homework_view', 1, NOW()),
+('homework_add', 2, NOW()),
+('homework_edit', 2, NOW()),
+('homework_delete', 3, NOW()),
+('student_homework_view', 1, NOW()),
+/* 학생 등하원 관련 */
+('student_attendance_view', 1, NOW()),
+('students_attendance_view', 1, NOW()),
+/* 작업 기록 관련 */
+('admin_log_view', 3, NOW()),
+/* 시간표 관련 */
+('plan', 1, NOW()), /* legacy */
+('plan_add', 1, NOW()), /* legacy */
+('plan_update', 1, NOW()), /* legacy */
+('plan_remove', 1, NOW()), /* legacy */
+/* 기타 */
+('conditional_note', 1, NOW()); /* legacy */
 
 
 -- 설정 테이블
