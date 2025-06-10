@@ -5,7 +5,10 @@ mysql/.DS_Store
 
 
 # Ignore Node.js related folders
-/node/node_modules
+node/node_modules
+kiosk/sources/node_modules
+kiosk/sources/public/node_modules
+react/sources/node_modules
 
 # Production build
 /node/build

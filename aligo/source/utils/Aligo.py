@@ -32,9 +32,8 @@ class Aligo:
         current_time = datetime.now().strftime('%H시 %M분')
         # 메시지 포맷
         msg_template = (
-            "안녕하세요. 제이엠에듀 학원입니다.\n\n"
-            f"금일 {current_time}, {self.receiver_name} 학생이\n"
-            f"{status} 하였습니다.")
+            "안녕하세요. 제이엠에듀입니다.\n\n"
+            f"{current_time}, {self.receiver_name} 학생이 {status}하였습니다.")
 
         sms_data_updated = self.sms_data.copy()
         sms_data_updated['msg'] = msg_template
