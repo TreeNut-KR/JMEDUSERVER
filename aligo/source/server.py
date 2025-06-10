@@ -65,7 +65,7 @@ class QRresult(BaseModel):
 
 class Aligo:
     def __init__(self) -> None:
-        load_dotenv()  # .env 파일 로드
+        load_dotenv()
         self.send_url = 'https://apis.aligo.in/send/'
         self.receiver_name = "김준건"
         self.receiver_num = "0327667789"
@@ -111,13 +111,13 @@ def procedure_attendance_contact(QR: str, cursor: mysql.connector.cursor) -> Uni
     try:
 
         cursor.callproc('RecordAttendance', (QR,))
-        result_set = next(cursor.stored_results())  # 첫 번째 결과 집합에 직접 접근
+        result_set = next(cursor.stored_results()) 
         fetched_result = result_set.fetchone()
             
         if fetched_result:
             return fetched_result
         else:
-            return "해당 QR의 학생이 데이터베이스에 존재하지 않습니다."  # 에러 메시지
+            return "해당 QR의 학생이 데이터베이스에 존재하지 않습니다."
         
     except Exception as e:
         logging.error(f'An error occurred: {str(e)}')
@@ -149,14 +149,15 @@ def receive_qr(request_data: QRdata) -> QRresult:
             attendance_status = "하원"
             
         try:
-            message, msg_type, title = Aligo().send_sms(receiver_name=name, receiver_num=number, status=attendance_status)
             
+            message, result_code, api_message = Aligo().send_alimtalk(receiver_name=name, receiver_num=number, status=attendance_status)
+
             logging.info(f'Received QR Data: {request_data.qr_data} '
                         f'Student\'s name: {name} '
                         f'Parent\'s Contact: {number} '
                         f'status: {status}'
-                        f'aligo: {message, msg_type, title}')
-            return QRresult(message=f"{status}: {message}", student_name=name, send_result=msg_type)
+                        f'aligo: {message, result_code, api_message}')
+            return QRresult(message=f"{status}: {message}", student_name=name, send_result=api_message)
         except Exception as e:
             cnx.rollback() # 전송 실패 시 attendance_log 롤백
             logging.error(f'An error occurred while sending SMS: {str(e)}')
