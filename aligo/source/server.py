@@ -14,6 +14,7 @@ import uvicorn
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field, field_validator
+from utils.Aligo import Aligo
 
 app = FastAPI()
 
@@ -63,41 +64,6 @@ class QRresult(BaseModel):
     student_name: Optional[str] = Field(None, title="학생 이름")
     send_result: Optional[Any] = Field(None, title="전송 결과")
 
-class Aligo:
-    def __init__(self) -> None:
-        load_dotenv()
-        self.send_url = 'https://apis.aligo.in/send/'
-        self.receiver_name = "김준건"
-        self.receiver_num = "0327667789"
-        self.sms_data = {
-            'key': os.getenv('SMS_KEY'),
-            'userid': os.getenv('SMS_USERID'),
-            'sender': os.getenv('SMS_SENDER'),
-            'receiver': self.receiver_num,
-            'msg_type': os.getenv('SMS_MSG_TYPE'),
-            'title': os.getenv('SMS_TITLE'),
-            'testmode_yn': os.getenv('SMS_TESTMODE_YN')
-        }
-        
-    def send_sms(self, receiver_name: str, receiver_num: str, status: str) -> Tuple[str, str, str]:
-        '''
-        반환값 => (결과 : str, 문자 유형 : str, 타이틀 : str)
-        '''
-        self.receiver_name = receiver_name
-        self.sms_data['receiver'] = receiver_num
-        current_time = datetime.now().strftime('%H시 %M분')
-        # 메시지 포맷
-        msg_template = (
-            "안녕하세요. 제이엠에듀입니다.\n\n"
-            f"{current_time}, {self.receiver_name} 학생이 {status}하였습니다.")
-
-        sms_data_updated = self.sms_data.copy()
-        sms_data_updated['msg'] = msg_template
-        
-        send_response = requests.post(self.send_url, data=sms_data_updated)
-        return send_response.json().get('message'), send_response.json().get('msg_type'), send_response.json().get('title')
-
-load_dotenv()
 db_config = {
     'host': os.getenv('MYSQL_ROOT_HOST'),
     'user': os.getenv('MYSQL_ROOT_USERDB_USER'),
@@ -147,21 +113,30 @@ def receive_qr(request_data: QRdata) -> QRresult:
             attendance_status = "등원"
         elif status == "already":
             attendance_status = "하원"
-            
-        try:
-            
-            message, result_code, api_message = Aligo().send_alimtalk(receiver_name=name, receiver_num=number, status=attendance_status)
+        else:
+            attendance_status = None
 
-            logging.info(f'Received QR Data: {request_data.qr_data} '
-                        f'Student\'s name: {name} '
-                        f'Parent\'s Contact: {number} '
-                        f'status: {status}'
-                        f'aligo: {message, result_code, api_message}')
-            return QRresult(message=f"{status}: {message}", student_name=name, send_result=api_message)
-        except Exception as e:
-            cnx.rollback() # 전송 실패 시 attendance_log 롤백
-            logging.error(f'An error occurred while sending SMS: {str(e)}')
-            raise HTTPException(status_code=503, detail="문자 전송 할 수 없는 요청입니다. 관리자에게 문의해주세요.")
+        if attendance_status:
+            try:
+                # 알림톡 전송
+                message, result_code, api_message = Aligo().send_alimtalk(
+                    receiver_name=name,
+                    receiver_num=number,
+                    status=attendance_status
+                )
+                logging.info(f'Received QR Data: {request_data.qr_data} '
+                             f'Student\'s name: {name} '
+                             f'Parent\'s Contact: {number} '
+                             f'status: {status} '
+                             f'aligo: {message, result_code, api_message}')
+                return QRresult(
+                    message=f"{attendance_status}: {message}",
+                    student_name=name,
+                    send_result=api_message
+                )
+            except Exception as e:
+                logging.error(f"Alimtalk send error: {e}")
+                raise HTTPException(status_code=500, detail="알림톡 전송 실패")
         
     except ValueError as ve:
         logging.error(f'An value error occurred: {str(ve)}')

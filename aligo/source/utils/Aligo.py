@@ -1,9 +1,9 @@
 import os
 import requests
-from typing import Tuple
+import json
 from datetime import datetime
 from dotenv import load_dotenv
-import json
+from typing import Tuple
 
 class Aligo:
     def __init__(self) -> None:
@@ -45,40 +45,49 @@ class Aligo:
     def send_alimtalk(self, receiver_name: str, receiver_num: str, status: str) -> tuple:
         '''
         카카오 알림톡 전송
-        반환값 => (결과 : str, 응답코드 : int, 응답메시지 : str)
+        반환값: (결과 메시지, 응답코드, 상세 메시지)
         '''
-        basic_send_url = 'https://kakaoapi.aligo.in/akv10/alimtalk/send/'
-        current_time = datetime.now().strftime('%H시 %M분')
-        msg_template = (
-            "안녕하세요. 제이엠에듀입니다.\n\n"
-            f"{current_time}, {receiver_name} 학생이 {status}하였습니다."
-        )
+        url = 'https://kakaoapi.aligo.in/akv10/alimtalk/send/'
+        now = datetime.now().strftime('%H:%M')
 
-        button_info = {
-            'button': [
-                {
-                    'name': '홈페이지 바로가기',
-                    'linkType': 'WL',
-                    'linkTypeName': '웹링크',
-                    'linkM': 'https://yourhomepage.com',
-                    'linkP': 'https://yourhomepage.com'
-                }
-            ]
-        }
+        # 템플릿 내용
+        if status == "등원":
+            tpl_code = os.getenv('ALIMTALK_TEMPLATE_ATTEND')
+            subject = "제이엠에듀국영수논술전문학원"
+            emtitle = "등원알림"
+            msg_template = f"안녕하세요, 제이엠에듀국영수논술전문학원입니다.\n\n{receiver_name} 학생이 {now}에 등원하였습니다.\n\n더 열심히 가르치겠습니다. 감사합니다."
+            alt_msg = f"안녕하세요, 제이엠에듀입니다.\n\n{receiver_name} 학생이 {now}에 등원하였습니다."
+        elif status == "하원":
+            tpl_code = os.getenv('ALIMTALK_TEMPLATE_LEAVE')
+            subject = "제이엠에듀국영수논술전문학원"
+            emtitle = "하원알림"
+            msg_template = f"안녕하세요, 제이엠에듀국영수논술전문학원입니다.\n\n{receiver_name} 학생이 {now}에 하원하였습니다.\n\n더 열심히 가르치겠습니다. 감사합니다."
+            alt_msg = f"안녕하세요, 제이엠에듀입니다.\n\n{receiver_name} 학생이 {now}에 하원하였습니다."
+        else:
+            tpl_code = os.getenv('ALIMTALK_TEMPLATE_ATTEND')
+            subject = ""
+            emtitle = ""
+            msg_template = ""
+            alt_msg = ""
 
-        sms_data = {
+
+        data = {
             'apikey': os.getenv('ALIMTALK_API_KEY'),
             'userid': os.getenv('ALIMTALK_USERID'),
             'senderkey': os.getenv('ALIMTALK_SENDERKEY'),
-            'tpl_code': os.getenv('ALIMTALK_TPL_CODE'),
+            'tpl_code': tpl_code,
             'sender': os.getenv('ALIMTALK_SENDER'),
             'receiver_1': receiver_num,
             'recvname_1': receiver_name,
-            'subject_1': os.getenv('ALIMTALK_SUBJECT'),
+            'subject_1': subject,
+            'emtitle_1': emtitle,
             'message_1': msg_template,
-            'button_1': json.dumps(button_info)
+            'failover': 'Y',
+            'fsubject_1': subject,
+            'fmessage_1': alt_msg,
+            'ftype_1': 'SMS'
         }
 
-        response = requests.post(basic_send_url, data=sms_data)
+        response = requests.post(url, data=data)
         resp_json = response.json()
         return resp_json.get('result_message', ''), resp_json.get('result_code', ''), resp_json.get('message', '')
