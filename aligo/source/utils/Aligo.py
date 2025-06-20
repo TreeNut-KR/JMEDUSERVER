@@ -30,11 +30,18 @@ class Aligo:
         '''
         self.receiver_name = receiver_name
         self.sms_data['receiver'] = receiver_num
-        current_time = datetime.now().strftime('%H시 %M분')
-        # 메시지 포맷
+
+        now_dt = datetime.now()
+        hour = now_dt.hour
+        minute = now_dt.minute
+        ampm = "오전" if hour < 12 else "오후"
+        hour12 = hour if 1 <= hour <= 12 else (hour - 12 if hour > 12 else 12)
+        current_time = f"{ampm} {hour12}시 {minute:02d}분"
+
         msg_template = (
             "안녕하세요. 제이엠에듀입니다.\n\n"
-            f"{current_time}, {self.receiver_name} 학생이 {status}하였습니다.")
+            f"{current_time}, {self.receiver_name} 학생이 {status}하였습니다."
+        )
 
         sms_data_updated = self.sms_data.copy()
         sms_data_updated['msg'] = msg_template
@@ -48,7 +55,13 @@ class Aligo:
         반환값: (결과 메시지, 응답코드, 상세 메시지)
         '''
         url = 'https://kakaoapi.aligo.in/akv10/alimtalk/send/'
-        now = datetime.now().strftime('%H:%M')
+
+        now_dt = datetime.now()
+        hour = now_dt.hour
+        minute = now_dt.minute
+        ampm = "오전" if hour < 12 else "오후"
+        hour12 = hour if 1 <= hour <= 12 else (hour - 12 if hour > 12 else 12)
+        now = f"{ampm} {hour12}시 {minute:02d}분"
 
         # 템플릿 내용
         if status == "등원":
@@ -69,7 +82,6 @@ class Aligo:
             emtitle = ""
             msg_template = ""
             alt_msg = ""
-
 
         data = {
             'apikey': os.getenv('ALIMTALK_API_KEY'),
