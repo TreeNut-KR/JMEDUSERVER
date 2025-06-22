@@ -72,6 +72,60 @@
 Python Module Github Link : https://github.com/CutTheWire/ClassLinker
 
 
+# 프로젝트 디렉토리 구조
+
+```
+JMEDUSERVER/
+├── aligo/                        # 알리고(알림톡/SMS) 관련 파이썬 서버 코드
+│   └── source/
+│       ├── server.py             # FastAPI 메인 서버 엔트리포인트
+│       └── utils/
+│           └── Aligo.py          # 알리고 API 연동 및 메시지 전송 유틸
+├── node/                         # Node.js 기반 학원 관리 서버
+│   └── sources/
+│       ├── managePlan.js         # 시간표/플랜 관리
+│       ├── manageSchool.js       # 학교 관리
+│       ├── manageStudent.js      # 학생 관리
+│       ├── manageSubject.js      # 과목 관리
+│       ├── manageTeacher.js      # 강사 관리
+│       ├── checkAttend.js        # 출석 체크 및 관련 API
+│       ├── db.js                 # DB 연결 설정
+│       └── logger.js             # 출결/관리 로그 기록
+├── react/                        # React 프론트엔드(관리자/키오스크)
+│   └── sources/
+│       ├── src/
+│       │   ├── pages/            # 주요 페이지(교사, 관리자 등)
+│       │   │   ├── teacher/
+│       │   │   │   ├── manage_subject.jsx
+│       │   │   │   ├── manage_schedule.jsx
+│       │   │   │   ├── schedule-edit/
+│       │   │   │   │   ├── PlanEdit.jsx
+│       │   │   │   │   ├── planAdd.jsx
+│       │   │   │   └── subject-edit/
+│       │   │   │       └── subjectShow.jsx
+│       │   │   └── admin/
+│       │   │       └── view_log.jsx
+│       │   ├── constants/
+│       │   │   └── sideMenus.js  # 사이드 메뉴 구성
+│       │   ├── template/
+│       │   │   └── Consist.jsx   # 공통 레이아웃
+│       │   └── server.js         # 서버 연동 유틸
+│       └── public/
+│           └── index.html        # SPA 진입점
+├── kiosk/                        # 키오스크(출석용) 프론트엔드
+│   └── sources/
+│       ├── public/
+│       │   └── index.html
+│       └── index.js
+├── test_kiosk/                   # 키오스크 테스트용 스크립트
+│   └── kdh.py
+├── admin/                        # 관리자 도커/설정 파일
+│   ├── README.md
+│   ├── Dockerfile
+│   └── setup.sh
+├── README.md                     # 프로젝트 설명서
+```
+
 # Docker 컨테이너 구성
 Docker를 사용하여 각 서비스를 컨테이너화 하고, 배포 및 관리를 용이하게 한다.
 
