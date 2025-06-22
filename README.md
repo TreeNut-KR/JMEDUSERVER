@@ -181,3 +181,72 @@ serverconf : 서버 관리 설정 기록
 
 
 
+# 서버를 실행하는 방법
+
+```
+# .env 파일 경로
+JMEDUSERVER/
+├── node/
+│   └── .env                # Node.js 서버에서 실제로 사용되는 환경변수 파일
+├── aligo/
+│   └── source/
+│       └── .env            # 알리고(FastAPI) 서버에서 사용하는 환경변수 파일
+├── admin/
+│   └── .env                # 관리자 도커/배포 환경변수 파일
+├── react/
+│   └── sources/
+│       └── .env            # React 프론트엔드 환경변수 파일
+```
+
+```
+# 최상단 .env
+MYSQL_ROOT_HOST=mysql
+MYSQL_ROOT_USER= # 데이터베이스 계정 이름
+MYSQL_ROOT_PASSWORD= # 데이터베이스 계정 패스워드
+MYSQL_DATABASE=jmedu
+SESSION_SECRET= # 로그인 세션 시크릿 키
+```
+
+```
+# aligo/source/.env
+SMS_KEY= # 알리고 API 키
+SMS_USERID= # 알리고 계정 ID
+SMS_SENDER= # 알리고에 등록된 발신자 전화번호
+SMS_MSG=
+SMS_MSG_TYPE=SMS
+SMS_TITLE=title
+SMS_TESTMODE_YN=N # 테스트 모드 여부
+
+
+
+MYSQL_ROOT_HOST=mysql
+MYSQL_ROOT_USERDB_USER= # 데이터베이스 계정 이름
+MYSQL_ROOT_PASSWORD= # 데이터베이스 계정 패스워드
+MYSQL_DATABASE=jmedu
+
+
+ALIMTALK_API_KEY= # 알리고 API 키
+ALIMTALK_USERID= # 알리고 계정 ID
+ALIMTALK_SENDERKEY= # 카카오 알림톡 발신자 키
+ALIMTALK_SENDER= # 알림톡 발신자 전화번호
+
+ALIMTALK_TEMPLATE_ATTEND= # 알림톡 등원 템플릿 코드
+ALIMTALK_TEMPLATE_LEAVE= # 알림톡 하원 템플릿 코드
+```
+
+```
+# node/.env
+MYSQL_ROOT_HOST=mysql
+MYSQL_ROOT_USER= # 데이터베이스 계정 이름
+MYSQL_ROOT_PASSWORD= # 데이터베이스 계정 패스워드
+MYSQL_DATABASE=jmedu
+SESSION_SECRET= # 로그인 세션 시크릿 키
+SMS_SENDER= # 알리고 SMS 발신자 전화번호
+SMS_KEY= # 알리고 SMS API 키
+```
+
+```
+# react/sources/.env
+# GitHub에 올라가있음
+REACT_APP_SERVER_URL=http://localhost # 클라이언트의 접속이 허용되는 서버의 주소
+```
