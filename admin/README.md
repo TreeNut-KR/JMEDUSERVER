@@ -26,8 +26,7 @@ admin/
   ├─ .env 👈 (환경변수 파일)
   ├─ .gitignore
   ├─ Dockerfile
-  ├─ README.md
-  └─ setup.sh
+  └─ README.md
 ```
 
 ### 2. SSH 키 준비
@@ -39,8 +38,7 @@ admin/
   ├─ .gitignore
   ├─ Dockerfile
   ├─ id_ed25519 👈 (SSH 키 파일)
-  ├─ README.md
-  └─ setup.sh
+  └─ README.md
 ```
 
 ## 빌드
@@ -56,7 +54,7 @@ docker build -t jmedu-admin .
 ### Docker Compose로 빌드
 
 ```shell
-docker-compose build
+docker compose build
 ```
 
 ## 실행
@@ -70,5 +68,5 @@ docker run -p 5005:5005 jmedu-admin
 또는 `docker-compose.yml` 파일이 있는 경우:
 
 ```shell
-docker-compose up
+docker compose up -d
 ```

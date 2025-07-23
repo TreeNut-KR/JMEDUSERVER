@@ -82,6 +82,8 @@ services:
     restart: always
     build:
       context: ./admin
+      ssh:
+        - default=./admin/id_ed25519
     ports:
       - 5005:5005
     expose:

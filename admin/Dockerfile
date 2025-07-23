@@ -1,34 +1,18 @@
-## Stage 1
-FROM node:18-alpine AS check
+# Build Stage
+FROM node:22-alpine AS build
 
-# dependencies
-RUN apk add --no-cache git openssh
+ADD git@github.com:TreeNut-KR/jmedu-admin.git /temp/source
 
-COPY . /temp
-WORKDIR /temp
+COPY .env* /temp/source
 
-# cache invalidation
-ADD https://api.github.com/rate_limit /rate_limit.json
+WORKDIR /temp/source
 
-# check last commit hash
-RUN /bin/sh /temp/check.sh
+RUN npm install 
 
+RUN npm run build
 
-## Stage 2
-FROM node:18-alpine AS build
-
-# dependencies
-RUN apk add --no-cache git openssh
-
-COPY --from=check /temp /temp
-WORKDIR /temp
-
-# clone and build source code
-RUN /bin/sh /temp/build.sh
-
-
-## Stage 3
-FROM node:18-alpine
+# Production Image
+FROM node:22-alpine
 
 ENV TZ=Asia/Seoul
 
